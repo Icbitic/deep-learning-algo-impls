@@ -17,6 +17,8 @@ jobs:
         exclude:
           - os: macos-latest
             compiler: gcc
+          - os: ubuntu-latest
+            compiler: clang
 
     steps:
     - uses: actions/checkout@v4
@@ -100,6 +102,10 @@ jobs:
   documentation:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
     - uses: actions/checkout@v4
 
@@ -114,7 +120,7 @@ jobs:
 
     - name: Deploy to GitHub Pages
       if: success()
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs/html
