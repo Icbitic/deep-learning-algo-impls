@@ -1,1 +1,211 @@
-/cmake-build-debug/
+# Build directories
+build/
+build-*/
+cmake-build-*/
+out/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Executables
+*.exe
+*.out
+*.app
+deep_learning_algo_impls
+run_tests
+
+# Object files
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# IDE files
+# Visual Studio
+.vs/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# CLion
+.idea/
+cmake-build-debug/
+cmake-build-release/
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+*.moc.cpp
+ui_*.h
+qrc_*.cpp
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Code::Blocks
+*.depend
+*.layout
+*.cbp
+
+# Dev-C++
+*.dev
+
+# KDevelop
+*.kdev4
+.kdev4/
+
+# Conan
+conanfile.txt
+conaninfo.txt
+conanbuildinfo.*
+
+# vcpkg
+vcpkg_installed/
+
+# Package managers
+node_modules/
+.npm
+.yarn/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+
+# Documentation
+docs/html/
+docs/latex/
+doxygen_warnings.txt
+
+# Test results
+*.xml
+*.junit
+
+# Coverage reports
+*.gcov
+*.gcda
+*.gcno
+lcov.info
+coverage/
+
+# Profiling
+*.prof
+gmon.out
+callgrind.out.*
+
+# Valgrind
+*.memcheck
+*.helgrind
+*.drd
+
+# Static analysis
+cppcheck-result.xml
+clang-tidy-result.txt
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Data files (add specific patterns as needed)
+*.csv
+*.json
+*.txt
+*.dat
+*.bin
+
+# Model files
+*.model
+*.weights
+*.checkpoint
+
+# Datasets
+datasets/
+data/
+*.h5
+*.hdf5
+
+# Python (if any Python scripts are added)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
