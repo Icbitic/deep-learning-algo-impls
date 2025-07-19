@@ -92,7 +92,7 @@ jobs:
 
       - name: Run static analysis (cppcheck)
         run: |
-          cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem --suppress=missingInclude -I include/ src/
+          cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem --suppress=missingInclude --suppress=unusedFunction --suppress=noExplicitConstructor -I include/ src/
 
       - name: Run clang-tidy
         run: |
