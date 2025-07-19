@@ -84,7 +84,12 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang-format clang-tidy cppcheck
+          sudo apt-get install -y clang-format clang-tidy cppcheck cmake ninja-build libgtest-dev
+          # Install Google Test
+          cd /usr/src/gtest
+          sudo cmake CMakeLists.txt
+          sudo make
+          sudo cp lib/*.a /usr/lib
 
       - name: Check code formatting
         run: |
