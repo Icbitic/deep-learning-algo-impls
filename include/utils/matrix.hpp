@@ -15,22 +15,22 @@ namespace dl {
     namespace utils {
         /**
          * @brief A templated matrix class for mathematical operations in deep learning
-         * 
+         *
          * This class provides a comprehensive matrix implementation with support for
          * common mathematical operations required in deep learning algorithms including
          * matrix multiplication, element-wise operations, transpose, and various
          * initialization methods.
-         * 
+         *
          * @tparam T The data type for matrix elements (typically float or double)
-         * 
+         *
          * @example
          * ```cpp
          * // Create a 3x3 identity matrix
          * auto identity = Matrix<float>::identity(3);
-         * 
+         *
          * // Create a random matrix
          * auto random_matrix = Matrix<float>::random(2, 3, 0.0f, 1.0f);
-         * 
+         *
          * // Matrix multiplication
          * auto result = identity * random_matrix;
          * ```
@@ -42,7 +42,7 @@ namespace dl {
              * @name Constructors
              * @{
              */
-            
+
             /**
              * @brief Default constructor creating an empty matrix
              */
@@ -62,14 +62,14 @@ namespace dl {
              * @param value Value to fill the matrix with
              */
             Matrix(size_t rows, size_t cols, T value);
-            
+
             /** @} */
 
             /**
              * @name Element Access
              * @{
              */
-            
+
             /**
              * @brief Access matrix element at specified position (mutable)
              * @param row Row index (0-based)
@@ -87,14 +87,14 @@ namespace dl {
              * @throw std::out_of_range if indices are invalid
              */
             const T &operator()(size_t row, size_t col) const;
-            
+
             /** @} */
 
             /**
              * @name Arithmetic Operations
              * @{
              */
-            
+
             /**
              * @brief Matrix addition operator
              * @param other Matrix to add
@@ -118,14 +118,14 @@ namespace dl {
              * @throw std::invalid_argument if matrix dimensions are incompatible
              */
             Matrix operator*(const Matrix &other) const;
-            
+
             /** @} */
 
             /**
              * @name Matrix Operations
              * @{
              */
-            
+
             /**
              * @brief Compute the transpose of the matrix
              * @return Transposed matrix
@@ -154,39 +154,39 @@ namespace dl {
              * @throw std::invalid_argument if matrix is not square or singular
              */
             Matrix inverse() const;
-            
+
             /** @} */
 
             /**
              * @name Utility Methods
              * @{
              */
-            
+
             /**
              * @brief Get the number of rows
              * @return Number of rows
              */
             size_t rows() const { return rows_; }
-            
+
             /**
              * @brief Get the number of columns
              * @return Number of columns
              */
             size_t cols() const { return cols_; }
-            
+
             /**
              * @brief Get the total number of elements
              * @return Total size (rows * cols)
              */
             size_t size() const { return rows_ * cols_; }
-            
+
             /** @} */
 
             /**
              * @name Static Factory Methods
              * @{
              */
-            
+
             /**
              * @brief Create a matrix filled with zeros
              * @param rows Number of rows
@@ -219,7 +219,7 @@ namespace dl {
              * @return Matrix with random values
              */
             static Matrix random(size_t rows, size_t cols, T min, T max);
-            
+
             /** @} */
 
         private:
@@ -227,7 +227,7 @@ namespace dl {
              * @brief Internal data storage using a flat vector
              */
             std::vector<T> data_;
-            
+
             /**
              * @brief Number of rows and columns
              */
@@ -238,7 +238,7 @@ namespace dl {
          * @name Non-member Functions
          * @{
          */
-        
+
         /**
          * @todo Add stream output operator for matrix printing
          * @brief Output stream operator for matrix visualization
@@ -276,24 +276,24 @@ namespace dl {
          */
         // template<typename T>
         // T mean(const Matrix<T>& matrix)
-        
+
         /** @} */
 
         /**
          * @name Type Aliases
          * @{
          */
-        
+
         /**
          * @brief Single-precision floating point matrix
          */
         using MatrixF = Matrix<float>;
-        
+
         /**
          * @brief Double-precision floating point matrix
          */
         using MatrixD = Matrix<double>;
-        
+
         /** @} */
     } // namespace utils
 } // namespace dl

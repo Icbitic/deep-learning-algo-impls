@@ -1,8 +1,9 @@
 # Deep Learning Algorithm Implementations
 
-A comprehensive C++ library for implementing and learning deep learning algorithms from scratch, featuring modern C++ design patterns, extensive documentation, and automated CI/CD.
+A comprehensive C++ library for implementing and learning deep learning algorithms from scratch, featuring modern C++
+design patterns, extensive documentation, and automated CI/CD.
 
-[![CI](https://github.com/your-username/deep-learning-algo-impls/workflows/CI/badge.svg)](https://github.com/your-username/deep-learning-algo-impls/actions)
+[![CI](https://github.com/Icbitic/deep-learning-algo-impls/workflows/CI/badge.svg)](https://github.com/your-username/deep-learning-algo-impls/actions)
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](https://your-username.github.io/deep-learning-algo-impls/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 
@@ -66,6 +67,7 @@ Full API documentation is automatically generated using Doxygen and deployed to 
 🔗 **[View Documentation](https://your-username.github.io/deep-learning-algo-impls/)**
 
 The documentation includes:
+
 - Complete API reference with examples
 - Mathematical descriptions of algorithms
 - Usage patterns and best practices
