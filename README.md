@@ -62,12 +62,16 @@ deep-learning-algo-impls/
 
 ## 📖 Documentation
 
-Full API documentation is automatically generated using Doxygen and deployed to GitHub Pages:
+Full API documentation is automatically generated using Doxygen with the modern **Doxygen Awesome** theme and deployed to GitHub Pages:
 
 🔗 **[View Documentation](https://your-username.github.io/deep-learning-algo-impls/)**
 
-The documentation includes:
+The documentation features:
 
+- **Modern, clean design** with improved readability <mcreference link="https://jothepro.github.io/doxygen-awesome-css/" index="1">1</mcreference>
+- **Mobile-responsive interface** for documentation on any device <mcreference link="https://jothepro.github.io/doxygen-awesome-css/" index="1">1</mcreference>
+- **Dark mode support** for comfortable viewing <mcreference link="https://jothepro.github.io/doxygen-awesome-css/" index="1">1</mcreference>
+- **Enhanced navigation** with sidebar treeview
 - Complete API reference with examples
 - Mathematical descriptions of algorithms
 - Usage patterns and best practices
