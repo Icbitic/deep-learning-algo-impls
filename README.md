@@ -169,14 +169,11 @@ This is a learning-focused project. Feel free to:
 
 ## 📄 License
 
-[Add your preferred license here]
+Apache License 2.0
 
 ## 🔗 Resources
 
 - [Deep Learning Book](http://www.deeplearningbook.org/) by Ian Goodfellow
-- [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/) by Michael Nielsen
-- [CS231n Convolutional Neural Networks](http://cs231n.github.io/)
-- [Understanding LSTMs](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 
 ---
 
