@@ -14,6 +14,7 @@ namespace dl::optimization {
     class Optimizer {
     public:
         virtual ~Optimizer() = default;
+
         virtual void update(MatrixD &weights, const MatrixD &gradients) = 0;
 
     protected:
@@ -30,6 +31,7 @@ namespace dl::optimization {
     class SGD : public Optimizer {
     public:
         SGD(double learning_rate);
+
         void update(MatrixD &weights, const MatrixD &gradients) override;
 
     private:
@@ -47,6 +49,7 @@ namespace dl::optimization {
     class Adam : public Optimizer {
     public:
         Adam(double learning_rate, double beta1 = 0.9, double beta2 = 0.999, double epsilon = 1e-8);
+
         void update(MatrixD &weights, const MatrixD &gradients) override;
 
     private:
@@ -66,6 +69,7 @@ namespace dl::optimization {
     class RMSprop : public Optimizer {
     public:
         RMSprop(double learning_rate, double decay_rate = 0.9, double epsilon = 1e-8);
+
         void update(MatrixD &weights, const MatrixD &gradients) override;
 
     private:

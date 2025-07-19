@@ -26,6 +26,7 @@ namespace dl::activation {
     class ReLU : public ActivationFunction {
     public:
         double forward(double x);
+
         double backward(double x);
     };
 
@@ -38,6 +39,7 @@ namespace dl::activation {
     class Sigmoid : public ActivationFunction {
     public:
         double forward(double x);
+
         double backward(double x);
     };
 
@@ -50,6 +52,7 @@ namespace dl::activation {
     class Tanh : public ActivationFunction {
     public:
         double forward(double x);
+
         double backward(double x);
     };
 
@@ -62,6 +65,7 @@ namespace dl::activation {
     class Softmax : public ActivationFunction {
     public:
         MatrixD forward(const MatrixD &x);
+
         MatrixD backward(const MatrixD &x);
     };
 
@@ -74,7 +78,9 @@ namespace dl::activation {
     class LeakyReLU : public ActivationFunction {
     public:
         LeakyReLU(double alpha = 0.01);
+
         double forward(double x);
+
         double backward(double x);
 
     private:

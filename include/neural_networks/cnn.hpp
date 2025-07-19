@@ -8,11 +8,11 @@
 using dl::utils::MatrixD;
 
 namespace dl::neural_networks {
-    
     enum class PoolingType {
         MAX,
         AVERAGE
     };
+
     /**
      * Convolutional Neural Network
      * TODO: Implement CNN with:
@@ -25,9 +25,13 @@ namespace dl::neural_networks {
     class ConvolutionalNetwork {
     public:
         ConvolutionalNetwork();
+
         MatrixD forward(const MatrixD &input);
+
         void backward(const MatrixD &target);
+
         void train(const utils::Dataset<double> &dataset, int epochs, double learning_rate);
+
         MatrixD predict(const MatrixD &input);
 
     private:
@@ -40,8 +44,11 @@ namespace dl::neural_networks {
      */
     class ConvolutionLayer {
     public:
-        ConvolutionLayer(size_t input_channels, size_t output_channels, size_t kernel_size, size_t stride, size_t padding);
+        ConvolutionLayer(size_t input_channels, size_t output_channels, size_t kernel_size, size_t stride,
+                         size_t padding);
+
         MatrixD forward(const MatrixD &input);
+
         void backward(const MatrixD &gradient);
 
     private:
@@ -60,7 +67,9 @@ namespace dl::neural_networks {
     class PoolingLayer {
     public:
         PoolingLayer(size_t pool_size, size_t stride, PoolingType type);
+
         MatrixD forward(const MatrixD &input);
+
         void backward(const MatrixD &gradient);
 
     private:

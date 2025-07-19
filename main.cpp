@@ -11,14 +11,15 @@
 
 int main() {
     std::cout << "=== Deep Learning Algorithm Implementations ===" << std::endl;
-    std::cout << "\nThis project provides a framework for implementing deep learning algorithms from scratch." << std::endl;
+    std::cout << "\nThis project provides a framework for implementing deep learning algorithms from scratch." <<
+            std::endl;
     std::cout << "\nProject Structure:" << std::endl;
     std::cout << "├── Neural Networks: Feedforward, CNN, RNN/LSTM/GRU" << std::endl;
     std::cout << "├── Optimization: SGD, Adam, RMSprop" << std::endl;
     std::cout << "├── Activation Functions: ReLU, Sigmoid, Tanh, Softmax" << std::endl;
     std::cout << "├── Loss Functions: MSE, Cross-entropy, Hinge loss" << std::endl;
     std::cout << "└── Utilities: Matrix operations, Data loading" << std::endl;
-    
+
     std::cout << "\n=== Getting Started ===" << std::endl;
     std::cout << "1. Implement the Matrix class in utils/matrix.hpp" << std::endl;
     std::cout << "2. Add activation functions in activation/functions.hpp" << std::endl;
@@ -26,7 +27,7 @@ int main() {
     std::cout << "4. Add optimization algorithms in optimization/optimizers.hpp" << std::endl;
     std::cout << "5. Implement loss functions in loss/functions.hpp" << std::endl;
     std::cout << "6. Run tests with: cd build && ctest" << std::endl;
-    
+
     std::cout << "\n=== Example Usage (after implementation) ===" << std::endl;
     std::cout << "/*" << std::endl;
     std::cout << "// Create a simple feedforward network" << std::endl;
@@ -41,8 +42,8 @@ int main() {
     std::cout << "MatrixD test_input({{1, 0}});" << std::endl;
     std::cout << "MatrixD prediction = network.predict(test_input);" << std::endl;
     std::cout << "*/" << std::endl;
-    
+
     std::cout << "\nHappy coding! 🚀" << std::endl;
-    
+
     return 0;
 }

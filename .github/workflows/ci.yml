@@ -11,9 +11,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        compiler: [gcc, clang]
-        build_type: [Debug, Release]
+        os: [ ubuntu-latest, macos-latest ]
+        compiler: [ gcc, clang ]
+        build_type: [ Debug, Release ]
         exclude:
           - os: macos-latest
             compiler: gcc
@@ -21,83 +21,83 @@ jobs:
             compiler: clang
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake ninja-build
-        if [ "${{ matrix.compiler }}" = "gcc" ]; then
-          sudo apt-get install -y gcc-11 g++-11
-          echo "CC=gcc-11" >> $GITHUB_ENV
-          echo "CXX=g++-11" >> $GITHUB_ENV
-        else
-          sudo apt-get install -y clang-14
-          echo "CC=clang-14" >> $GITHUB_ENV
-          echo "CXX=clang++-14" >> $GITHUB_ENV
-        fi
-        # Install Google Test
-        sudo apt-get install -y libgtest-dev
-        cd /usr/src/gtest
-        sudo cmake CMakeLists.txt
-        sudo make
-        sudo cp lib/*.a /usr/lib
+      - name: Install dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build
+          if [ "${{ matrix.compiler }}" = "gcc" ]; then
+            sudo apt-get install -y gcc-11 g++-11
+            echo "CC=gcc-11" >> $GITHUB_ENV
+            echo "CXX=g++-11" >> $GITHUB_ENV
+          else
+            sudo apt-get install -y clang-14
+            echo "CC=clang-14" >> $GITHUB_ENV
+            echo "CXX=clang++-14" >> $GITHUB_ENV
+          fi
+          # Install Google Test
+          sudo apt-get install -y libgtest-dev
+          cd /usr/src/gtest
+          sudo cmake CMakeLists.txt
+          sudo make
+          sudo cp lib/*.a /usr/lib
 
-    - name: Install dependencies (macOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install cmake ninja googletest
-        if [ "${{ matrix.compiler }}" = "clang" ]; then
-          echo "CC=clang" >> $GITHUB_ENV
-          echo "CXX=clang++" >> $GITHUB_ENV
-        fi
+      - name: Install dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install cmake ninja googletest
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
+            echo "CC=clang" >> $GITHUB_ENV
+            echo "CXX=clang++" >> $GITHUB_ENV
+          fi
 
-    - name: Configure CMake
-      run: |
-        cmake -B build \
-          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -DCMAKE_C_COMPILER=${{ env.CC }} \
-          -DCMAKE_CXX_COMPILER=${{ env.CXX }} \
-          -G Ninja
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_C_COMPILER=${{ env.CC }} \
+            -DCMAKE_CXX_COMPILER=${{ env.CXX }} \
+            -G Ninja
 
-    - name: Build
-      run: cmake --build build --config ${{ matrix.build_type }}
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }}
 
-    - name: Run tests
-      working-directory: build
-      run: |
-        ctest --output-on-failure --verbose
+      - name: Run tests
+        working-directory: build
+        run: |
+          ctest --output-on-failure --verbose
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: test-results-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
-        path: build/Testing/
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          path: build/Testing/
 
   code-quality:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y clang-format clang-tidy cppcheck
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format clang-tidy cppcheck
 
-    - name: Check code formatting
-      run: |
-        find . -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
+      - name: Check code formatting
+        run: |
+          find . -name '*.cpp' -o -name '*.hpp' | xargs clang-format --dry-run --Werror
 
-    - name: Run static analysis (cppcheck)
-      run: |
-        cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem src/ include/
+      - name: Run static analysis (cppcheck)
+        run: |
+          cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem src/ include/
 
-    - name: Run clang-tidy
-      run: |
-        cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-        find src/ -name '*.cpp' | xargs clang-tidy -p build/
+      - name: Run clang-tidy
+        run: |
+          cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          find src/ -name '*.cpp' | xargs clang-tidy -p build/
 
   documentation:
     runs-on: ubuntu-latest
@@ -114,39 +114,45 @@ jobs:
 
     - name: Generate documentation
       run: |
+        mkdir -p docs/html
         # TODO: Add Doxygen configuration file
         # doxygen Doxyfile
-        echo "Documentation generation placeholder"
+        echo "<html><body><h1>Documentation Placeholder</h1></body></html>" > docs/html/index.html
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./docs/html
 
     - name: Deploy to GitHub Pages
-      if: success()
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/html
+      id: deployment
+      uses: actions/deploy-pages@v4
 
   performance:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake ninja-build libgtest-dev valgrind
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build libgtest-dev valgrind
 
-    - name: Build with profiling
-      run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -G Ninja
-        cmake --build build
+      - name: Build with profiling
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -G Ninja
+          cmake --build build
 
-    - name: Run performance tests
-      run: |
-        # TODO: Add performance benchmarks
-        echo "Performance testing placeholder"
+      - name: Run performance tests
+        run: |
+          # TODO: Add performance benchmarks
+          echo "Performance testing placeholder"
 
-    - name: Memory leak check
-      run: |
-        # TODO: Run valgrind on test suite
-        echo "Memory leak check placeholder"
+      - name: Memory leak check
+        run: |
+          # TODO: Run valgrind on test suite
+          echo "Memory leak check placeholder"

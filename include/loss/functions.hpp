@@ -27,6 +27,7 @@ namespace dl::loss {
     class MeanSquaredError : public LossFunction {
     public:
         double forward(const MatrixD &predictions, const MatrixD &targets);
+
         MatrixD backward(const MatrixD &predictions, const MatrixD &targets);
     };
 
@@ -40,6 +41,7 @@ namespace dl::loss {
     class CrossEntropyLoss : public LossFunction {
     public:
         double forward(const MatrixD &predictions, const MatrixD &targets);
+
         MatrixD backward(const MatrixD &predictions, const MatrixD &targets);
     };
 
@@ -52,6 +54,7 @@ namespace dl::loss {
     class BinaryCrossEntropyLoss : public LossFunction {
     public:
         double forward(const MatrixD &predictions, const MatrixD &targets);
+
         MatrixD backward(const MatrixD &predictions, const MatrixD &targets);
     };
 
@@ -64,6 +67,7 @@ namespace dl::loss {
     class HingeLoss : public LossFunction {
     public:
         double forward(const MatrixD &predictions, const MatrixD &targets);
+
         MatrixD backward(const MatrixD &predictions, const MatrixD &targets);
     };
 
@@ -77,7 +81,9 @@ namespace dl::loss {
     class HuberLoss : public LossFunction {
     public:
         HuberLoss(double delta = 1.0);
+
         double forward(const MatrixD &predictions, const MatrixD &targets);
+
         MatrixD backward(const MatrixD &predictions, const MatrixD &targets);
 
     private:

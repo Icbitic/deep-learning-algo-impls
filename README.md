@@ -4,7 +4,8 @@ A comprehensive C++ library for implementing and learning deep learning algorith
 
 ## 🎯 Project Goals
 
-This project provides a structured framework for implementing fundamental deep learning algorithms in C++. It's designed for educational purposes and hands-on learning of:
+This project provides a structured framework for implementing fundamental deep learning algorithms in C++. It's designed
+for educational purposes and hands-on learning of:
 
 - Neural network architectures (Feedforward, CNN, RNN, LSTM, GRU)
 - Optimization algorithms (SGD, Adam, RMSprop)
@@ -53,6 +54,7 @@ deep-learning-algo-impls/
 ### Installing Dependencies
 
 #### Ubuntu/Debian
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y cmake ninja-build libgtest-dev
@@ -60,11 +62,13 @@ sudo apt-get install -y gcc-11 g++-11  # or clang-14
 ```
 
 #### macOS
+
 ```bash
 brew install cmake ninja googletest
 ```
 
 #### Windows (vcpkg)
+
 ```bash
 vcpkg install gtest
 ```
@@ -96,36 +100,43 @@ vcpkg install gtest
 
 ## 📚 Implementation Guide
 
-This project provides header files with comprehensive TODO comments and example structures. Each algorithm should be implemented following these guidelines:
+This project provides header files with comprehensive TODO comments and example structures. Each algorithm should be
+implemented following these guidelines:
 
 ### 1. Neural Networks
+
 - **Feedforward Networks**: Implement basic multilayer perceptrons with configurable architectures
 - **CNNs**: Add convolution, pooling, and feature extraction layers
 - **RNNs**: Implement sequence processing with LSTM and GRU variants
 
 ### 2. Optimization
+
 - **SGD**: Basic gradient descent with momentum support
 - **Adam**: Adaptive learning rates with bias correction
 - **RMSprop**: Root mean square propagation
 
 ### 3. Mathematical Utilities
+
 - **Matrix Class**: Efficient matrix operations for linear algebra
 - **Activation Functions**: Differentiable activation functions
 - **Loss Functions**: Various loss functions for different tasks
 
 ### 4. Data Processing
+
 - **Data Loaders**: CSV and image data loading utilities
 - **Preprocessing**: Normalization, standardization, and augmentation
 
 ## 🧪 Testing Strategy
 
 The project includes comprehensive unit tests for:
+
 - Matrix operations and mathematical correctness
 - Neural network forward/backward propagation
 - Optimizer convergence and update rules
 - Activation and loss function derivatives
 
 ### Running Specific Tests
+
 ```bash
 # Run all tests
 ctest
@@ -140,6 +151,7 @@ ctest
 ## 🔄 Continuous Integration
 
 The project includes GitHub Actions workflows that automatically:
+
 - Build and test on multiple platforms (Ubuntu, macOS)
 - Test with different compilers (GCC, Clang)
 - Run static analysis and code formatting checks
@@ -161,6 +173,7 @@ Recommended implementation order for learning:
 ## 🤝 Contributing
 
 This is a learning-focused project. Feel free to:
+
 - Implement the TODO items in the headers
 - Add comprehensive tests for your implementations
 - Improve documentation and examples

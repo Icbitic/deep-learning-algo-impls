@@ -20,9 +20,13 @@ namespace dl::neural_networks {
     class FeedforwardNetwork {
     public:
         FeedforwardNetwork(const std::vector<size_t> &layer_sizes);
+
         MatrixD forward(const MatrixD &input);
+
         void backward(const MatrixD &target);
+
         void train(const utils::Dataset<double> &dataset, int epochs, double learning_rate);
+
         MatrixD predict(const MatrixD &input);
 
     private:
