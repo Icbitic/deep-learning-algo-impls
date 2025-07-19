@@ -1,17 +1,31 @@
 # Deep Learning Algorithm Implementations
 
-A comprehensive C++ library for implementing and learning deep learning algorithms from scratch.
+A comprehensive C++ library for implementing and learning deep learning algorithms from scratch, featuring modern C++ design patterns, extensive documentation, and automated CI/CD.
+
+[![CI](https://github.com/your-username/deep-learning-algo-impls/workflows/CI/badge.svg)](https://github.com/your-username/deep-learning-algo-impls/actions)
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](https://your-username.github.io/deep-learning-algo-impls/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 
 ## 🎯 Project Goals
 
 This project provides a structured framework for implementing fundamental deep learning algorithms in C++. It's designed
 for educational purposes and hands-on learning of:
 
-- Neural network architectures (Feedforward, CNN, RNN, LSTM, GRU)
-- Optimization algorithms (SGD, Adam, RMSprop)
-- Activation functions (ReLU, Sigmoid, Tanh, Softmax)
-- Loss functions (MSE, Cross-entropy, Hinge loss)
-- Mathematical utilities and data processing
+- **Neural network architectures** (Feedforward, CNN, RNN, LSTM, GRU)
+- **Optimization algorithms** (SGD, Adam, RMSprop)
+- **Activation functions** (ReLU, Sigmoid, Tanh, Softmax, LeakyReLU)
+- **Loss functions** (MSE, Cross-entropy, Hinge loss)
+- **Mathematical utilities** and high-performance matrix operations
+- **Data processing** with comprehensive loading and preprocessing utilities
+
+## 🚀 Key Features
+
+- 📚 **Comprehensive Documentation**: Full Doxygen documentation with examples and mathematical descriptions
+- 🔧 **Modern C++**: Uses C++23 features and best practices
+- 🧪 **Tested**: Comprehensive test suite with Google Test
+- 🔄 **CI/CD**: Automated testing, static analysis, and documentation deployment
+- 📊 **Performance**: Optimized matrix operations and memory management
+- 🎓 **Educational**: Detailed comments and learning-focused design
 
 ## 📁 Project Structure
 
@@ -41,7 +55,86 @@ deep-learning-algo-impls/
 ├── .github/workflows/          # CI/CD pipelines
 │   └── ci.yml                 # Automated testing workflow
 ├── CMakeLists.txt             # Build configuration
+├── Doxyfile                   # Documentation configuration
 └── main.cpp                   # Example usage
+```
+
+## 📖 Documentation
+
+Full API documentation is automatically generated using Doxygen and deployed to GitHub Pages:
+
+🔗 **[View Documentation](https://your-username.github.io/deep-learning-algo-impls/)**
+
+The documentation includes:
+- Complete API reference with examples
+- Mathematical descriptions of algorithms
+- Usage patterns and best practices
+- Implementation guides and tutorials
+
+## 🚀 Quick Start
+
+### Matrix Operations
+
+```cpp
+#include "utils/matrix.hpp"
+using namespace dl::utils;
+
+// Create matrices
+Matrix<double> a(3, 3, 1.0);  // 3x3 matrix filled with 1.0
+Matrix<double> b = Matrix<double>::random(3, 3);  // Random 3x3 matrix
+
+// Matrix operations
+auto c = a * b;  // Matrix multiplication
+auto d = a + b;  // Element-wise addition
+auto e = a.transpose();  // Transpose
+```
+
+### Neural Network Training
+
+```cpp
+#include "neural_networks/feedforward.hpp"
+#include "utils/data_loader.hpp"
+using namespace dl;
+
+// Define network architecture
+std::vector<size_t> layers = {784, 128, 64, 10};  // MNIST-like network
+neural_networks::FeedforwardNetwork network(layers);
+
+// Load and preprocess data
+auto [features, labels] = utils::CSVLoader::load_features_labels(
+    "data.csv", {0, 1, 2, 3}, {4});
+utils::Dataset<double> dataset(features, labels);
+
+// Train the network
+network.train(dataset, epochs=100, learning_rate=0.01);
+
+// Make predictions
+auto predictions = network.predict(test_features);
+```
+
+### Data Loading and Preprocessing
+
+```cpp
+#include "utils/data_loader.hpp"
+using namespace dl::utils;
+
+// Load CSV data
+auto data = CSVLoader::load_csv("dataset.csv");
+
+// Preprocess data
+auto normalized = Preprocessor::normalize(data, 0.0, 1.0);
+auto standardized = Preprocessor::standardize(data);
+
+// Split dataset
+auto [train, val, test] = Preprocessor::train_val_test_split(
+    dataset, 0.7, 0.15);
+
+// Create data loader for batch processing
+DataLoader<double> loader(train, batch_size=32, shuffle=true);
+while (loader.has_next()) {
+    auto [batch_features, batch_labels] = loader.next_batch();
+    // Process batch...
+}
 ```
 
 ## 🛠️ Prerequisites
