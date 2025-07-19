@@ -11,8 +11,8 @@
 
 int main() {
     std::cout << "=== Deep Learning Algorithm Implementations ===" << std::endl;
-    std::cout << "\nThis project provides a framework for implementing deep learning algorithms from scratch." <<
-            std::endl;
+    std::cout << "\nThis project provides a framework for implementing deep learning algorithms from scratch."
+              << std::endl;
     std::cout << "\nProject Structure:" << std::endl;
     std::cout << "├── Neural Networks: Feedforward, CNN, RNN/LSTM/GRU" << std::endl;
     std::cout << "├── Optimization: SGD, Adam, RMSprop" << std::endl;

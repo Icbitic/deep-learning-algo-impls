@@ -1,6 +1,6 @@
 #include "loss/functions.hpp"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #include "utils/data_loader.hpp"
 

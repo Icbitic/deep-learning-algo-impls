@@ -39,9 +39,7 @@ namespace dl::neural_networks {
     }
 
     // TODO: Implement training method
-    void ConvolutionalNetwork::train(const utils::Dataset<double> &dataset,
-                                     int epochs,
-                                     double learning_rate) {
+    void ConvolutionalNetwork::train(const utils::Dataset<double> &dataset, int epochs, double learning_rate) {
         // TODO: Implement CNN training loop
         // Similar to feedforward but with image-specific preprocessing
     }
@@ -54,16 +52,10 @@ namespace dl::neural_networks {
 
     // ConvolutionLayer implementation
     // TODO: Implement ConvolutionLayer constructor
-    ConvolutionLayer::ConvolutionLayer(size_t input_channels,
-                                       size_t output_channels,
-                                       size_t kernel_size,
-                                       size_t stride,
-                                       size_t padding)
-        : input_channels_(input_channels),
-          output_channels_(output_channels),
-          kernel_size_(kernel_size),
-          stride_(stride),
-          padding_(padding) {
+    ConvolutionLayer::ConvolutionLayer(size_t input_channels, size_t output_channels, size_t kernel_size, size_t stride,
+                                       size_t padding) :
+        input_channels_(input_channels), output_channels_(output_channels), kernel_size_(kernel_size), stride_(stride),
+        padding_(padding) {
         // TODO: Initialize convolution filters/kernels
         // - Create weight matrices for each filter
         // - Initialize bias terms
@@ -95,8 +87,8 @@ namespace dl::neural_networks {
 
     // PoolingLayer implementation
     // TODO: Implement PoolingLayer constructor
-    PoolingLayer::PoolingLayer(size_t pool_size, size_t stride, PoolingType type)
-        : pool_size_(pool_size), stride_(stride), type_(type) {
+    PoolingLayer::PoolingLayer(size_t pool_size, size_t stride, PoolingType type) :
+        pool_size_(pool_size), stride_(stride), type_(type) {
         // TODO: Set up pooling parameters
     }
 

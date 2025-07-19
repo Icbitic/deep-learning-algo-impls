@@ -1,6 +1,6 @@
 #include "activation/functions.hpp"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 namespace dl::activation {
     // ReLU Implementation

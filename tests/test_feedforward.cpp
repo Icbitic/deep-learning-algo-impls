@@ -34,7 +34,7 @@
 //     // Test forward propagation
 //     MatrixD input = MatrixD::random(1, 2, -1.0, 1.0);
 //     MatrixD output = network->forward(input);
-//     
+//
 //     EXPECT_EQ(output.rows(), 1);
 //     EXPECT_EQ(output.cols(), 1);
 // }
@@ -43,7 +43,7 @@
 //     // Test backpropagation
 //     MatrixD input = MatrixD::random(1, 2, -1.0, 1.0);
 //     MatrixD target = MatrixD::random(1, 1, 0.0, 1.0);
-//     
+//
 //     EXPECT_NO_THROW({
 //         network->forward(input);
 //         network->backward(target);
@@ -55,7 +55,7 @@
 //     // Create simple XOR dataset
 //     Dataset<double> dataset;
 //     // TODO: Initialize dataset with XOR data
-//     
+//
 //     EXPECT_NO_THROW({
 //         network->train(dataset, 100, 0.01);
 //     });
@@ -65,7 +65,7 @@
 //     // Test prediction accuracy
 //     MatrixD input = MatrixD::random(1, 2, -1.0, 1.0);
 //     MatrixD prediction = network->predict(input);
-//     
+//
 //     EXPECT_EQ(prediction.rows(), 1);
 //     EXPECT_EQ(prediction.cols(), 1);
 //     EXPECT_GE(prediction(0, 0), 0.0);

@@ -1,17 +1,14 @@
 #pragma once
 
-#include <vector>
 #include <memory>
-#include "utils/matrix.hpp"
+#include <vector>
 #include "utils/data_loader.hpp"
+#include "utils/matrix.hpp"
 
 using dl::utils::MatrixD;
 
 namespace dl::neural_networks {
-    enum class PoolingType {
-        MAX,
-        AVERAGE
-    };
+    enum class PoolingType { MAX, AVERAGE };
 
     /**
      * Convolutional Neural Network

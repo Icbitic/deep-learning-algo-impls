@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 #include "matrix.hpp"
 
 namespace dl {
@@ -74,16 +74,12 @@ namespace dl {
          */
         class CSVLoader {
         public:
-            static MatrixD load_csv(const std::string &filename,
-                                    bool has_header = true,
-                                    char delimiter = ',');
+            static MatrixD load_csv(const std::string &filename, bool has_header = true, char delimiter = ',');
 
-            static std::pair<MatrixD, MatrixD> load_features_labels(
-                const std::string &filename,
-                const std::vector<size_t> &feature_cols,
-                const std::vector<size_t> &label_cols,
-                bool has_header = true,
-                char delimiter = ',');
+            static std::pair<MatrixD, MatrixD> load_features_labels(const std::string &filename,
+                                                                    const std::vector<size_t> &feature_cols,
+                                                                    const std::vector<size_t> &label_cols,
+                                                                    bool has_header = true, char delimiter = ',');
         };
 
         /**
@@ -95,14 +91,10 @@ namespace dl {
          */
         class ImageLoader {
         public:
-            static MatrixD load_image(const std::string &filename,
-                                      size_t target_width = 0,
-                                      size_t target_height = 0);
+            static MatrixD load_image(const std::string &filename, size_t target_width = 0, size_t target_height = 0);
 
-            static std::vector<MatrixD> load_images_from_directory(
-                const std::string &directory_path,
-                size_t target_width = 0,
-                size_t target_height = 0);
+            static std::vector<MatrixD> load_images_from_directory(const std::string &directory_path,
+                                                                   size_t target_width = 0, size_t target_height = 0);
         };
 
         /**
@@ -115,19 +107,14 @@ namespace dl {
          */
         class Preprocessor {
         public:
-            static MatrixD normalize(const MatrixD &data,
-                                     double min_val = 0.0,
-                                     double max_val = 1.0);
+            static MatrixD normalize(const MatrixD &data, double min_val = 0.0, double max_val = 1.0);
 
             static MatrixD standardize(const MatrixD &data);
 
-            static MatrixD one_hot_encode(const std::vector<int> &labels,
-                                          size_t num_classes);
+            static MatrixD one_hot_encode(const std::vector<int> &labels, size_t num_classes);
 
-            static std::tuple<Dataset<double>, Dataset<double>, Dataset<double> >
-            train_val_test_split(const Dataset<double> &data,
-                                 double train_ratio = 0.7,
-                                 double val_ratio = 0.15);
+            static std::tuple<Dataset<double>, Dataset<double>, Dataset<double>>
+            train_val_test_split(const Dataset<double> &data, double train_ratio = 0.7, double val_ratio = 0.15);
         };
     } // namespace utils
 } // namespace dl

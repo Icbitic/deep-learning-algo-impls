@@ -41,7 +41,7 @@
 //     m(0, 1) = 2.0;
 //     m(1, 0) = 3.0;
 //     m(1, 1) = 4.0;
-//     
+//
 //     EXPECT_DOUBLE_EQ(m(0, 0), 1.0);
 //     EXPECT_DOUBLE_EQ(m(0, 1), 2.0);
 //     EXPECT_DOUBLE_EQ(m(1, 0), 3.0);
@@ -52,11 +52,11 @@
 //     // Test matrix arithmetic operations
 //     MatrixD a({{1, 2}, {3, 4}});
 //     MatrixD b({{5, 6}, {7, 8}});
-//     
+//
 //     MatrixD sum = a + b;
 //     MatrixD diff = a - b;
 //     MatrixD product = a * b;
-//     
+//
 //     // Verify results
 //     EXPECT_DOUBLE_EQ(sum(0, 0), 6.0);
 //     EXPECT_DOUBLE_EQ(diff(0, 0), -4.0);
@@ -67,7 +67,7 @@
 //     // Test matrix transpose
 //     MatrixD m({{1, 2, 3}, {4, 5, 6}});
 //     MatrixD transposed = m.transpose();
-//     
+//
 //     EXPECT_EQ(transposed.rows(), 3);
 //     EXPECT_EQ(transposed.cols(), 2);
 //     EXPECT_DOUBLE_EQ(transposed(0, 0), 1.0);
@@ -79,17 +79,17 @@
 //     // Test determinant calculation for square matrices
 //     MatrixD m({{1, 2}, {3, 4}});
 //     double det = m.determinant();
-//     
+//
 //     EXPECT_DOUBLE_EQ(det, -2.0);
 // }
 //
 // TEST_F(MatrixTest, RandomInitializationTest) {
 //     // Test random matrix generation
 //     MatrixD random_matrix = MatrixD::random(3, 3, -1.0, 1.0);
-//     
+//
 //     EXPECT_EQ(random_matrix.rows(), 3);
 //     EXPECT_EQ(random_matrix.cols(), 3);
-//     
+//
 //     // Check if values are within specified range
 //     for (size_t i = 0; i < 3; ++i) {
 //         for (size_t j = 0; j < 3; ++j) {

@@ -29,9 +29,9 @@
 //     // Test SGD optimizer updates
 //     SGD optimizer(0.01, 0.9);
 //     MatrixD original_weights = weights;
-//     
+//
 //     optimizer.update(weights, gradients);
-//     
+//
 //     // Verify weights have been updated
 //     EXPECT_NE(weights(0, 0), original_weights(0, 0));
 // }
@@ -40,12 +40,12 @@
 //     // Test Adam optimizer updates
 //     Adam optimizer(0.001, 0.9, 0.999, 1e-8);
 //     MatrixD original_weights = weights;
-//     
+//
 //     // Perform multiple updates to test momentum
 //     for (int i = 0; i < 5; ++i) {
 //         optimizer.update(weights, gradients);
 //     }
-//     
+//
 //     // Verify weights have been updated
 //     EXPECT_NE(weights(0, 0), original_weights(0, 0));
 // }
@@ -54,9 +54,9 @@
 //     // Test RMSprop optimizer updates
 //     RMSprop optimizer(0.001, 0.9, 1e-8);
 //     MatrixD original_weights = weights;
-//     
+//
 //     optimizer.update(weights, gradients);
-//     
+//
 //     // Verify weights have been updated
 //     EXPECT_NE(weights(0, 0), original_weights(0, 0));
 // }
@@ -66,12 +66,12 @@
 //     // f(x) = x^2, gradient = 2x
 //     MatrixD x({{2.0}});
 //     SGD optimizer(0.1, 0.0);
-//     
+//
 //     for (int i = 0; i < 100; ++i) {
 //         MatrixD gradient({{2.0 * x(0, 0)}});
 //         optimizer.update(x, gradient);
 //     }
-//     
+//
 //     // Should converge close to 0
 //     EXPECT_NEAR(x(0, 0), 0.0, 0.01);
 // }
@@ -80,17 +80,17 @@
 //     // Test different learning rates
 //     SGD optimizer_fast(0.1, 0.0);
 //     SGD optimizer_slow(0.01, 0.0);
-//     
+//
 //     MatrixD weights_fast = weights;
 //     MatrixD weights_slow = weights;
-//     
+//
 //     optimizer_fast.update(weights_fast, gradients);
 //     optimizer_slow.update(weights_slow, gradients);
-//     
+//
 //     // Fast optimizer should make larger updates
 //     double change_fast = std::abs(weights_fast(0, 0) - weights(0, 0));
 //     double change_slow = std::abs(weights_slow(0, 0) - weights(0, 0));
-//     
+//
 //     EXPECT_GT(change_fast, change_slow);
 // }
 

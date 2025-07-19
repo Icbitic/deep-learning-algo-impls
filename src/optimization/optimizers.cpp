@@ -24,8 +24,8 @@ namespace dl::optimization {
 
     // Adam Implementation
     // TODO: Implement Adam constructor
-    Adam::Adam(double learning_rate, double beta1, double beta2, double epsilon)
-        : learning_rate_(learning_rate), beta1_(beta1), beta2_(beta2), epsilon_(epsilon) {
+    Adam::Adam(double learning_rate, double beta1, double beta2, double epsilon) :
+        learning_rate_(learning_rate), beta1_(beta1), beta2_(beta2), epsilon_(epsilon) {
         // TODO: Initialize Adam-specific parameters
         // - Initialize momentum and velocity matrices
         // - Set time step counter
@@ -44,8 +44,8 @@ namespace dl::optimization {
 
     // RMSprop Implementation
     // TODO: Implement RMSprop constructor
-    RMSprop::RMSprop(double learning_rate, double decay_rate, double epsilon)
-        : learning_rate_(learning_rate), decay_rate_(decay_rate), epsilon_(epsilon) {
+    RMSprop::RMSprop(double learning_rate, double decay_rate, double epsilon) :
+        learning_rate_(learning_rate), decay_rate_(decay_rate), epsilon_(epsilon) {
         // TODO: Initialize RMSprop-specific parameters
         // - Initialize squared gradient accumulator
     }

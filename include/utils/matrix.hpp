@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <initializer_list>
 #include <iostream>
+#include <vector>
 
 namespace dl {
     namespace utils {
@@ -19,8 +19,7 @@ namespace dl {
         class Matrix {
         public:
             // Constructors
-            Matrix() : rows_(0), cols_(0) {
-            }
+            Matrix() : rows_(0), cols_(0) {}
 
             Matrix(size_t rows, size_t cols);
 

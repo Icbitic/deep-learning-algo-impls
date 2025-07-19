@@ -1,10 +1,10 @@
 #include "utils/data_loader.hpp"
-#include <fstream>
-#include <sstream>
 #include <algorithm>
-#include <random>
-#include <stdexcept>
+#include <fstream>
 #include <numeric>
+#include <random>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 
 
@@ -12,12 +12,10 @@ namespace dl {
     namespace utils {
         // Dataset Implementation
         template<typename T>
-        Dataset<T>::Dataset() : features_(), labels_() {
-        }
+        Dataset<T>::Dataset() : features_(), labels_() {}
 
         template<typename T>
-        Dataset<T>::Dataset(const MatrixD &features, const MatrixD &labels)
-            : features_(features), labels_(labels) {
+        Dataset<T>::Dataset(const MatrixD &features, const MatrixD &labels) : features_(features), labels_(labels) {
             // TODO: Validate that features and labels have compatible dimensions
             if (features.rows() != labels.rows()) {
                 throw std::invalid_argument("Features and labels must have same number of samples");
@@ -58,8 +56,8 @@ namespace dl {
 
         // DataLoader Implementation
         template<typename T>
-        DataLoader<T>::DataLoader(const Dataset<T> &dataset, size_t batch_size, bool shuffle)
-            : dataset_(dataset), batch_size_(batch_size), shuffle_(shuffle), current_idx_(0) {
+        DataLoader<T>::DataLoader(const Dataset<T> &dataset, size_t batch_size, bool shuffle) :
+            dataset_(dataset), batch_size_(batch_size), shuffle_(shuffle), current_idx_(0) {
             // TODO: Initialize data loader
         }
 
@@ -99,7 +97,7 @@ namespace dl {
                 throw std::runtime_error("Could not open file: " + filename);
             }
 
-            std::vector<std::vector<double> > data;
+            std::vector<std::vector<double>> data;
             std::string line;
 
             // Skip header if present
@@ -147,8 +145,7 @@ namespace dl {
         std::pair<MatrixD, MatrixD> CSVLoader::load_features_labels(const std::string &filename,
                                                                     const std::vector<size_t> &feature_cols,
                                                                     const std::vector<size_t> &label_cols,
-                                                                    bool has_header,
-                                                                    char delimiter) {
+                                                                    bool has_header, char delimiter) {
             // TODO: Implement feature-label separation
             MatrixD full_data = load_csv(filename, has_header, delimiter);
 
@@ -170,8 +167,7 @@ namespace dl {
         }
 
         std::vector<MatrixD> ImageLoader::load_images_from_directory(const std::string &directory_path,
-                                                                     size_t target_width,
-                                                                     size_t target_height) {
+                                                                     size_t target_width, size_t target_height) {
             // TODO: Implement batch image loading from directory
             // This would scan the directory and load all image files
             std::vector<MatrixD> images;
@@ -216,10 +212,8 @@ namespace dl {
 
         // Removed train_test_split method - using train_val_test_split instead
 
-        std::tuple<Dataset<double>, Dataset<double>, Dataset<double> >
-        Preprocessor::train_val_test_split(const Dataset<double> &data,
-                                           double train_ratio,
-                                           double val_ratio) {
+        std::tuple<Dataset<double>, Dataset<double>, Dataset<double>>
+        Preprocessor::train_val_test_split(const Dataset<double> &data, double train_ratio, double val_ratio) {
             // TODO: Implement train-validation-test split
             // For now, return empty datasets
             Dataset<double> train_set;
@@ -236,4 +230,3 @@ namespace dl {
         template class DataLoader<float>;
     } // namespace utils
 } // namespace dl
-

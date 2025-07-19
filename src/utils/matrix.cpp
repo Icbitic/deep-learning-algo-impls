@@ -1,8 +1,8 @@
 #include "utils/matrix.hpp"
-#include <random>
-#include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <random>
+#include <stdexcept>
 
 
 namespace dl {

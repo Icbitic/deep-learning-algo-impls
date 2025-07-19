@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
 #include <memory>
-#include "utils/matrix.hpp"
+#include <vector>
 #include "utils/data_loader.hpp"
+#include "utils/matrix.hpp"
 
 using dl::utils::MatrixD;
 

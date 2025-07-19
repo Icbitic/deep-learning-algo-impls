@@ -38,9 +38,7 @@ namespace dl::neural_networks {
     }
 
     // TODO: Implement training method
-    void FeedforwardNetwork::train(const utils::Dataset<double> &dataset,
-                                   int epochs,
-                                   double learning_rate) {
+    void FeedforwardNetwork::train(const utils::Dataset<double> &dataset, int epochs, double learning_rate) {
         // TODO: Implement training loop
         // Example steps:
         // 1. Initialize optimizer (SGD, Adam, etc.)

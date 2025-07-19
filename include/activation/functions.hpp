@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <cmath>
+#include <vector>
 #include "utils/matrix.hpp"
 
 namespace dl::activation {
