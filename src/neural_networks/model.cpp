@@ -47,7 +47,7 @@ namespace dl::neural_networks {
     }
 
     void Model::update_parameters(double learning_rate) {
-        // Update parameters in all layers
+        // Update parameters in all layers.
         for (auto &layer: layers_) {
             layer->update_parameters(learning_rate);
         }
