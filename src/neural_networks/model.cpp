@@ -41,7 +41,7 @@ namespace dl::neural_networks {
         MatrixD gradient = last_output_ - target;
 
         // Backpropagate through all layers in reverse order
-        for (const auto & layer : std::ranges::reverse_view(layers_)) {
+        for (const auto &layer: std::ranges::reverse_view(layers_)) {
             gradient = layer->backward(gradient);
         }
     }
