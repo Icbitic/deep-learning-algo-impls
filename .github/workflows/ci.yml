@@ -55,7 +55,7 @@ jobs:
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          brew install cmake ninja xtensor xtensor-blas googletest
+          brew install cmake ninja xtensor googletest
           if [ "${{ matrix.compiler }}" = "clang" ]; then
             echo "CC=clang" >> $GITHUB_ENV
             echo "CXX=clang++" >> $GITHUB_ENV
