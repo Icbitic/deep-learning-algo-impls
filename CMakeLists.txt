@@ -13,11 +13,15 @@ find_package(Threads REQUIRED)
 
 # ---- Fetch xtensor ----
 include(FetchContent)
+include(FetchContent)
+
 FetchContent_Declare(
         xtensor
         GIT_REPOSITORY https://github.com/xtensor-stack/xtensor.git
         GIT_TAG        0.24.1
+        PATCH_COMMAND ${CMAKE_COMMAND} -E echo 'cmake_policy(VERSION 3.5)' >> CMakeLists.txt
 )
+
 FetchContent_MakeAvailable(xtensor)
 
 # Optionally fetch xtensor-blas
