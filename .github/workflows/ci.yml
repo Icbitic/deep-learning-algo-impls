@@ -55,18 +55,15 @@ jobs:
           path: build/Testing/
 
   code-quality:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-format clang-tidy cppcheck cmake ninja-build libgtest-dev
-          cd /usr/src/gtest
-          sudo cmake CMakeLists.txt
-          sudo make
-          sudo cp lib/*.a /usr/lib
+          # Update brew and install dependencies
+          brew update
+          brew install cmake ninja clang-format clang-tidy cppcheck googletest xtensor
 
       - name: Check code formatting
         run: |
@@ -80,8 +77,9 @@ jobs:
         run: |
           cmake -B build \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_PREFIX_PATH=/usr/local
+            -DCMAKE_PREFIX_PATH=$(brew --prefix)
           find src/ -name '*.cpp' | xargs clang-tidy -p build/
+
 
   documentation:
     runs-on: ubuntu-latest
