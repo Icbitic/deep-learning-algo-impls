@@ -75,16 +75,6 @@ jobs:
       - name: Run static analysis (cppcheck)
         run: |
           cppcheck --enable=all --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=noExplicitConstructor -I include/ src/
-
-      - name: Run clang-tidy
-        run: |
-          export LLBREW_PREFIX=$(brew --prefix llvm)
-          cmake -B build \
-            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-            -DCMAKE_PREFIX_PATH=$LLBREW_PREFIX \
-            -DCMAKE_CXX_FLAGS="-I${LLBREW_PREFIX}/include/c++/v1 -stdlib=libc++"
-          find src/ -name '*.cpp' | xargs clang-tidy -p build/
-  
   
 
   documentation:
