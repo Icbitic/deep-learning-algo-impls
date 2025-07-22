@@ -1,7 +1,6 @@
 #include "utils/matrix.hpp"
-#include <xtensor/containers/xadapt.hpp>
-#include <xtensor/containers/xadapt.hpp>
 #include <xtensor-blas/xlinalg.hpp>
+#include <xtensor/containers/xadapt.hpp>
 
 namespace dl {
     namespace utils {
