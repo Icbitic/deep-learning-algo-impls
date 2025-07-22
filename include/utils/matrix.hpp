@@ -1,12 +1,6 @@
 #pragma once
 
 #include <initializer_list>
-#include <iostream>
-#include <vector>
-#include <xtensor-blas/xlinalg.hpp>
-#include <xtensor/xio.hpp>
-#include <xtensor/xmath.hpp>
-#include <xtensor/xrandom.hpp>
 #include <xtensor/xview.hpp>
 
 /**
