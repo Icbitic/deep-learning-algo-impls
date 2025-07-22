@@ -1,8 +1,8 @@
 #pragma once
 
 #include <initializer_list>
-#include <xtensor/xrandom.hpp>
-#include <xtensor/xview.hpp>
+#include <xtensor/generators/xrandom.hpp>
+#include <xtensor/views/xview.hpp>
 
 /**
  * @file matrix.hpp
