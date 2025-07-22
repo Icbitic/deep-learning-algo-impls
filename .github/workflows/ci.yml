@@ -78,7 +78,9 @@ jobs:
 
       - name: Run clang-tidy
         run: |
-          cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          cmake -B build \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DCMAKE_PREFIX_PATH=/usr/local
           find src/ -name '*.cpp' | xargs clang-tidy -p build/
 
   documentation:
