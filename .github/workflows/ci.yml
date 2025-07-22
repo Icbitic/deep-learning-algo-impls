@@ -44,13 +44,13 @@ jobs:
           sudo make
           sudo cp lib/*.a /usr/lib
           # Install xtensor
-          wget https://github.com/xtensor-stack/xtensor/archive/refs/tags/0.24.1.zip
-          unzip 0.24.1.zip
-          mkdir xtensor-0.24.1/build
+          wget https://github.com/xtensor-stack/xtensor/archive/refs/tags/0.24.1.zip -O xtensor.zip
+          unzip xtensor.zip
+          mkdir -p xtensor-0.24.1/build
           cd xtensor-0.24.1/build
           cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
           sudo cmake --install .
-          cd ../..
+          cd ../../..
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
