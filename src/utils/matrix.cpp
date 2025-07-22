@@ -5,14 +5,11 @@
 namespace dl {
     namespace utils {
         template<typename T>
-        Matrix<T>::Matrix(size_t rows, size_t cols) : rows_(rows), cols_(cols) {
-            data_ = xt::zeros<T>({rows, cols});
-        }
+        Matrix<T>::Matrix(size_t rows, size_t cols) : rows_(rows), cols_(cols), data_(xt::zeros<T>({rows, cols})) {}
 
         template<typename T>
-        Matrix<T>::Matrix(size_t rows, size_t cols, T value) : rows_(rows), cols_(cols) {
-            data_ = xt::ones<T>({rows, cols}) * value;
-        }
+        Matrix<T>::Matrix(size_t rows, size_t cols, T value) :
+            rows_(rows), cols_(cols), data_(xt::ones<T>({rows, cols}) * value) {}
 
         template<typename T>
         Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> list) {
@@ -20,10 +17,10 @@ namespace dl {
             cols_ = list.begin()->size();
 
             std::vector<T> flat_data;
+            flat_data.reserve(rows_ * cols_);
+
             for (const auto &row: list) {
-                for (const auto &val: row) {
-                    flat_data.push_back(val);
-                }
+                std::copy(row.begin(), row.end(), std::back_inserter(flat_data));
             }
 
             data_ = xt::adapt(flat_data, {rows_, cols_});
