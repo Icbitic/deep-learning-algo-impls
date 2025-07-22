@@ -1,6 +1,7 @@
 #pragma once
 
 #include <initializer_list>
+#include <xtensor/xrandom.hpp>
 #include <xtensor/xview.hpp>
 
 /**
