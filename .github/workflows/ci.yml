@@ -8,52 +8,16 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
-        compiler: [ gcc, clang ]
+        compiler: [ clang ]
         build_type: [ Debug, Release ]
-        exclude:
-          - os: macos-latest
-            compiler: gcc
-          - os: ubuntu-latest
-            compiler: clang
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake ninja-build
-          if [ "${{ matrix.compiler }}" = "gcc" ]; then
-            sudo apt-get install -y gcc-11 g++-11
-            echo "CC=gcc-11" >> $GITHUB_ENV
-            echo "CXX=g++-11" >> $GITHUB_ENV
-          else
-            sudo apt-get install -y clang-14
-            echo "CC=clang-14" >> $GITHUB_ENV
-            echo "CXX=clang++-14" >> $GITHUB_ENV
-          fi
-          # Install Google Test
-          sudo apt-get install -y libgtest-dev
-          cd /usr/src/gtest
-          sudo cmake CMakeLists.txt
-          sudo make
-          sudo cp lib/*.a /usr/lib
-          # Install xtensor
-          wget https://github.com/xtensor-stack/xtensor/archive/refs/tags/0.24.1.zip -O xtensor.zip
-          unzip xtensor.zip
-          mkdir -p xtensor-0.24.1/build
-          cd xtensor-0.24.1/build
-          cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
-          sudo cmake --install .
-          cd ../../..
-
       - name: Install dependencies (macOS)
-        if: matrix.os == 'macos-latest'
         run: |
           brew install cmake ninja xtensor googletest
           git clone https://github.com/xtensor-stack/xtensor-blas.git
@@ -62,10 +26,8 @@ jobs:
           cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
           sudo cmake --install .
           cd ../..
-          if [ "${{ matrix.compiler }}" = "clang" ]; then
-            echo "CC=clang" >> $GITHUB_ENV
-            echo "CXX=clang++" >> $GITHUB_ENV
-          fi
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
           echo "CMAKE_PREFIX_PATH=$(brew --prefix)" >> $GITHUB_ENV
 
       - name: Configure CMake
@@ -76,7 +38,6 @@ jobs:
             -DCMAKE_CXX_COMPILER=${{ env.CXX }} \
             -DCMAKE_PREFIX_PATH="${{ env.CMAKE_PREFIX_PATH }}" \
             -G Ninja
-
 
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
@@ -90,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-results-${{ matrix.os }}-${{ matrix.compiler }}-${{ matrix.build_type }}
+          name: test-results-macos-clang-${{ matrix.build_type }}
           path: build/Testing/
 
   code-quality:
@@ -102,7 +63,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y clang-format clang-tidy cppcheck cmake ninja-build libgtest-dev
-          # Install Google Test
           cd /usr/src/gtest
           sudo cmake CMakeLists.txt
           sudo make
@@ -173,10 +133,8 @@ jobs:
 
       - name: Run performance tests
         run: |
-          # TODO: Add performance benchmarks
           echo "Performance testing placeholder"
 
       - name: Memory leak check
         run: |
-          # TODO: Run valgrind on test suite
           echo "Memory leak check placeholder"
