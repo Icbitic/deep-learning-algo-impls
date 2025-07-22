@@ -7,7 +7,7 @@
 /**
  * @file functions.hpp
  * @brief Activation functions for neural networks
- * @author Deep Learning Algorithm Implementations
+ * @author Kalenitid
  * @version 1.0.0
  */
 

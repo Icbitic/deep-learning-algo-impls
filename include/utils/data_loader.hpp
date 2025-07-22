@@ -8,7 +8,7 @@
 /**
  * @file data_loader.hpp
  * @brief Data loading and preprocessing utilities for deep learning
- * @author Deep Learning Algorithm Implementations
+ * @author Kalenitid
  * @version 1.0.0
  *
  * This file provides comprehensive data handling capabilities including:

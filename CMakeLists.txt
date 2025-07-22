@@ -11,8 +11,20 @@ enable_testing()
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 
+# Find xtensor packages
+find_package(xtensor REQUIRED)
+find_package(xtensor-blas QUIET)
+
+# Set xtensor include directories explicitly
+include_directories(${xtensor_INCLUDE_DIRS})
+if(xtensor-blas_FOUND)
+    include_directories(${xtensor-blas_INCLUDE_DIRS})
+endif()
+
 # Include directories
 include_directories(include)
+include_directories(/opt/homebrew/Cellar/xtensor/0.27.0/include)
+include_directories(/usr/local/include)
 
 # Collect source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -21,6 +33,10 @@ file(GLOB_RECURSE HEADERS "include/*.hpp")
 # Create library for deep learning algorithms
 add_library(dl_algorithms ${SOURCES} ${HEADERS})
 target_include_directories(dl_algorithms PUBLIC include)
+target_link_libraries(dl_algorithms PUBLIC xtensor)
+if(xtensor-blas_FOUND)
+    target_link_libraries(dl_algorithms PUBLIC xtensor-blas)
+endif()
 
 # Main executable
 add_executable(deep_learning_algo_impls main.cpp)

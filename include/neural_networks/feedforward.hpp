@@ -8,7 +8,7 @@
 /**
  * @file feedforward.hpp
  * @brief Feedforward neural network implementation
- * @author Deep Learning Algorithm Implementations
+ * @author Kalenitid
  * @version 1.0.0
  */
 

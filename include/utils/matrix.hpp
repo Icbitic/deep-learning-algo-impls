@@ -3,11 +3,18 @@
 #include <initializer_list>
 #include <iostream>
 #include <vector>
+#include <xtensor-blas/xlinalg.hpp>
+#include <xtensor/xadapt.hpp>
+#include <xtensor/xarray.hpp>
+#include <xtensor/xio.hpp>
+#include <xtensor/xmath.hpp>
+#include <xtensor/xrandom.hpp>
+#include <xtensor/xview.hpp>
 
 /**
  * @file matrix.hpp
  * @brief Matrix utility class for deep learning operations
- * @author Deep Learning Algorithm Implementations
+ * @author Kalenitid
  * @version 1.0.0
  */
 
@@ -20,6 +27,8 @@ namespace dl {
          * common mathematical operations required in deep learning algorithms including
          * matrix multiplication, element-wise operations, transpose, and various
          * initialization methods.
+         *
+         * This implementation uses xtensor as the backend for efficient matrix operations.
          *
          * @tparam T The data type for matrix elements (typically float or double)
          *
@@ -55,6 +64,7 @@ namespace dl {
              */
             Matrix(size_t rows, size_t cols);
 
+
             /**
              * @brief Constructor creating a matrix filled with a specific value
              * @param rows Number of rows
@@ -63,7 +73,22 @@ namespace dl {
              */
             Matrix(size_t rows, size_t cols, T value);
 
+            /**
+             * @brief Constructor from initializer list
+             * @param list Nested initializer list representing matrix data
+             */
+            Matrix(std::initializer_list<std::initializer_list<T>> list);
+
             /** @} */
+
+            template<typename U>
+            friend std::ostream &operator<<(std::ostream &os, const Matrix<U> &matrix);
+            template<typename U>
+            friend Matrix<U> dot(const Matrix<U> &a, const Matrix<U> &b);
+            template<typename U>
+            friend U sum(const Matrix<U> &matrix);
+            template<typename U>
+            friend U mean(const Matrix<U> &matrix);
 
             /**
              * @name Element Access
@@ -222,11 +247,23 @@ namespace dl {
 
             /** @} */
 
+            /**
+             * @brief Get the underlying xtensor array
+             * @return Reference to the xtensor array
+             */
+            xt::xarray<T> &data() { return data_; }
+
+            /**
+             * @brief Get the underlying xtensor array (const)
+             * @return Const reference to the xtensor array
+             */
+            const xt::xarray<T> &data() const { return data_; }
+
         private:
             /**
-             * @brief Internal data storage using a flat vector
+             * @brief Internal data storage using xtensor
              */
-            std::vector<T> data_;
+            xt::xarray<T> data_;
 
             /**
              * @brief Number of rows and columns
@@ -240,42 +277,38 @@ namespace dl {
          */
 
         /**
-         * @todo Add stream output operator for matrix printing
          * @brief Output stream operator for matrix visualization
          * @param os Output stream
          * @param matrix Matrix to output
          * @return Reference to the output stream
          */
-        // template<typename T>
-        // std::ostream& operator<<(std::ostream& os, const Matrix<T>& matrix)
+        template<typename T>
+        std::ostream &operator<<(std::ostream &os, const Matrix<T> &matrix);
 
         /**
-         * @todo Add specialized mathematical functions for matrix operations
          * @brief Compute dot product of two matrices
          * @param a First matrix
          * @param b Second matrix
          * @return Dot product result
          */
-        // template<typename T>
-        // Matrix<T> dot(const Matrix<T>& a, const Matrix<T>& b)
+        template<typename T>
+        Matrix<T> dot(const Matrix<T> &a, const Matrix<T> &b);
 
         /**
-         * @todo Add matrix aggregation functions
          * @brief Calculate sum of all matrix elements
          * @param matrix Input matrix
          * @return Sum of all elements
          */
-        // template<typename T>
-        // T sum(const Matrix<T>& matrix)
+        template<typename T>
+        T sum(const Matrix<T> &matrix);
 
         /**
-         * @todo Add statistical functions
          * @brief Calculate mean of all matrix elements
          * @param matrix Input matrix
          * @return Mean of all elements
          */
-        // template<typename T>
-        // T mean(const Matrix<T>& matrix)
+        template<typename T>
+        T mean(const Matrix<T> &matrix);
 
         /** @} */
 
