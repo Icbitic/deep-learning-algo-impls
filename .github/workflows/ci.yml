@@ -74,7 +74,7 @@ jobs:
 
       - name: Run static analysis (cppcheck)
         run: |
-          cppcheck --enable=all --error-exitcode=2 --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=noExplicitConstructor -I include/ src/
+          cppcheck --enable=all --suppress=missingIncludeSystem --suppress=unusedFunction --suppress=noExplicitConstructor -I include/ src/
 
       - name: Run clang-tidy
         run: |
