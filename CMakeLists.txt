@@ -11,20 +11,25 @@ enable_testing()
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 
-# Find xtensor packages
-find_package(xtensor REQUIRED)
-find_package(xtensor-blas QUIET)
+# ---- Fetch xtensor ----
+include(FetchContent)
+FetchContent_Declare(
+        xtensor
+        GIT_REPOSITORY https://github.com/xtensor-stack/xtensor.git
+        GIT_TAG        0.24.1
+)
+FetchContent_MakeAvailable(xtensor)
 
-# Set xtensor include directories explicitly
-include_directories(${xtensor_INCLUDE_DIRS})
-if(xtensor-blas_FOUND)
-    include_directories(${xtensor-blas_INCLUDE_DIRS})
-endif()
+# Optionally fetch xtensor-blas
+FetchContent_Declare(
+        xtensor_blas
+        GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-blas.git
+        GIT_TAG        master
+)
+FetchContent_MakeAvailable(xtensor_blas)
 
-# Include directories
+# Include project headers
 include_directories(include)
-include_directories(/opt/homebrew/Cellar/xtensor/0.27.0/include)
-include_directories(/usr/local/include)
 
 # Collect source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -33,10 +38,7 @@ file(GLOB_RECURSE HEADERS "include/*.hpp")
 # Create library for deep learning algorithms
 add_library(dl_algorithms ${SOURCES} ${HEADERS})
 target_include_directories(dl_algorithms PUBLIC include)
-target_link_libraries(dl_algorithms PUBLIC xtensor)
-if(xtensor-blas_FOUND)
-    target_link_libraries(dl_algorithms PUBLIC xtensor-blas)
-endif()
+target_link_libraries(dl_algorithms PUBLIC xtensor xtensor-blas)
 
 # Main executable
 add_executable(deep_learning_algo_impls main.cpp)
