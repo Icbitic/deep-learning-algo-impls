@@ -114,6 +114,11 @@ namespace dl {
         }
 
         template<typename T>
+        auto Matrix<T>::eigenvalues() const {
+            return xt::linalg::eigh(data_);
+        }
+
+        template<typename T>
         Matrix<T> Matrix<T>::zeros(size_t rows, size_t cols) {
             Matrix<T> result(rows, cols);
             result.data_ = xt::zeros<T>({rows, cols});
@@ -140,11 +145,13 @@ namespace dl {
             result.data_ = xt::random::rand<T>({rows, cols}, min, max);
             return result;
         }
+
         template<typename T>
         std::ostream &operator<<(std::ostream &os, const Matrix<T> &matrix) {
             os << matrix.data();
             return os;
         }
+
         template<typename T>
         Matrix<T> dot(const Matrix<T> &a, const Matrix<T> &b) {
             if (a.cols() != b.rows()) {
@@ -155,10 +162,12 @@ namespace dl {
             result.data() = xt::linalg::dot(a.data(), b.data());
             return result;
         }
+
         template<typename T>
         T sum(const Matrix<T> &matrix) {
             return xt::sum(matrix.data())(0);
         }
+
         template<typename T>
         T mean(const Matrix<T> &matrix) {
             return xt::mean(matrix.data())(0);

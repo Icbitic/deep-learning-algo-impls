@@ -173,6 +173,8 @@ namespace dl {
              */
             Matrix inverse() const;
 
+            auto eigenvalues() const;
+
             /** @} */
 
             /**

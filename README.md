@@ -45,7 +45,8 @@ deep-learning-algo-impls/
 │   │   └── functions.hpp      # MSE, Cross-entropy, Hinge loss
 │   └── utils/                  # Utility classes
 │       ├── matrix.hpp         # Matrix operations
-│       └── data_loader.hpp    # Data loading and preprocessing
+│       ├── data_loader.hpp    # Data loading and preprocessing
+│       └── pca.hpp           # Principal Component Analysis
 ├── src/                        # Implementation files
 │   ├── neural_networks/        # Neural network implementations
 │   └── optimization/           # Optimizer implementations
@@ -97,6 +98,38 @@ Matrix<double> b = Matrix<double>::random(3, 3);  // Random 3x3 matrix
 auto c = a * b;  // Matrix multiplication
 auto d = a + b;  // Element-wise addition
 auto e = a.transpose();  // Transpose
+```
+
+### Principal Component Analysis
+
+```cpp
+#include "utils/pca.hpp"
+#include "utils/matrix.hpp"
+using namespace dl::utils;
+
+// Create a dataset
+MatrixD data({
+    {2.5, 2.4},
+    {0.5, 0.7},
+    {2.2, 2.9},
+    {1.9, 2.2},
+    {3.1, 3.0}
+});
+
+// Create a PCA object
+PCAD pca;
+
+// Fit the PCA model to the data
+pca.fit(data);
+
+// Get the explained variance ratio
+auto variance_ratio = pca.explained_variance_ratio();
+for (size_t i = 0; i < variance_ratio.size(); ++i) {
+    std::cout << "Component " << i << ": " << variance_ratio[i] << std::endl;
+}
+
+// Reduce dimensions (e.g., to 1D)
+MatrixD reduced_data = pca.transform(data, 1);
 ```
 
 ### Neural Network Training
