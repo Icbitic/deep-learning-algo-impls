@@ -60,43 +60,41 @@ int main() {
 
     // Example 3: Principal Component Analysis (PCA)
     std::cout << "\n=== Example 3: Principal Component Analysis (PCA) ===" << std::endl;
-    
+
     // Create a sample dataset
-    dl::utils::MatrixD data({
-        {2.5, 2.4},
-        {0.5, 0.7},
-        {2.2, 2.9},
-        {1.9, 2.2},
-        {3.1, 3.0},
-        {2.3, 2.7},
-        {2.0, 1.6},
-        {1.0, 1.1},
-        {1.5, 1.6},
-        {1.1, 0.9}
-    });
-    
+    dl::utils::MatrixD data({{2.5, 2.4},
+                             {0.5, 0.7},
+                             {2.2, 2.9},
+                             {1.9, 2.2},
+                             {3.1, 3.0},
+                             {2.3, 2.7},
+                             {2.0, 1.6},
+                             {1.0, 1.1},
+                             {1.5, 1.6},
+                             {1.1, 0.9}});
+
     // Create a PCA object
     dl::utils::PCAD pca;
-    
+
     // Fit the PCA model to the data
     pca.fit(data);
-    
+
     // Get the explained variance ratio
     auto variance_ratio = pca.explained_variance_ratio();
     std::cout << "Explained variance ratio: [" << variance_ratio[0] << ", " << variance_ratio[1] << "]" << std::endl;
-    
+
     // Transform the data to the principal component space (reduce to 1 dimension)
     auto transformed = pca.transform(data, 1);
     std::cout << "\nOriginal data (first 3 samples):" << std::endl;
     for (size_t i = 0; i < 3; ++i) {
         std::cout << "[" << data(i, 0) << ", " << data(i, 1) << "]" << std::endl;
     }
-    
+
     std::cout << "\nTransformed data (first 3 samples, reduced to 1 dimension):" << std::endl;
     for (size_t i = 0; i < 3; ++i) {
         std::cout << "[" << transformed(i, 0) << "]" << std::endl;
     }
-    
+
     // Get the principal components
     auto components = pca.components();
     std::cout << "\nPrincipal components:" << std::endl;

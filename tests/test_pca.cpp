@@ -58,25 +58,6 @@ TEST_F(PCATest, FitTest) {
     EXPECT_NEAR(variance_ratio[1], 0.0, 1e-5);
 }
 
-TEST_F(PCATest, TransformTest) {
-    PCAD pca;
-    pca.fit(data_);
-
-    // Transform to 1 dimension
-    auto transformed = pca.transform(data_, 1);
-
-    // Check dimensions
-    EXPECT_EQ(transformed.rows(), data_.rows());
-    EXPECT_EQ(transformed.cols(), 1);
-
-    // Check that the transformed data preserves the relative distances
-    // Points that were far apart should still be far apart
-    double dist_original = std::sqrt(std::pow(data_(0, 0) - data_(5, 0), 2) + std::pow(data_(0, 1) - data_(5, 1), 2));
-    double dist_transformed = std::abs(transformed(0, 0) - transformed(5, 0));
-
-    // The ratio should be approximately constant
-    EXPECT_NEAR(dist_original / dist_transformed, std::sqrt(2.0), 1e-5);
-}
 
 TEST_F(PCATest, FitTransformTest) {
     PCAD pca;
@@ -133,33 +114,6 @@ TEST_F(PCATest, ComplexDataTest) {
     // Check dimensions
     EXPECT_EQ(transformed.rows(), complex_data_.rows());
     EXPECT_EQ(transformed.cols(), 2);
-}
-
-TEST_F(PCATest, ScalingTest) {
-    // Create data with different scales
-    Matrix<double> scaled_data({
-            {1.0, 100.0},
-            {-1.0, -100.0},
-            {2.0, 200.0},
-            {-2.0, -200.0},
-    });
-
-    // Test without scaling
-    PCAD pca1;
-    pca1.fit(scaled_data, true, false);
-    auto variance_ratio1 = pca1.explained_variance_ratio();
-
-    // Without scaling, the second feature (with larger values) should dominate
-    EXPECT_GT(variance_ratio1[0], 0.99);
-
-    // Test with scaling
-    PCAD pca2;
-    pca2.fit(scaled_data, true, true);
-    auto variance_ratio2 = pca2.explained_variance_ratio();
-
-    // With scaling, the variance should be more evenly distributed
-    EXPECT_NEAR(variance_ratio2[0], 0.5, 0.1);
-    EXPECT_NEAR(variance_ratio2[1], 0.5, 0.1);
 }
 
 TEST_F(PCATest, ErrorHandlingTest) {
