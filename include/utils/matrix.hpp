@@ -186,19 +186,25 @@ namespace dl {
              * @brief Get the number of rows
              * @return Number of rows
              */
-            size_t rows() const { return rows_; }
+            [[nodiscard]] size_t rows() const { return rows_; }
 
             /**
              * @brief Get the number of columns
              * @return Number of columns
              */
-            size_t cols() const { return cols_; }
+            [[nodiscard]] size_t cols() const { return cols_; }
 
             /**
              * @brief Get the total number of elements
              * @return Total size (rows * cols)
              */
-            size_t size() const { return rows_ * cols_; }
+            [[nodiscard]] size_t size() const { return rows_ * cols_; }
+
+            /**
+             * @brief Get the shape of the matric in one step
+             * @return Shape (rows, cols) in tuple
+             */
+            [[nodiscard]] std::tuple<size_t, size_t> shape() const { return {rows_, cols_}; }
 
             /** @} */
 

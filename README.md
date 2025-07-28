@@ -66,7 +66,7 @@ deep-learning-algo-impls/
 Full API documentation is automatically generated using Doxygen with the modern **Doxygen Awesome** theme and deployed
 to GitHub Pages:
 
-🔗 **[View Documentation](https://your-username.github.io/deep-learning-algo-impls/)**
+🔗 **[View Documentation](https://icbitic.github.io/deep-learning-algo-impls/)**
 
 The documentation features:
 

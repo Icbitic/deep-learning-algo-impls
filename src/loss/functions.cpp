@@ -7,10 +7,11 @@
 namespace dl::loss {
     // MeanSquaredError Implementation
     double MeanSquaredError::forward(const MatrixD &predictions, const MatrixD &targets) {
-        // TODO: Implement MSE forward pass
         // Formula: MSE = (1/n) * sum((y_pred - y_true)^2)
-        // Placeholder return
-        return 0.0;
+        if (predictions.cols() != targets.cols() || predictions.rows() != targets.rows()) {
+            throw std::runtime_error("MeanSquaredError: wrong size");
+        }
+        return xt::mean(xt::square(predictions - targets))();
     }
 
     MatrixD MeanSquaredError::backward(const MatrixD &predictions, const MatrixD &targets) {
