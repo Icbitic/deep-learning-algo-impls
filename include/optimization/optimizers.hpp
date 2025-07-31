@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <vector>
+
+#include "utils/data_loader.hpp"
 #include "utils/matrix.hpp"
 
 using dl::utils::MatrixD;

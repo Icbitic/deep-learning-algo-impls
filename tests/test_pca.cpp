@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
-#include "utils/matrix.hpp"
-#include "utils/pca.hpp"
+#include "../include/ml/pca.hpp"
+#include "../include/utils/matrix.hpp"
 
-using namespace dl::utils;
+using namespace utils;
+using namespace ml;
 
 class PCATest : public ::testing::Test {
 protected:
