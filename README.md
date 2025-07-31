@@ -1,7 +1,6 @@
-# Deep Learning Algorithm Implementations
+# Deep Learning & Machine Learning Algorithm Implementations
 
-A comprehensive C++ library for implementing and learning deep learning algorithms from scratch, featuring modern C++
-design patterns, extensive documentation, and automated CI/CD.
+A comprehensive C++ library for implementing and learning both deep learning and traditional machine learning algorithms from scratch, featuring modern C++ design patterns, extensive documentation, and automated CI/CD.
 
 [![CI](https://github.com/Icbitic/deep-learning-algo-impls/workflows/CI/badge.svg)](https://github.com/your-username/deep-learning-algo-impls/actions)
 [![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](https://your-username.github.io/deep-learning-algo-impls/)
@@ -9,13 +8,20 @@ design patterns, extensive documentation, and automated CI/CD.
 
 ## 🎯 Project Goals
 
-This project provides a structured framework for implementing fundamental deep learning algorithms in C++. It's designed
-for educational purposes and hands-on learning of:
+This project provides a structured framework for implementing fundamental deep learning and traditional machine learning algorithms in C++. It's designed for educational purposes and hands-on learning of:
 
+**Deep Learning Algorithms:**
 - **Neural network architectures** (Feedforward, CNN, RNN, LSTM, GRU)
 - **Optimization algorithms** (SGD, Adam, RMSprop)
 - **Activation functions** (ReLU, Sigmoid, Tanh, Softmax, LeakyReLU)
 - **Loss functions** (MSE, Cross-entropy, Hinge loss)
+
+**Traditional Machine Learning Algorithms:**
+- **Dimensionality reduction** (Principal Component Analysis)
+- **Clustering algorithms** (K-Means)
+- **Classification algorithms** (Support Vector Machine)
+
+**Utilities:**
 - **Mathematical utilities** and high-performance matrix operations
 - **Data processing** with comprehensive loading and preprocessing utilities
 
@@ -33,7 +39,7 @@ for educational purposes and hands-on learning of:
 ```
 deep-learning-algo-impls/
 ├── include/                    # Header files
-│   ├── neural_networks/        # Neural network architectures
+│   ├── neural_networks/        # Deep learning architectures
 │   │   ├── feedforward.hpp     # Feedforward neural networks
 │   │   ├── cnn.hpp            # Convolutional neural networks
 │   │   └── rnn.hpp            # Recurrent neural networks (RNN/LSTM/GRU)
@@ -43,13 +49,24 @@ deep-learning-algo-impls/
 │   │   └── functions.hpp      # ReLU, Sigmoid, Tanh, Softmax
 │   ├── loss/                   # Loss functions
 │   │   └── functions.hpp      # MSE, Cross-entropy, Hinge loss
+│   ├── ml/                     # Traditional ML algorithms
+│   │   ├── ml.hpp             # Main ML header (includes all algorithms)
+│   │   ├── pca.hpp            # Principal Component Analysis
+│   │   ├── kmeans.hpp         # K-Means clustering
+│   │   └── svm.hpp            # Support Vector Machine
 │   └── utils/                  # Utility classes
 │       ├── matrix.hpp         # Matrix operations
-│       ├── data_loader.hpp    # Data loading and preprocessing
-│       └── pca.hpp           # Principal Component Analysis
+│       └── data_loader.hpp    # Data loading and preprocessing
 ├── src/                        # Implementation files
-│   ├── neural_networks/        # Neural network implementations
-│   └── optimization/           # Optimizer implementations
+│   ├── neural_networks/        # Deep learning implementations
+│   ├── optimization/           # Optimizer implementations
+│   ├── activation/             # Activation function implementations
+│   ├── loss/                   # Loss function implementations
+│   ├── ml/                     # Traditional ML implementations
+│   │   ├── pca.cpp            # PCA implementation
+│   │   ├── kmeans.cpp         # K-Means implementation
+│   │   └── svm.cpp            # SVM implementation
+│   └── utils/                  # Utility implementations
 ├── tests/                      # Unit tests
 │   ├── test_feedforward.cpp    # Neural network tests
 │   ├── test_matrix.cpp        # Matrix operation tests

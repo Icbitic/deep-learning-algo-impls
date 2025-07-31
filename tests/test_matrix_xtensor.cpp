@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "utils/matrix.hpp"
+#include "../include/utils/matrix.hpp"
 
-using namespace dl::utils;
+using namespace utils;
 
 TEST(MatrixXTensorTest, Construction) {
     // Test default constructor

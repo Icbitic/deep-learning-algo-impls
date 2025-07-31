@@ -21,7 +21,7 @@
 namespace dl {
     namespace utils {
         // Forward declarations
-        using MatrixD = Matrix<double>;
+        using MatrixD = ::utils::Matrix<double>;
 
         /**
          * @brief Dataset container for machine learning data

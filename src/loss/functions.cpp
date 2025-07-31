@@ -11,14 +11,15 @@ namespace dl::loss {
         if (predictions.cols() != targets.cols() || predictions.rows() != targets.rows()) {
             throw std::runtime_error("MeanSquaredError: wrong size");
         }
-        return xt::mean(xt::square(predictions - targets))();
+        auto diff = predictions.data() - targets.data();
+        return xt::mean(xt::square(diff))();
     }
 
     MatrixD MeanSquaredError::backward(const MatrixD &predictions, const MatrixD &targets) {
         // TODO: Implement MSE backward pass
         // Formula: dL/dy_pred = (2/n) * (y_pred - y_true)
         // Placeholder return
-        return MatrixD(predictions.rows(), predictions.cols());
+        return MatrixD(predictions.rows(), predictions.cols(), 0.0);
     }
 
     // CrossEntropyLoss Implementation
@@ -33,7 +34,7 @@ namespace dl::loss {
         // TODO: Implement Cross Entropy backward pass
         // Formula: dL/dy_pred = -y_true / y_pred
         // Placeholder return
-        return MatrixD(predictions.rows(), predictions.cols());
+        return MatrixD(predictions.rows(), predictions.cols(), 0.0);
     }
 
     // BinaryCrossEntropyLoss Implementation
@@ -48,7 +49,7 @@ namespace dl::loss {
         // TODO: Implement Binary Cross Entropy backward pass
         // Formula: dL/dp = -(y/p - (1-y)/(1-p))
         // Placeholder return
-        return MatrixD(predictions.rows(), predictions.cols());
+        return MatrixD(predictions.rows(), predictions.cols(), 0.0);
     }
 
     // HingeLoss Implementation
@@ -63,7 +64,7 @@ namespace dl::loss {
         // TODO: Implement Hinge Loss backward pass
         // Formula: dL/dy_pred = -y if y * y_pred < 1, else 0
         // Placeholder return
-        return MatrixD(predictions.rows(), predictions.cols());
+        return MatrixD(predictions.rows(), predictions.cols(), 0.0);
     }
 
     // HuberLoss Implementation
@@ -84,6 +85,6 @@ namespace dl::loss {
         // Formula: dL/dy_pred = y_pred - y if |y - y_pred| <= delta
         //          dL/dy_pred = delta * sign(y_pred - y) otherwise
         // Placeholder return
-        return MatrixD(predictions.rows(), predictions.cols());
+        return MatrixD(predictions.rows(), predictions.cols(), 0.0);
     }
 } // namespace dl::loss
