@@ -1,6 +1,7 @@
 #include <cmath>
 #include <gtest/gtest.h>
 #include <vector>
+#include <chrono>
 #include "ml/svm.hpp"
 #include "utils/matrix.hpp"
 
@@ -231,7 +232,7 @@ TEST_F(SVMTest, KernelFunctionTest) {
 }
 
 TEST_F(SVMTest, SmallDatasetTest) {
-    // Test with minimal dataset
+    // Test with very small dataset
     Matrix<double> X_small({{1.0}, {-1.0}});
     std::vector<int> y_small = {1, -1};
 
@@ -240,4 +241,87 @@ TEST_F(SVMTest, SmallDatasetTest) {
 
     std::vector<int> predictions = svm.predict(X_small);
     EXPECT_EQ(predictions.size(), 2);
+}
+
+TEST_F(SVMTest, StaticVsAutogradComparisonTest) {
+    std::cout << "\n=== Comparison: Static Computation vs Autograd ===" << std::endl;
+    
+    // Test with linear kernel on linearly separable data
+    std::cout << "\nTesting Linear Kernel on Linearly Separable Data:" << std::endl;
+    
+    // Original SVM with static computation (SMO algorithm)
+    std::cout << "\n1. Original SVM (Static Computation - SMO Algorithm):" << std::endl;
+    SVM<double> static_svm(KernelType::LINEAR, 1.0);
+    
+    auto start_static = std::chrono::high_resolution_clock::now();
+    static_svm.fit(X_linear_, y_linear_);
+    auto end_static = std::chrono::high_resolution_clock::now();
+    auto duration_static = std::chrono::duration_cast<std::chrono::microseconds>(end_static - start_static);
+    
+    std::vector<int> static_predictions = static_svm.predict(X_linear_);
+    int static_correct = 0;
+    for (size_t i = 0; i < y_linear_.size(); ++i) {
+        if (static_predictions[i] == y_linear_[i]) static_correct++;
+    }
+    double static_accuracy = static_cast<double>(static_correct) / y_linear_.size();
+    
+    std::cout << "   - Training time: " << duration_static.count() << " microseconds" << std::endl;
+    std::cout << "   - Accuracy: " << static_accuracy * 100 << "%" << std::endl;
+    std::cout << "   - Method: Sequential Minimal Optimization (SMO)" << std::endl;
+    std::cout << "   - Gradient computation: Manual/Analytical" << std::endl;
+    
+    // New SVM with autograd
+    std::cout << "\n2. New SVM (Automatic Differentiation - Gradient Descent):" << std::endl;
+    SVM<double> autograd_svm(KernelType::LINEAR, 1.0, 1.0, 3, 0.0, 1e-4, 300, 0.01);
+    
+    auto start_autograd = std::chrono::high_resolution_clock::now();
+    autograd_svm.fit(X_linear_, y_linear_);
+    auto end_autograd = std::chrono::high_resolution_clock::now();
+    auto duration_autograd = std::chrono::duration_cast<std::chrono::microseconds>(end_autograd - start_autograd);
+    
+    std::vector<int> autograd_predictions = autograd_svm.predict(X_linear_);
+    int autograd_correct = 0;
+    for (size_t i = 0; i < y_linear_.size(); ++i) {
+        if (autograd_predictions[i] == y_linear_[i]) autograd_correct++;
+    }
+    double autograd_accuracy = static_cast<double>(autograd_correct) / y_linear_.size();
+    
+    std::cout << "   - Training time: " << duration_autograd.count() << " microseconds" << std::endl;
+    std::cout << "   - Accuracy: " << autograd_accuracy * 100 << "%" << std::endl;
+    std::cout << "   - Method: Gradient Descent with Autograd" << std::endl;
+    std::cout << "   - Gradient computation: Automatic Differentiation" << std::endl;
+    
+    // Show loss history for autograd
+    std::vector<double> loss_history = autograd_svm.loss_history();
+    if (loss_history.size() > 0) {
+        std::cout << "   - Initial loss: " << loss_history[0] << std::endl;
+        std::cout << "   - Final loss: " << loss_history.back() << std::endl;
+        std::cout << "   - Training iterations: " << loss_history.size() << std::endl;
+    }
+    
+    std::cout << "\n=== Key Differences ===" << std::endl;
+    std::cout << "1. Gradient Computation:" << std::endl;
+    std::cout << "   - Static: Manual gradient calculations in SMO algorithm" << std::endl;
+    std::cout << "   - Autograd: Automatic differentiation tracks operations" << std::endl;
+    
+    std::cout << "\n2. Optimization Method:" << std::endl;
+    std::cout << "   - Static: Sequential Minimal Optimization (SMO)" << std::endl;
+    std::cout << "   - Autograd: Gradient descent with backpropagation" << std::endl;
+    
+    std::cout << "\n3. Flexibility:" << std::endl;
+    std::cout << "   - Static: Fixed optimization algorithm, hard to modify" << std::endl;
+    std::cout << "   - Autograd: Easy to experiment with different loss functions" << std::endl;
+    
+    std::cout << "\n4. Computational Graph:" << std::endl;
+    std::cout << "   - Static: No computational graph, direct computation" << std::endl;
+    std::cout << "   - Autograd: Builds computational graph for backpropagation" << std::endl;
+    
+    // Both should achieve reasonable accuracy
+    EXPECT_GT(static_accuracy, 0.6);
+    EXPECT_GT(autograd_accuracy, 0.6);
+    
+    std::cout << "\n=== Test Results ===" << std::endl;
+    std::cout << "Both implementations achieved reasonable accuracy (>60%)" << std::endl;
+    std::cout << "Autograd provides more flexibility for experimentation" << std::endl;
+    std::cout << "Static SMO is more traditional and well-established" << std::endl;
 }
