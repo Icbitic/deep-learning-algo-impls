@@ -2,8 +2,8 @@
 
 #include <functional>
 #include <vector>
-#include "../utils/matrix.hpp"
-#include "../utils/autograd.hpp"
+#include "utils/autograd.hpp"
+#include "utils/tensor.hpp"
 
 /**
  * @file svm.hpp
@@ -39,12 +39,12 @@ namespace ml {
      * SVM<double> svm(KernelType::RBF, 1.0, 0.1);
      *
      * // Fit SVM to training data with automatic gradient computation
-     * Matrix<double> X_train = training_features;
+     * Tensor<double> X_train = training_features;
      * std::vector<int> y_train = training_labels;
      * svm.fit(X_train, y_train);
      *
      * // Predict on test data
-     * Matrix<double> X_test = test_features;
+     * Tensor<double> X_test = test_features;
      * std::vector<int> predictions = svm.predict(X_test);
      * ```
      */
@@ -70,34 +70,34 @@ namespace ml {
          * @param X Training features matrix (n_samples x n_features)
          * @param y Training labels vector
          */
-        void fit(const Matrix<T> &X, const std::vector<int> &y);
+        void fit(const Tensor<T> &X, const std::vector<int> &y);
 
         /**
          * @brief Predict class labels for samples
          * @param X Input samples matrix (n_samples x n_features)
          * @return Vector of predicted class labels
          */
-        std::vector<int> predict(const Matrix<T> &X) const;
+        std::vector<int> predict(const Tensor<T> &X) const;
 
         /**
          * @brief Predict class probabilities for samples
          * @param X Input samples matrix (n_samples x n_features)
          * @return Matrix of class probabilities (n_samples x n_classes)
          */
-        Matrix<T> predict_proba(const Matrix<T> &X) const;
+        Tensor<T> predict_proba(const Tensor<T> &X) const;
 
         /**
          * @brief Compute the decision function for samples
          * @param X Input samples matrix (n_samples x n_features)
          * @return Vector of decision function values
          */
-        std::vector<T> decision_function(const Matrix<T> &X) const;
+        std::vector<T> decision_function(const Tensor<T> &X) const;
 
         /**
          * @brief Get support vectors
          * @return Matrix of support vectors
          */
-        Matrix<T> support_vectors() const;
+        Tensor<T> support_vectors() const;
 
         /**
          * @brief Get support vector indices
@@ -135,7 +135,7 @@ namespace ml {
 
         Variable<T> weights_; ///< Weight parameters (with autograd)
         Variable<T> bias_; ///< Bias parameter (with autograd)
-        Matrix<T> support_vectors_; ///< Support vectors
+        Tensor<T> support_vectors_; ///< Support vectors
         std::vector<size_t> support_indices_; ///< Support vector indices
         std::vector<T> dual_coef_; ///< Dual coefficients
         std::vector<int> classes_; ///< Unique class labels
@@ -172,7 +172,7 @@ namespace ml {
          * @param y Training labels
          * @return Current loss value
          */
-        T gradient_step(const Matrix<T> &X, const std::vector<int> &y);
+        T gradient_step(const Tensor<T> &X, const std::vector<int> &y);
 
         /**
          * @brief Convert matrix to Variable
@@ -180,7 +180,7 @@ namespace ml {
          * @param requires_grad Whether to track gradients
          * @return Variable wrapping the matrix
          */
-        Variable<T> to_variable(const Matrix<T> &matrix, bool requires_grad = false) const;
+        Variable<T> to_variable(const Tensor<T> &matrix, bool requires_grad = false) const;
     };
 
     // Type aliases

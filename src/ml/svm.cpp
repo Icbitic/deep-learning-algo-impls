@@ -13,8 +13,8 @@ namespace ml {
                                T tol, size_t max_iter, T learning_rate) :
         kernel_type_(kernel_type), C_(C), gamma_(gamma), degree_(degree), coef0_(coef0), 
         tol_(tol), max_iter_(max_iter), learning_rate_(learning_rate), is_fitted_(false),
-        weights_(Matrix<T>(1, 1, 0.0), true),  // Initialize with dummy data, will be resized in fit
-        bias_(Matrix<T>(1, 1, 0.0), true) {    // Initialize with dummy data
+        weights_(Tensor<T>(1, 1, 0.0), true),  // Initialize with dummy data, will be resized in fit
+        bias_(Tensor<T>(1, 1, 0.0), true) {    // Initialize with dummy data
         
         if (C <= 0) {
             throw std::invalid_argument("C must be positive");
@@ -28,7 +28,7 @@ namespace ml {
     }
 
     template<typename T>
-    void SVM<T>::fit(const Matrix<T> &X, const std::vector<int> &y) {
+    void SVM<T>::fit(const Tensor<T> &X, const std::vector<int> &y) {
         if (X.rows() != y.size()) {
             throw std::invalid_argument("Number of samples in X and y must match");
         }
@@ -51,17 +51,17 @@ namespace ml {
         // For linear SVM, we use weight vector; for kernel SVM, we use dual variables
         if (kernel_type_ == KernelType::LINEAR) {
             // Initialize weights randomly
-            Matrix<T> w_init = Matrix<T>::random(X.cols(), 1, -0.1, 0.1);
+            Tensor<T> w_init = Tensor<T>::random(X.cols(), 1, -0.1, 0.1);
             weights_ = Variable<T>(w_init, true); // requires_grad = true
             
-            Matrix<T> b_init(1, 1, 0.0);
+            Tensor<T> b_init(1, 1, 0.0);
             bias_ = Variable<T>(b_init, true);
         } else {
             // For kernel methods, initialize dual variables
-            Matrix<T> alpha_init = Matrix<T>::random(X.rows(), 1, 0.0, 0.1);
+            Tensor<T> alpha_init = Tensor<T>::random(X.rows(), 1, 0.0, 0.1);
             weights_ = Variable<T>(alpha_init, true);
             
-            Matrix<T> b_init(1, 1, 0.0);
+            Tensor<T> b_init(1, 1, 0.0);
             bias_ = Variable<T>(b_init, true);
         }
 
@@ -94,7 +94,7 @@ namespace ml {
     }
 
     template<typename T>
-    T SVM<T>::gradient_step(const Matrix<T> &X, const std::vector<int> &y) {
+    T SVM<T>::gradient_step(const Tensor<T> &X, const std::vector<int> &y) {
         // Zero gradients
         weights_.zero_grad();
         bias_.zero_grad();
@@ -110,7 +110,7 @@ namespace ml {
         
         // Update parameters using gradient descent
         // weights_ = weights_ - learning_rate * weights_.grad()
-        Matrix<T> weight_grad_scaled(weights_.grad().rows(), weights_.grad().cols());
+        Tensor<T> weight_grad_scaled(weights_.grad().rows(), weights_.grad().cols());
         for (size_t i = 0; i < weights_.grad().rows(); ++i) {
             for (size_t j = 0; j < weights_.grad().cols(); ++j) {
                 weight_grad_scaled(i, j) = weights_.grad()(i, j) * (-learning_rate_);
@@ -118,7 +118,7 @@ namespace ml {
         }
         weights_ = Variable<T>(weights_.data() + weight_grad_scaled, true);
         
-        Matrix<T> bias_grad_scaled(bias_.grad().rows(), bias_.grad().cols());
+        Tensor<T> bias_grad_scaled(bias_.grad().rows(), bias_.grad().cols());
         for (size_t i = 0; i < bias_.grad().rows(); ++i) {
             for (size_t j = 0; j < bias_.grad().cols(); ++j) {
                 bias_grad_scaled(i, j) = bias_.grad()(i, j) * (-learning_rate_);
@@ -138,14 +138,14 @@ namespace ml {
             
             // Regularization term: (1/2) * ||w||^2
             Variable<T> w_squared = weights_.transpose().dot(weights_);
-            Variable<T> reg_term = w_squared * Variable<T>(Matrix<T>(1, 1, 0.5), false);
+            Variable<T> reg_term = w_squared * Variable<T>(Tensor<T>(1, 1, 0.5), false);
             
             // Hinge loss term
-            Variable<T> hinge_loss_sum = Variable<T>(Matrix<T>(1, 1, 0.0), false);
+            Variable<T> hinge_loss_sum = Variable<T>(Tensor<T>(1, 1, 0.0), false);
             
             for (size_t i = 0; i < n_samples; ++i) {
                 // Extract sample x_i
-                Matrix<T> x_i_data(1, X.cols());
+                Tensor<T> x_i_data(1, X.cols());
                 for (size_t j = 0; j < X.cols(); ++j) {
                     x_i_data(0, j) = X.data()(i, j);
                 }
@@ -158,18 +158,18 @@ namespace ml {
                 
                 // Compute margin: y_i * decision
                 T y_i = static_cast<T>(y[i]);
-                Variable<T> margin = decision * Variable<T>(Matrix<T>(1, 1, y_i), false);
+                Variable<T> margin = decision * Variable<T>(Tensor<T>(1, 1, y_i), false);
                 
                 // Hinge loss: max(0, 1 - margin)
                 T margin_val = margin.data()(0, 0);
                 if (margin_val < 1.0) {
-                    Variable<T> hinge = Variable<T>(Matrix<T>(1, 1, 1.0), false) - margin;
+                    Variable<T> hinge = Variable<T>(Tensor<T>(1, 1, 1.0), false) - margin;
                     hinge_loss_sum = hinge_loss_sum + hinge;
                 }
             }
             
             // Total loss: regularization + C * hinge_loss
-            Variable<T> C_var = Variable<T>(Matrix<T>(1, 1, C_), false);
+            Variable<T> C_var = Variable<T>(Tensor<T>(1, 1, C_), false);
             return reg_term + C_var * hinge_loss_sum;
             
         } else {
@@ -177,11 +177,11 @@ namespace ml {
             // This is more complex and would require implementing the full dual optimization
             // For now, we'll use a simplified approach
             
-            Variable<T> loss_sum = Variable<T>(Matrix<T>(1, 1, 0.0), false);
+            Variable<T> loss_sum = Variable<T>(Tensor<T>(1, 1, 0.0), false);
             
             for (size_t i = 0; i < n_samples; ++i) {
                 // Extract sample x_i
-                Matrix<T> x_i_data(1, X.cols());
+                Tensor<T> x_i_data(1, X.cols());
                 for (size_t j = 0; j < X.cols(); ++j) {
                     x_i_data(0, j) = X(i, j);
                 }
@@ -192,7 +192,7 @@ namespace ml {
                 
                 // Add contribution from each training sample (simplified)
                 for (size_t k = 0; k < std::min(n_samples, static_cast<size_t>(10)); ++k) {
-                    Matrix<T> x_k_data(1, X.cols());
+                    Tensor<T> x_k_data(1, X.cols());
                     for (size_t j = 0; j < X.cols(); ++j) {
                         x_k_data(0, j) = X.data()(k, j);
                     }
@@ -202,19 +202,19 @@ namespace ml {
                     
                     // Use a subset of weights as dual variables
                     if (k < weights_.rows()) {
-                        Matrix<T> alpha_k(1, 1, weights_.data()(k, 0));
+                        Tensor<T> alpha_k(1, 1, weights_.data()(k, 0));
                         Variable<T> alpha_k_var = Variable<T>(alpha_k, false);
-                        decision = decision + alpha_k_var * kernel_val * Variable<T>(Matrix<T>(1, 1, static_cast<T>(y[k])), false);
+                        decision = decision + alpha_k_var * kernel_val * Variable<T>(Tensor<T>(1, 1, static_cast<T>(y[k])), false);
                     }
                 }
                 
                 // Hinge loss
                 T y_i = static_cast<T>(y[i]);
-                Variable<T> margin = decision * Variable<T>(Matrix<T>(1, 1, y_i), false);
+                Variable<T> margin = decision * Variable<T>(Tensor<T>(1, 1, y_i), false);
                 
                 T margin_val = margin.data()(0, 0);
                 if (margin_val < 1.0) {
-                    Variable<T> hinge = Variable<T>(Matrix<T>(1, 1, 1.0), false) - margin;
+                    Variable<T> hinge = Variable<T>(Tensor<T>(1, 1, 1.0), false) - margin;
                     loss_sum = loss_sum + hinge;
                 }
             }
@@ -233,15 +233,15 @@ namespace ml {
                 // RBF kernel: exp(-gamma * ||x1 - x2||^2)
                 Variable<T> diff = x1 - x2;
                 Variable<T> squared_norm = diff.dot(diff.transpose());
-                Variable<T> gamma_var = Variable<T>(Matrix<T>(1, 1, -gamma_), false);
+                Variable<T> gamma_var = Variable<T>(Tensor<T>(1, 1, -gamma_), false);
                 return (gamma_var * squared_norm).exp();
             }
             
             case KernelType::POLYNOMIAL: {
                 // Polynomial kernel: (gamma * x1^T * x2 + coef0)^degree
                 Variable<T> dot_product = x1.dot(x2.transpose());
-                Variable<T> gamma_var = Variable<T>(Matrix<T>(1, 1, gamma_), false);
-                Variable<T> coef0_var = Variable<T>(Matrix<T>(1, 1, coef0_), false);
+                Variable<T> gamma_var = Variable<T>(Tensor<T>(1, 1, gamma_), false);
+                Variable<T> coef0_var = Variable<T>(Tensor<T>(1, 1, coef0_), false);
                 Variable<T> base = gamma_var * dot_product + coef0_var;
                 
                 // Simple power implementation (for degree = 2)
@@ -255,8 +255,8 @@ namespace ml {
             case KernelType::SIGMOID: {
                 // Sigmoid kernel: tanh(gamma * x1^T * x2 + coef0)
                 Variable<T> dot_product = x1.dot(x2.transpose());
-                Variable<T> gamma_var = Variable<T>(Matrix<T>(1, 1, gamma_), false);
-                Variable<T> coef0_var = Variable<T>(Matrix<T>(1, 1, coef0_), false);
+                Variable<T> gamma_var = Variable<T>(Tensor<T>(1, 1, gamma_), false);
+                Variable<T> coef0_var = Variable<T>(Tensor<T>(1, 1, coef0_), false);
                 return (gamma_var * dot_product + coef0_var).tanh();
             }
             
@@ -266,12 +266,12 @@ namespace ml {
     }
 
     template<typename T>
-    Variable<T> SVM<T>::to_variable(const Matrix<T> &matrix, bool requires_grad) const {
+    Variable<T> SVM<T>::to_variable(const Tensor<T> &matrix, bool requires_grad) const {
         return Variable<T>(matrix, requires_grad);
     }
 
     template<typename T>
-    std::vector<int> SVM<T>::predict(const Matrix<T> &X) const {
+    std::vector<int> SVM<T>::predict(const Tensor<T> &X) const {
         if (!is_fitted_) {
             throw std::runtime_error("Model must be fitted before prediction");
         }
@@ -287,7 +287,7 @@ namespace ml {
     }
 
     template<typename T>
-    std::vector<T> SVM<T>::decision_function(const Matrix<T> &X) const {
+    std::vector<T> SVM<T>::decision_function(const Tensor<T> &X) const {
         if (!is_fitted_) {
             throw std::runtime_error("Model must be fitted before prediction");
         }
@@ -314,9 +314,9 @@ namespace ml {
     }
 
     template<typename T>
-    Matrix<T> SVM<T>::predict_proba(const Matrix<T> &X) const {
+    Tensor<T> SVM<T>::predict_proba(const Tensor<T> &X) const {
         std::vector<T> decision_values = decision_function(X);
-        Matrix<T> probabilities(X.rows(), 2);
+        Tensor<T> probabilities(X.rows(), 2);
         
         for (size_t i = 0; i < decision_values.size(); ++i) {
             // Convert decision function to probability using sigmoid
@@ -329,7 +329,7 @@ namespace ml {
     }
 
     template<typename T>
-    Matrix<T> SVM<T>::support_vectors() const {
+    Tensor<T> SVM<T>::support_vectors() const {
         return support_vectors_;
     }
 

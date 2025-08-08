@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "../include/ml/pca.hpp"
-#include "../include/utils/matrix.hpp"
+#include "ml/pca.hpp"
+#include "utils/tensor.hpp"
 
 using namespace utils;
 using namespace ml;
@@ -10,7 +10,7 @@ protected:
     void SetUp() override {
         // Create a simple dataset for testing
         // 2D data with clear principal components
-        data_ = Matrix<double>({
+        data_ = Tensor<double>({
                 {1.0, 1.0},
                 {-1.0, -1.0},
                 {2.0, 2.0},
@@ -21,7 +21,7 @@ protected:
 
         // Create a more complex dataset
         // 3D data with different variances along different axes
-        complex_data_ = Matrix<double>({
+        complex_data_ = Tensor<double>({
                 {1.0, 2.0, 0.5},
                 {-1.0, -2.0, -0.5},
                 {2.0, 4.0, 1.0},
@@ -33,8 +33,8 @@ protected:
         });
     }
 
-    Matrix<double> data_;
-    Matrix<double> complex_data_;
+    Tensor<double> data_;
+    Tensor<double> complex_data_;
 };
 
 TEST_F(PCATest, ConstructorTest) {
@@ -121,7 +121,7 @@ TEST_F(PCATest, ErrorHandlingTest) {
     PCAD pca;
 
     // Test with empty matrix
-    Matrix<double> empty;
+    Tensor<double> empty;
     EXPECT_THROW(pca.fit(empty), std::invalid_argument);
 
     // Test transform before fit
@@ -129,6 +129,6 @@ TEST_F(PCATest, ErrorHandlingTest) {
 
     // Test with incompatible dimensions
     pca.fit(data_);
-    Matrix<double> wrong_dims(3, 3);
+    Tensor<double> wrong_dims(3, 3);
     EXPECT_THROW(pca.transform(wrong_dims), std::invalid_argument);
 }

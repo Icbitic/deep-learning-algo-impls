@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "matrix.hpp"
+#include "tensor.hpp"
 
 /**
  * @file data_loader.hpp
@@ -21,7 +21,7 @@
 namespace dl {
     namespace utils {
         // Forward declarations
-        using MatrixD = ::utils::Matrix<double>;
+        using TensorD = ::utils::Tensor<double>;
 
         /**
          * @brief Dataset container for machine learning data
@@ -63,7 +63,7 @@ namespace dl {
              *
              * @note Features and labels must have the same number of rows (samples)
              */
-            Dataset(const MatrixD &features, const MatrixD &labels);
+            Dataset(const TensorD &features, const TensorD &labels);
 
             /**
              * @brief Add a single sample to the dataset
@@ -89,7 +89,7 @@ namespace dl {
              * @note If start_idx + batch_size exceeds dataset size,
              *       returns samples from start_idx to the end
              */
-            std::pair<MatrixD, MatrixD> get_batch(size_t start_idx, size_t batch_size) const;
+            std::pair<TensorD, TensorD> get_batch(size_t start_idx, size_t batch_size) const;
 
             /**
              * @brief Randomly shuffle the dataset samples
@@ -99,8 +99,8 @@ namespace dl {
             void shuffle();
 
         private:
-            MatrixD features_; ///< Feature matrix (samples x features)
-            MatrixD labels_; ///< Label matrix (samples x outputs)
+            TensorD features_; ///< Feature matrix (samples x features)
+            TensorD labels_; ///< Label matrix (samples x outputs)
         };
 
         /**
@@ -148,7 +148,7 @@ namespace dl {
              *
              * @note Advances the internal iterator. Call has_next() first to check availability
              */
-            std::pair<MatrixD, MatrixD> next_batch();
+            std::pair<TensorD, TensorD> next_batch();
 
             /**
              * @brief Reset iterator to start of dataset
@@ -193,7 +193,7 @@ namespace dl {
              *
              * @note Missing values are handled by setting them to 0.0
              */
-            static MatrixD load_csv(const std::string &filename, bool has_header = true, char delimiter = ',');
+            static TensorD load_csv(const std::string &filename, bool has_header = true, char delimiter = ',');
 
             /**
              * @brief Load specific columns as features and labels
@@ -204,10 +204,10 @@ namespace dl {
              * @param delimiter Character used to separate values
              * @return Pair of (features, labels) matrices
              */
-            static std::pair<MatrixD, MatrixD> load_features_labels(const std::string &filename,
-                                                                    const std::vector<size_t> &feature_cols,
-                                                                    const std::vector<size_t> &label_cols,
-                                                                    bool has_header = true, char delimiter = ',');
+            static std::pair<TensorD, TensorD> load_features_labels(const std::string &filename,
+                                                                     const std::vector<size_t> &feature_cols,
+                                                                     const std::vector<size_t> &label_cols,
+                                                                     bool has_header = true, char delimiter = ',');
         };
 
         /**
@@ -239,7 +239,7 @@ namespace dl {
              *
              * @note Images are converted to grayscale and normalized
              */
-            static MatrixD load_image(const std::string &filename, size_t target_width = 0, size_t target_height = 0);
+            static TensorD load_image(const std::string &filename, size_t target_width = 0, size_t target_height = 0);
 
             /**
              * @brief Load all images from a directory
@@ -250,7 +250,7 @@ namespace dl {
              *
              * @note Processes all supported image files in the directory
              */
-            static std::vector<MatrixD> load_images_from_directory(const std::string &directory_path,
+            static std::vector<TensorD> load_images_from_directory(const std::string &directory_path,
                                                                    size_t target_width = 0, size_t target_height = 0);
         };
 
@@ -288,7 +288,7 @@ namespace dl {
              *
              * @note Uses min-max normalization: (x - min) / (max - min) * (max_val - min_val) + min_val
              */
-            static MatrixD normalize(const MatrixD &data, double min_val = 0.0, double max_val = 1.0);
+            static TensorD normalize(const TensorD &data, double min_val = 0.0, double max_val = 1.0);
 
             /**
              * @brief Standardize data to zero mean and unit variance
@@ -297,7 +297,7 @@ namespace dl {
              *
              * @note Uses z-score normalization: (x - mean) / std_dev
              */
-            static MatrixD standardize(const MatrixD &data);
+            static TensorD standardize(const TensorD &data);
 
             /**
              * @brief Convert categorical labels to one-hot encoding
@@ -307,7 +307,7 @@ namespace dl {
              *
              * @note Each row represents one sample, columns represent classes
              */
-            static MatrixD one_hot_encode(const std::vector<int> &labels, size_t num_classes);
+            static TensorD one_hot_encode(const std::vector<int> &labels, size_t num_classes);
 
             /**
              * @brief Split dataset into training, validation, and test sets

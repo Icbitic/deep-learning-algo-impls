@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 #include "utils/autograd.hpp"
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
 
 /**
  * @file losses.hpp
@@ -16,9 +16,9 @@ namespace dl::loss {
     using utils::Variable;
     using utils::VariableD;
     using utils::VariableF;
-    using utils::Matrix;
-    using utils::MatrixD;
-    using utils::MatrixF;
+    using utils::Tensor;
+    using utils::TensorD;
+    using utils::TensorF;
 
     /**
      * @brief Base class for autograd-compatible loss functions

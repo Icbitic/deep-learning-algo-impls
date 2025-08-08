@@ -2,9 +2,9 @@
 
 #include <functional>
 #include <memory>
-#include <vector>
 #include <unordered_set>
-#include "matrix.hpp"
+#include <vector>
+#include "tensor.hpp"
 
 /**
  * @file autograd.hpp
@@ -29,26 +29,41 @@ namespace utils {
         /**
          * @brief Forward pass computation
          * @param inputs Input variables
-         * @return Output matrix
+         * @return Output tensor
          */
-        virtual Matrix<T> forward(const std::vector<Variable<T>>& inputs) = 0;
+        virtual Tensor<T> forward(const std::vector<Variable<T>>& inputs) = 0;
         
         /**
          * @brief Backward pass computation
          * @param grad_output Gradient from the output
          * @return Gradients with respect to inputs
          */
-        virtual std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) = 0;
+        virtual std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) = 0;
         
         /**
-         * @brief Set saved tensors for backward pass
+         * @brief Set input variables for backward pass
          */
-        virtual void save_for_backward(const std::vector<Matrix<T>>& tensors) {
-            saved_tensors_ = tensors;
+        void set_inputs(const std::vector<std::shared_ptr<Variable<T>>>& inputs) {
+            input_variables_ = inputs;
+        }
+        
+        /**
+         * @brief Get input variables
+         */
+        const std::vector<std::shared_ptr<Variable<T>>>& get_inputs() const {
+            return input_variables_;
         }
         
     protected:
-        std::vector<Matrix<T>> saved_tensors_;
+        /**
+         * @brief Set saved tensors for backward pass
+         */
+        void save_for_backward(const std::vector<Tensor<T>>& tensors) {
+            saved_tensors_ = tensors;
+        }
+        
+        std::vector<Tensor<T>> saved_tensors_;
+        std::vector<std::shared_ptr<Variable<T>>> input_variables_;
     };
 
     /**
@@ -62,26 +77,33 @@ namespace utils {
          * @param data The matrix data
          * @param requires_grad Whether to compute gradients for this variable
          */
-        Variable(const Matrix<T>& data, bool requires_grad = false)
+        explicit Variable(const Tensor<T>& data, bool requires_grad = false)
             : data_(data), requires_grad_(requires_grad), grad_fn_(nullptr) {
-            if (requires_grad_) {
-                grad_ = Matrix<T>::zeros(data.rows(), data.cols());
+            if (requires_grad) {
+                grad_ = Tensor<T>::zeros(data.rows(), data.cols());
             }
         }
-        
+
         /**
          * @brief Constructor with gradient function
          */
-        Variable(const Matrix<T>& data, std::shared_ptr<Function<T>> grad_fn)
+        Variable(const Tensor<T>& data, std::shared_ptr<Function<T>> grad_fn)
             : data_(data), requires_grad_(true), grad_fn_(grad_fn) {
-            grad_ = Matrix<T>::zeros(data.rows(), data.cols());
+            grad_ = Tensor<T>::zeros(data.rows(), data.cols());
+        }
+        
+        /**
+         * @brief Create a shared pointer to this variable
+         */
+        std::shared_ptr<Variable<T>> shared_from_this() {
+            return std::make_shared<Variable<T>>(*this);
         }
         
         // Getters
-        const Matrix<T>& data() const { return data_; }
-        Matrix<T>& data() { return data_; }
-        const Matrix<T>& grad() const { return grad_; }
-        Matrix<T>& grad() { return grad_; }
+        const Tensor<T>& data() const { return data_; }
+        Tensor<T>& data() { return data_; }
+        const Tensor<T>& grad() const { return grad_; }
+        Tensor<T>& grad() { return grad_; }
         bool requires_grad() const { return requires_grad_; }
         std::shared_ptr<Function<T>> grad_fn() const { return grad_fn_; }
         
@@ -89,14 +111,14 @@ namespace utils {
          * @brief Perform backward pass
          * @param gradient Optional gradient to start with
          */
-        void backward(const Matrix<T>& gradient = Matrix<T>());
+        void backward(const Tensor<T>& gradient = Tensor<T>());
         
         /**
          * @brief Zero the gradients
          */
         void zero_grad() {
             if (requires_grad_) {
-                grad_ = Matrix<T>::zeros(data_.rows(), data_.cols());
+                grad_ = Tensor<T>::zeros(data_.rows(), data_.cols());
             }
         }
         
@@ -132,12 +154,26 @@ namespace utils {
         size_t rows() const { return data_.rows(); }
         size_t cols() const { return data_.cols(); }
         
+        /**
+         * @brief Create a variable with gradient function and input references
+         */
+        static Variable<T> create_with_grad_fn(
+            const Tensor<T>& data,
+            std::shared_ptr<Function<T>> grad_fn,
+            const std::vector<std::shared_ptr<Variable<T>>>& inputs
+        ) {
+            Variable<T> result(data, grad_fn);
+            if (grad_fn) {
+                grad_fn->set_inputs(inputs);
+            }
+            return result;
+        }
+        
     private:
-        Matrix<T> data_;
-        Matrix<T> grad_;
+        Tensor<T> data_;
+        Tensor<T> grad_;
         bool requires_grad_;
         std::shared_ptr<Function<T>> grad_fn_;
-        std::vector<Variable<T>> inputs_; // For backward pass
     };
 
     // Specific function implementations
@@ -148,11 +184,11 @@ namespace utils {
     template<typename T>
     class AddFunction : public Function<T> {
     public:
-        Matrix<T> forward(const std::vector<Variable<T>>& inputs) override {
+        Tensor<T> forward(const std::vector<Variable<T>>& inputs) override {
             return inputs[0].data() + inputs[1].data();
         }
         
-        std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) override {
+        std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) override {
             return {grad_output, grad_output};
         }
     };
@@ -163,12 +199,12 @@ namespace utils {
     template<typename T>
     class SubFunction : public Function<T> {
     public:
-        Matrix<T> forward(const std::vector<Variable<T>>& inputs) override {
+        Tensor<T> forward(const std::vector<Variable<T>>& inputs) override {
             return inputs[0].data() - inputs[1].data();
         }
         
-        std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) override {
-            return {grad_output, grad_output * Matrix<T>(grad_output.rows(), grad_output.cols(), -1.0)};
+        std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) override {
+            return {grad_output, grad_output * Tensor<T>(grad_output.rows(), grad_output.cols(), -1.0)};
         }
     };
     
@@ -178,12 +214,12 @@ namespace utils {
     template<typename T>
     class MulFunction : public Function<T> {
     public:
-        Matrix<T> forward(const std::vector<Variable<T>>& inputs) override {
+        Tensor<T> forward(const std::vector<Variable<T>>& inputs) override {
             this->save_for_backward({inputs[0].data(), inputs[1].data()});
             return inputs[0].data() * inputs[1].data();
         }
         
-        std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) override {
+        std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) override {
             return {grad_output * this->saved_tensors_[1], grad_output * this->saved_tensors_[0]};
         }
     };
@@ -194,12 +230,12 @@ namespace utils {
     template<typename T>
     class DotFunction : public Function<T> {
     public:
-        Matrix<T> forward(const std::vector<Variable<T>>& inputs) override {
+        Tensor<T> forward(const std::vector<Variable<T>>& inputs) override {
             this->save_for_backward({inputs[0].data(), inputs[1].data()});
             return dot(inputs[0].data(), inputs[1].data());
         }
         
-        std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) override {
+        std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) override {
             return {
                 dot(grad_output, this->saved_tensors_[1].transpose()),
                 dot(this->saved_tensors_[0].transpose(), grad_output)
@@ -213,11 +249,11 @@ namespace utils {
     template<typename T>
     class TransposeFunction : public Function<T> {
     public:
-        Matrix<T> forward(const std::vector<Variable<T>>& inputs) override {
+        Tensor<T> forward(const std::vector<Variable<T>>& inputs) override {
             return inputs[0].data().transpose();
         }
         
-        std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) override {
+        std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) override {
             return {grad_output.transpose()};
         }
     };
@@ -228,8 +264,8 @@ namespace utils {
     template<typename T>
     class SigmoidFunction : public Function<T> {
     public:
-        Matrix<T> forward(const std::vector<Variable<T>>& inputs) override {
-            Matrix<T> result(inputs[0].rows(), inputs[0].cols());
+        Tensor<T> forward(const std::vector<Variable<T>>& inputs) override {
+            Tensor<T> result(inputs[0].rows(), inputs[0].cols());
             for (size_t i = 0; i < inputs[0].rows(); ++i) {
                 for (size_t j = 0; j < inputs[0].cols(); ++j) {
                     result(i, j) = 1.0 / (1.0 + std::exp(-inputs[0](i, j)));
@@ -239,9 +275,9 @@ namespace utils {
             return result;
         }
         
-        std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) override {
+        std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) override {
             const auto& sigmoid_output = this->saved_tensors_[0];
-            Matrix<T> grad_input(sigmoid_output.rows(), sigmoid_output.cols());
+            Tensor<T> grad_input(sigmoid_output.rows(), sigmoid_output.cols());
             for (size_t i = 0; i < sigmoid_output.rows(); ++i) {
                 for (size_t j = 0; j < sigmoid_output.cols(); ++j) {
                     grad_input(i, j) = grad_output(i, j) * sigmoid_output(i, j) * (1.0 - sigmoid_output(i, j));
@@ -257,15 +293,15 @@ namespace utils {
     template<typename T>
     class SumFunction : public Function<T> {
     public:
-        Matrix<T> forward(const std::vector<Variable<T>>& inputs) override {
+        Tensor<T> forward(const std::vector<Variable<T>>& inputs) override {
             this->save_for_backward({inputs[0].data()});
             T sum_val = sum(inputs[0].data());
-            return Matrix<T>(1, 1, sum_val);
+            return Tensor<T>(1, 1, sum_val);
         }
         
-        std::vector<Matrix<T>> backward(const Matrix<T>& grad_output) override {
+        std::vector<Tensor<T>> backward(const Tensor<T>& grad_output) override {
             const auto& input_shape = this->saved_tensors_[0];
-            return {Matrix<T>(input_shape.rows(), input_shape.cols(), grad_output(0, 0))};
+            return {Tensor<T>(input_shape.rows(), input_shape.cols(), grad_output(0, 0))};
         }
     };
 

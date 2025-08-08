@@ -12,8 +12,8 @@ namespace dl::layers {
     template<typename T>
     Linear<T>::Linear(size_t in_features, size_t out_features, bool bias)
         : in_features_(in_features), out_features_(out_features), has_bias_(bias),
-          weight_(Matrix<T>(out_features, in_features), true),
-          bias_(Matrix<T>(out_features, 1), true) {
+          weight_(Tensor<T>(out_features, in_features), true),
+          bias_(Tensor<T>(out_features, 1), true) {
         initialize_parameters();
     }
     

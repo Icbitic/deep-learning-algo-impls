@@ -17,7 +17,7 @@ namespace ml {
     }
 
     template<typename T>
-    void KMeans<T>::fit(const Matrix<T> &data) {
+    void KMeans<T>::fit(const Tensor<T> &data) {
         if (data.rows() < k_) {
             throw std::invalid_argument("Number of samples must be at least k");
         }
@@ -71,7 +71,7 @@ namespace ml {
     }
 
     template<typename T>
-    std::vector<int> KMeans<T>::predict(const Matrix<T> &data) const {
+    std::vector<int> KMeans<T>::predict(const Tensor<T> &data) const {
         if (!is_fitted_) {
             throw std::runtime_error("Model must be fitted before prediction");
         }
@@ -79,13 +79,13 @@ namespace ml {
     }
 
     template<typename T>
-    std::vector<int> KMeans<T>::fit_predict(const Matrix<T> &data) {
+    std::vector<int> KMeans<T>::fit_predict(const Tensor<T> &data) {
         fit(data);
         return predict(data);
     }
 
     template<typename T>
-    Matrix<T> KMeans<T>::cluster_centers() const {
+    Tensor<T> KMeans<T>::cluster_centers() const {
         if (!is_fitted_) {
             throw std::runtime_error("Model must be fitted before accessing cluster centers");
         }
@@ -106,11 +106,11 @@ namespace ml {
     }
 
     template<typename T>
-    void KMeans<T>::init_centroids(const Matrix<T> &data) {
+    void KMeans<T>::init_centroids(const Tensor<T> &data) {
         size_t n_samples = data.rows();
         size_t n_features = data.cols();
 
-        centroids_ = Matrix<T>(k_, n_features);
+        centroids_ = Tensor<T>(k_, n_features);
 
         // Use K-means++ initialization for better results
         std::mt19937 rng(random_state_ >= 0 ? random_state_ : std::random_device{}());
@@ -160,7 +160,7 @@ namespace ml {
     }
 
     template<typename T>
-    std::vector<int> KMeans<T>::assign_clusters(const Matrix<T> &data) const {
+    std::vector<int> KMeans<T>::assign_clusters(const Tensor<T> &data) const {
         size_t n_samples = data.rows();
         size_t n_features = data.cols();
         std::vector<int> labels(n_samples);
@@ -188,12 +188,12 @@ namespace ml {
     }
 
     template<typename T>
-    void KMeans<T>::update_centroids(const Matrix<T> &data, const std::vector<int> &labels) {
+    void KMeans<T>::update_centroids(const Tensor<T> &data, const std::vector<int> &labels) {
         size_t n_samples = data.rows();
         size_t n_features = data.cols();
 
         // Reset centroids
-        centroids_ = Matrix<T>::zeros(k_, n_features);
+        centroids_ = Tensor<T>::zeros(k_, n_features);
         std::vector<size_t> counts(k_, 0);
 
         // Sum points for each cluster

@@ -3,7 +3,7 @@
 #include <limits>
 #include <random>
 #include <vector>
-#include "../utils/matrix.hpp"
+#include "../utils/tensor.hpp"
 
 /**
  * @file kmeans.hpp
@@ -30,7 +30,7 @@ namespace ml {
      * KMeans<double> kmeans(3);
      *
      * // Fit K-Means to data
-     * Matrix<double> data = your_data_matrix;
+     * Tensor<double> data = your_data_tensor;
      * kmeans.fit(data);
      *
      * // Predict cluster labels for new data
@@ -55,7 +55,7 @@ namespace ml {
          *
          * @param data Input data matrix where rows are samples and columns are features
          */
-        void fit(const Matrix<T> &data);
+        void fit(const Tensor<T> &data);
 
         /**
          * @brief Predict cluster labels for the given data
@@ -63,7 +63,7 @@ namespace ml {
          * @param data Input data matrix
          * @return Vector of cluster labels (0 to k-1)
          */
-        std::vector<int> predict(const Matrix<T> &data) const;
+        std::vector<int> predict(const Tensor<T> &data) const;
 
         /**
          * @brief Fit the model and predict cluster labels
@@ -71,14 +71,14 @@ namespace ml {
          * @param data Input data matrix
          * @return Vector of cluster labels (0 to k-1)
          */
-        std::vector<int> fit_predict(const Matrix<T> &data);
+        std::vector<int> fit_predict(const Tensor<T> &data);
 
         /**
          * @brief Get the cluster centroids
          *
          * @return Matrix containing cluster centroids
          */
-        Matrix<T> cluster_centers() const;
+        Tensor<T> cluster_centers() const;
 
         /**
          * @brief Get the within-cluster sum of squares (inertia)
@@ -99,7 +99,7 @@ namespace ml {
         size_t max_iters_; ///< Maximum number of iterations
         T tol_; ///< Tolerance for convergence
         int random_state_; ///< Random seed
-        Matrix<T> centroids_; ///< Cluster centroids
+        Tensor<T> centroids_; ///< Cluster centroids
         T inertia_; ///< Within-cluster sum of squares
         size_t n_iter_; ///< Number of iterations performed
         bool is_fitted_; ///< Whether the model has been fitted
@@ -109,7 +109,7 @@ namespace ml {
          *
          * @param data Input data matrix
          */
-        void init_centroids(const Matrix<T> &data);
+        void init_centroids(const Tensor<T> &data);
 
         /**
          * @brief Assign each point to the nearest centroid
@@ -117,7 +117,7 @@ namespace ml {
          * @param data Input data matrix
          * @return Vector of cluster assignments
          */
-        std::vector<int> assign_clusters(const Matrix<T> &data) const;
+        std::vector<int> assign_clusters(const Tensor<T> &data) const;
 
         /**
          * @brief Update centroids based on current assignments
@@ -125,7 +125,7 @@ namespace ml {
          * @param data Input data matrix
          * @param labels Current cluster assignments
          */
-        void update_centroids(const Matrix<T> &data, const std::vector<int> &labels);
+        void update_centroids(const Tensor<T> &data, const std::vector<int> &labels);
 
         /**
          * @brief Calculate squared Euclidean distance between two points

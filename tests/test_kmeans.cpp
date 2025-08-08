@@ -2,7 +2,7 @@
 #include <set>
 #include <vector>
 #include "ml/kmeans.hpp"
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
 
 using namespace utils;
 using namespace ml;
@@ -14,7 +14,7 @@ protected:
         // Cluster 1: around (0, 0)
         // Cluster 2: around (5, 5)
         // Cluster 3: around (0, 5)
-        data_ = Matrix<double>({
+        data_ = Tensor<double>({
                 {0.0, 0.0},
                 {0.5, 0.2},
                 {-0.3, 0.1},
@@ -30,11 +30,11 @@ protected:
         });
 
         // Create a 1D dataset for edge case testing
-        simple_data_ = Matrix<double>({{1.0}, {1.1}, {1.2}, {5.0}, {5.1}, {5.2}});
+        simple_data_ = Tensor<double>({{1.0}, {1.1}, {1.2}, {5.0}, {5.1}, {5.2}});
     }
 
-    Matrix<double> data_;
-    Matrix<double> simple_data_;
+    Tensor<double> data_;
+    Tensor<double> simple_data_;
 };
 
 TEST_F(KMeansTest, ConstructorTest) {
@@ -53,7 +53,7 @@ TEST_F(KMeansTest, FitTest) {
     EXPECT_NO_THROW(kmeans.fit(data_));
 
     // Test that cluster centers are computed
-    Matrix<double> centers = kmeans.cluster_centers();
+    Tensor<double> centers = kmeans.cluster_centers();
     EXPECT_EQ(centers.rows(), 3);
     EXPECT_EQ(centers.cols(), 2);
 
@@ -62,7 +62,7 @@ TEST_F(KMeansTest, FitTest) {
     EXPECT_GE(inertia, 0.0);
 
     // Test error case: too few samples
-    Matrix<double> small_data({{1.0, 2.0}, {3.0, 4.0}});
+    Tensor<double> small_data({{1.0, 2.0}, {3.0, 4.0}});
     KMeans<double> kmeans_small(3);
     EXPECT_THROW(kmeans_small.fit(small_data), std::invalid_argument);
 }
@@ -111,7 +111,7 @@ TEST_F(KMeansTest, ClusterCentersTest) {
 
     // Fit and test
     kmeans.fit(simple_data_);
-    Matrix<double> centers = kmeans.cluster_centers();
+    Tensor<double> centers = kmeans.cluster_centers();
 
     EXPECT_EQ(centers.rows(), 2);
     EXPECT_EQ(centers.cols(), 1);
@@ -170,8 +170,8 @@ TEST_F(KMeansTest, ReproducibilityTest) {
     EXPECT_EQ(labels1, labels2);
 
     // Cluster centers should also be the same
-    Matrix<double> centers1 = kmeans1.cluster_centers();
-    Matrix<double> centers2 = kmeans2.cluster_centers();
+    Tensor<double> centers1 = kmeans1.cluster_centers();
+    Tensor<double> centers2 = kmeans2.cluster_centers();
 
     for (size_t i = 0; i < centers1.rows(); ++i) {
         for (size_t j = 0; j < centers1.cols(); ++j) {

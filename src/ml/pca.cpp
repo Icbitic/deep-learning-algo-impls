@@ -7,7 +7,7 @@
 namespace ml {
 
     template<typename T>
-    void PCA<T>::fit(const Matrix<T> &data, bool center, bool scale) {
+    void PCA<T>::fit(const Tensor<T> &data, bool center, bool scale) {
         if (data.rows() < 2 || data.cols() < 2) {
             throw std::invalid_argument("Data matrix must have at least 2 rows and 2 columns");
         }
@@ -18,7 +18,7 @@ namespace ml {
 
         // Center the data (subtract mean)
         mean_.resize(n_features);
-        Matrix<T> centered_data = data;
+        Tensor<T> centered_data = data;
 
         if (center) {
             // Compute mean for each feature
@@ -95,7 +95,7 @@ namespace ml {
         }
 
         // Create components matrix
-        components_ = Matrix<T>(n_features, n_features);
+        components_ = Tensor<T>(n_features, n_features);
 
         for (size_t i = 0; i < n_features; ++i) {
             // Compute singular values (sqrt of eigenvalues)
@@ -114,7 +114,7 @@ namespace ml {
     }
 
     template<typename T>
-    Matrix<T> PCA<T>::transform(const Matrix<T> &data, size_t n_components) const {
+    Tensor<T> PCA<T>::transform(const Tensor<T> &data, size_t n_components) const {
         if (!is_fitted_) {
             throw std::runtime_error("PCA model has not been fitted");
         }
@@ -132,7 +132,7 @@ namespace ml {
         }
 
         // Center and scale the data
-        Matrix<T> processed_data = data;
+        Tensor<T> processed_data = data;
 
         // Apply centering and scaling
         for (size_t i = 0; i < n_samples; ++i) {
@@ -143,7 +143,7 @@ namespace ml {
 
         // Project data onto principal components
         // X_transformed = X * V[:, :n_components]
-        Matrix<T> components_subset(n_features, n_components);
+        Tensor<T> components_subset(n_features, n_components);
         for (size_t i = 0; i < n_features; ++i) {
             for (size_t j = 0; j < n_components; ++j) {
                 components_subset(i, j) = components_(i, j);
@@ -154,7 +154,7 @@ namespace ml {
     }
 
     template<typename T>
-    Matrix<T> PCA<T>::fit_transform(const Matrix<T> &data, size_t n_components, bool center, bool scale) {
+    Tensor<T> PCA<T>::fit_transform(const Tensor<T> &data, size_t n_components, bool center, bool scale) {
         fit(data, center, scale);
         return transform(data, n_components);
     }
@@ -168,7 +168,7 @@ namespace ml {
     }
 
     template<typename T>
-    Matrix<T> PCA<T>::components() const {
+    Tensor<T> PCA<T>::components() const {
         if (!is_fitted_) {
             throw std::runtime_error("PCA model has not been fitted");
         }

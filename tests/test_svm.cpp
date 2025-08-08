@@ -1,9 +1,9 @@
+#include <chrono>
 #include <cmath>
 #include <gtest/gtest.h>
 #include <vector>
-#include <chrono>
 #include "ml/svm.hpp"
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
 
 using namespace utils;
 using namespace ml;
@@ -14,7 +14,7 @@ protected:
         // Create a simple linearly separable 2D dataset
         // Class 1: points around (1, 1)
         // Class -1: points around (-1, -1)
-        X_linear_ = Matrix<double>({
+        X_linear_ = Tensor<double>({
                 {1.0, 1.0},
                 {1.2, 0.8},
                 {0.8, 1.2},
@@ -27,7 +27,7 @@ protected:
         y_linear_ = {1, 1, 1, 1, -1, -1, -1, -1};
 
         // Create a non-linearly separable dataset (XOR-like)
-        X_nonlinear_ = Matrix<double>({
+        X_nonlinear_ = Tensor<double>({
                 {1.0, 1.0},
                 {-1.0, -1.0}, // Class 1
                 {1.0, -1.0},
@@ -36,11 +36,11 @@ protected:
         y_nonlinear_ = {1, 1, -1, -1};
 
         // Create a simple 1D dataset
-        X_1d_ = Matrix<double>({{2.0}, {3.0}, {4.0}, {-2.0}, {-3.0}, {-4.0}});
+        X_1d_ = Tensor<double>({{2.0}, {3.0}, {4.0}, {-2.0}, {-3.0}, {-4.0}});
         y_1d_ = {1, 1, 1, -1, -1, -1};
     }
 
-    Matrix<double> X_linear_, X_nonlinear_, X_1d_;
+    Tensor<double> X_linear_, X_nonlinear_, X_1d_;
     std::vector<int> y_linear_, y_nonlinear_, y_1d_;
 };
 
@@ -131,7 +131,7 @@ TEST_F(SVMTest, PredictProbaTest) {
     svm.fit(X_linear_, y_linear_);
 
     // Test probability prediction
-    Matrix<double> probabilities = svm.predict_proba(X_linear_);
+    Tensor<double> probabilities = svm.predict_proba(X_linear_);
     EXPECT_EQ(probabilities.rows(), X_linear_.rows());
 
     // Check that probabilities are in valid range [0, 1]
@@ -174,7 +174,7 @@ TEST_F(SVMTest, SupportVectorsTest) {
     svm.fit(X_linear_, y_linear_);
 
     // Test support vectors
-    Matrix<double> sv = svm.support_vectors();
+    Tensor<double> sv = svm.support_vectors();
     EXPECT_GT(sv.rows(), 0); // Should have at least one support vector
     EXPECT_EQ(sv.cols(), X_linear_.cols());
 
@@ -209,15 +209,15 @@ TEST_F(SVMTest, ErrorHandlingTest) {
 
     // Test prediction with wrong dimensions
     svm.fit(X_linear_, y_linear_);
-    Matrix<double> wrong_X({{1.0, 2.0, 3.0}}); // 3D instead of 2D
+    Tensor<double> wrong_X({{1.0, 2.0, 3.0}}); // 3D instead of 2D
     EXPECT_THROW(svm.predict(wrong_X), std::invalid_argument);
 }
 
 TEST_F(SVMTest, KernelFunctionTest) {
     SVM<double> svm;
 
-    Matrix<double> x1({{1.0, 2.0}});
-    Matrix<double> x2({{3.0, 4.0}});
+    Tensor<double> x1({{1.0, 2.0}});
+    Tensor<double> x2({{3.0, 4.0}});
 
     // Test linear kernel: should be dot product
     svm = SVM<double>(KernelType::LINEAR, 1.0);
@@ -233,7 +233,7 @@ TEST_F(SVMTest, KernelFunctionTest) {
 
 TEST_F(SVMTest, SmallDatasetTest) {
     // Test with very small dataset
-    Matrix<double> X_small({{1.0}, {-1.0}});
+    Tensor<double> X_small({{1.0}, {-1.0}});
     std::vector<int> y_small = {1, -1};
 
     SVM<double> svm(KernelType::LINEAR, 1.0);

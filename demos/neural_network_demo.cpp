@@ -6,10 +6,17 @@
 #include "neural_network/layers.hpp"
 #include "optimization/optimizers.hpp"
 #include "utils/autograd.hpp"
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
+
+/**
+ * @file neural_network_demo.cpp
+ * @brief Demonstration of PyTorch-like neural network with autograd
+ * @author Kalenitid
+ * @version 1.0.0
+ */
 
 // Type aliases for convenience
-using MatrixF = utils::Matrix<float>;
+using MatrixF = utils::Tensor<float>;
 using VariableF = utils::Variable<float>;
 using LinearF = dl::layers::Linear<float>;
 using ReLUF = dl::layers::ReLU<float>;
@@ -24,14 +31,6 @@ using AdamWF = dl::optimization::AdamW<float>;
 using RMSpropF = dl::optimization::RMSprop<float>;
 // Removed feedforward-specific aliases - using layers directly
 
-/**
- * @file neural_network_demo.cpp
- * @brief Demonstration of PyTorch-like neural network with autograd
- * @author Kalenitid
- * @version 1.0.0
- */
-
-using namespace dl;
 using namespace dl::layers;
 using namespace dl::loss;
 using namespace dl::optimization;

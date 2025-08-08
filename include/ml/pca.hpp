@@ -4,7 +4,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <vector>
-#include "../utils/matrix.hpp"
+#include "../utils/tensor.hpp"
 
 /**
  * @file pca.hpp
@@ -30,11 +30,11 @@ namespace ml {
      * PCA<double> pca;
      *
      * // Fit PCA to data
-     * Matrix<double> data = your_data_matrix;
+     * Tensor<double> data = your_data_tensor;
      * pca.fit(data);
      *
      * // Transform data to reduced dimensions
-     * Matrix<double> transformed = pca.transform(data, 2); // Reduce to 2 dimensions
+     * Tensor<double> transformed = pca.transform(data, 2); // Reduce to 2 dimensions
      * ```
      */
     template<typename T>
@@ -52,7 +52,7 @@ namespace ml {
          * @param center Whether to center the data before computing PCA
          * @param scale Whether to scale the data to unit variance before computing PCA
          */
-        void fit(const Matrix<T> &data, bool center = true, bool scale = false);
+        void fit(const Tensor<T> &data, bool center = true, bool scale = false);
 
         /**
          * @brief Transform data to the principal component space
@@ -61,7 +61,7 @@ namespace ml {
          * @param n_components Number of components to keep (if 0, keep all components)
          * @return Transformed data matrix
          */
-        Matrix<T> transform(const Matrix<T> &data, size_t n_components = 0) const;
+        Tensor<T> transform(const Tensor<T> &data, size_t n_components = 0) const;
 
         /**
          * @brief Fit the model and transform the data in one step
@@ -72,7 +72,7 @@ namespace ml {
          * @param scale Whether to scale the data to unit variance before computing PCA
          * @return Transformed data matrix
          */
-        Matrix<T> fit_transform(const Matrix<T> &data, size_t n_components = 0, bool center = true, bool scale = false);
+        Tensor<T> fit_transform(const Tensor<T> &data, size_t n_components = 0, bool center = true, bool scale = false);
 
         /**
          * @brief Get the explained variance ratio for each component
@@ -86,7 +86,7 @@ namespace ml {
          *
          * @return Matrix where each column is a principal component
          */
-        Matrix<T> components() const;
+        Tensor<T> components() const;
 
         /**
          * @brief Get the singular values (square roots of eigenvalues)
@@ -96,7 +96,7 @@ namespace ml {
         std::vector<T> singular_values() const;
 
     private:
-        Matrix<T> components_; ///< Principal components (eigenvectors)
+        Tensor<T> components_; ///< Principal components (eigenvectors)
         std::vector<T> singular_values_; ///< Singular values
         std::vector<T> explained_variance_; ///< Explained variance for each component
         std::vector<T> explained_variance_ratio_; ///< Explained variance ratio for each component

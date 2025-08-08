@@ -1,10 +1,10 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <vector>
-#include <functional>
 #include "utils/autograd.hpp"
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
 
 /**
  * @file layers.hpp
@@ -17,9 +17,9 @@ namespace dl::layers {
     using utils::Variable;
     using utils::VariableD;
     using utils::VariableF;
-    using utils::Matrix;
-    using utils::MatrixD;
-    using utils::MatrixF;
+    using utils::Tensor;
+    using utils::TensorD;
+    using utils::TensorF;
 
     /**
      * @brief Base class for all neural network modules (PyTorch-like nn.Module)

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 #include "utils/autograd.hpp"
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
 
 /**
  * @file optimizers.hpp
@@ -17,9 +17,9 @@ namespace dl::optimization {
     using utils::Variable;
     using utils::VariableD;
     using utils::VariableF;
-    using utils::Matrix;
-    using utils::MatrixD;
-    using utils::MatrixF;
+    using utils::Tensor;
+    using utils::TensorD;
+    using utils::TensorF;
 
     /**
      * @brief Base class for autograd-compatible optimizers
@@ -114,7 +114,7 @@ namespace dl::optimization {
         bool nesterov_;
         
         // Momentum buffers for each parameter
-        std::vector<Matrix<T>> momentum_buffers_;
+        std::vector<Tensor<T>> momentum_buffers_;
         
         void initialize_momentum_buffers();
     };
@@ -169,8 +169,8 @@ namespace dl::optimization {
         T weight_decay_;
         
         // State for each parameter
-        std::vector<Matrix<T>> exp_avg_;        // First moment estimate
-        std::vector<Matrix<T>> exp_avg_sq_;     // Second moment estimate
+        std::vector<Tensor<T>> exp_avg_;        // First moment estimate
+        std::vector<Tensor<T>> exp_avg_sq_;     // Second moment estimate
         size_t step_count_;
         
         void initialize_state();
@@ -226,8 +226,8 @@ namespace dl::optimization {
         T weight_decay_;
         
         // State for each parameter
-        std::vector<Matrix<T>> exp_avg_;        // First moment estimate
-        std::vector<Matrix<T>> exp_avg_sq_;     // Second moment estimate
+        std::vector<Tensor<T>> exp_avg_;        // First moment estimate
+        std::vector<Tensor<T>> exp_avg_sq_;     // Second moment estimate
         size_t step_count_;
         
         void initialize_state();
@@ -282,8 +282,8 @@ namespace dl::optimization {
         T momentum_;
         
         // State for each parameter
-        std::vector<Matrix<T>> square_avg_;     // Moving average of squared gradients
-        std::vector<Matrix<T>> momentum_buffer_; // Momentum buffer (if momentum > 0)
+        std::vector<Tensor<T>> square_avg_;     // Moving average of squared gradients
+        std::vector<Tensor<T>> momentum_buffer_; // Momentum buffer (if momentum > 0)
         
         void initialize_state();
     };

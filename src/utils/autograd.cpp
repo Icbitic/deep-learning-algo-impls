@@ -1,4 +1,4 @@
-#include "utils/autograd.hpp"
+#include "../../include/utils/autograd.hpp"
 #include <algorithm>
 #include <cmath>
 #include <queue>
@@ -7,16 +7,16 @@
 namespace utils {
 
     template<typename T>
-    void Variable<T>::backward(const Matrix<T>& gradient) {
+    void Variable<T>::backward(const Tensor<T>& gradient) {
         if (!requires_grad_) {
             return;
         }
         
         // Initialize gradient if not provided
-        Matrix<T> grad = gradient;
+        Tensor<T> grad = gradient;
         if (gradient.rows() == 0 || gradient.cols() == 0) {
             // Scalar case - gradient is 1
-            grad = Matrix<T>::ones(data_.rows(), data_.cols());
+            grad = Tensor<T>::ones(data_.rows(), data_.cols());
         }
         
         // Accumulate gradient
@@ -25,20 +25,26 @@ namespace utils {
         // If this variable has a gradient function, propagate backwards
         if (grad_fn_) {
             auto input_grads = grad_fn_->backward(grad);
+            const auto& input_vars = grad_fn_->get_inputs();
             
-            // Propagate to inputs (this would require storing input variables)
-            // For now, this is a simplified implementation
-            // In a full implementation, we'd need to store the computational graph
+            // Propagate gradients to input variables
+            for (size_t i = 0; i < input_grads.size() && i < input_vars.size(); ++i) {
+                if (input_vars[i] && input_vars[i]->requires_grad()) {
+                    input_vars[i]->backward(input_grads[i]);
+                }
+            }
         }
     }
     
     template<typename T>
     Variable<T> Variable<T>::operator+(const Variable<T>& other) const {
         auto add_fn = std::make_shared<AddFunction<T>>();
-        Matrix<T> result = add_fn->forward({*this, other});
+        Tensor<T> result = add_fn->forward({*this, other});
         
         if (requires_grad_ || other.requires_grad_) {
-            return Variable<T>(result, add_fn);
+            auto self_ptr = std::make_shared<Variable<T>>(*this);
+            auto other_ptr = std::make_shared<Variable<T>>(other);
+            return Variable<T>::create_with_grad_fn(result, add_fn, {self_ptr, other_ptr});
         }
         return Variable<T>(result, false);
     }
@@ -46,10 +52,12 @@ namespace utils {
     template<typename T>
     Variable<T> Variable<T>::operator-(const Variable<T>& other) const {
         auto sub_fn = std::make_shared<SubFunction<T>>();
-        Matrix<T> result = sub_fn->forward({*this, other});
+        Tensor<T> result = sub_fn->forward({*this, other});
         
         if (requires_grad_ || other.requires_grad_) {
-            return Variable<T>(result, sub_fn);
+            auto self_ptr = std::make_shared<Variable<T>>(*this);
+            auto other_ptr = std::make_shared<Variable<T>>(other);
+            return Variable<T>::create_with_grad_fn(result, sub_fn, {self_ptr, other_ptr});
         }
         return Variable<T>(result, false);
     }
@@ -57,10 +65,12 @@ namespace utils {
     template<typename T>
     Variable<T> Variable<T>::operator*(const Variable<T>& other) const {
         auto mul_fn = std::make_shared<MulFunction<T>>();
-        Matrix<T> result = mul_fn->forward({*this, other});
+        Tensor<T> result = mul_fn->forward({*this, other});
         
         if (requires_grad_ || other.requires_grad_) {
-            return Variable<T>(result, mul_fn);
+            auto self_ptr = std::make_shared<Variable<T>>(*this);
+            auto other_ptr = std::make_shared<Variable<T>>(other);
+            return Variable<T>::create_with_grad_fn(result, mul_fn, {self_ptr, other_ptr});
         }
         return Variable<T>(result, false);
     }
@@ -68,10 +78,12 @@ namespace utils {
     template<typename T>
     Variable<T> Variable<T>::dot(const Variable<T>& other) const {
         auto dot_fn = std::make_shared<DotFunction<T>>();
-        Matrix<T> result = dot_fn->forward({*this, other});
+        Tensor<T> result = dot_fn->forward({*this, other});
         
         if (requires_grad_ || other.requires_grad_) {
-            return Variable<T>(result, dot_fn);
+            auto self_ptr = std::make_shared<Variable<T>>(*this);
+            auto other_ptr = std::make_shared<Variable<T>>(other);
+            return Variable<T>::create_with_grad_fn(result, dot_fn, {self_ptr, other_ptr});
         }
         return Variable<T>(result, false);
     }
@@ -79,10 +91,11 @@ namespace utils {
     template<typename T>
     Variable<T> Variable<T>::transpose() const {
         auto transpose_fn = std::make_shared<TransposeFunction<T>>();
-        Matrix<T> result = transpose_fn->forward({*this});
+        Tensor<T> result = transpose_fn->forward({*this});
         
         if (requires_grad_) {
-            return Variable<T>(result, transpose_fn);
+            auto self_ptr = std::make_shared<Variable<T>>(*this);
+            return Variable<T>::create_with_grad_fn(result, transpose_fn, {self_ptr});
         }
         return Variable<T>(result, false);
     }
@@ -90,10 +103,11 @@ namespace utils {
     template<typename T>
     Variable<T> Variable<T>::sum() const {
         auto sum_fn = std::make_shared<SumFunction<T>>();
-        Matrix<T> result = sum_fn->forward({*this});
+        Tensor<T> result = sum_fn->forward({*this});
         
         if (requires_grad_) {
-            return Variable<T>(result, sum_fn);
+            auto self_ptr = std::make_shared<Variable<T>>(*this);
+            return Variable<T>::create_with_grad_fn(result, sum_fn, {self_ptr});
         }
         return Variable<T>(result, false);
     }
@@ -102,20 +116,21 @@ namespace utils {
     Variable<T> Variable<T>::mean() const {
         auto sum_result = sum();
         T count = static_cast<T>(data_.rows() * data_.cols());
-        Matrix<T> count_matrix(1, 1, count);
+        Tensor<T> count_matrix(1, 1, count);
         Variable<T> count_var(count_matrix, false);
         
         // mean = sum / count
-        return sum_result * Variable<T>(Matrix<T>(1, 1, 1.0 / count), false);
+        return sum_result * Variable<T>(Tensor<T>(1, 1, 1.0 / count), false);
     }
     
     template<typename T>
     Variable<T> Variable<T>::sigmoid() const {
         auto sigmoid_fn = std::make_shared<SigmoidFunction<T>>();
-        Matrix<T> result = sigmoid_fn->forward({*this});
+        Tensor<T> result = sigmoid_fn->forward({*this});
         
         if (requires_grad_) {
-            return Variable<T>(result, sigmoid_fn);
+            auto self_ptr = std::make_shared<Variable<T>>(*this);
+            return Variable<T>::create_with_grad_fn(result, sigmoid_fn, {self_ptr});
         }
         return Variable<T>(result, false);
     }
@@ -123,7 +138,7 @@ namespace utils {
     template<typename T>
     Variable<T> Variable<T>::tanh() const {
         // tanh(x) = (exp(2x) - 1) / (exp(2x) + 1)
-        Matrix<T> result(data_.rows(), data_.cols());
+        Tensor<T> result(data_.rows(), data_.cols());
         for (size_t i = 0; i < data_.rows(); ++i) {
             for (size_t j = 0; j < data_.cols(); ++j) {
                 result(i, j) = std::tanh(data_(i, j));
@@ -134,7 +149,7 @@ namespace utils {
     
     template<typename T>
     Variable<T> Variable<T>::relu() const {
-        Matrix<T> result(data_.rows(), data_.cols());
+        Tensor<T> result(data_.rows(), data_.cols());
         for (size_t i = 0; i < data_.rows(); ++i) {
             for (size_t j = 0; j < data_.cols(); ++j) {
                 result(i, j) = std::max(static_cast<T>(0), data_(i, j));
@@ -145,7 +160,7 @@ namespace utils {
     
     template<typename T>
     Variable<T> Variable<T>::exp() const {
-        Matrix<T> result(data_.rows(), data_.cols());
+        Tensor<T> result(data_.rows(), data_.cols());
         for (size_t i = 0; i < data_.rows(); ++i) {
             for (size_t j = 0; j < data_.cols(); ++j) {
                 result(i, j) = std::exp(data_(i, j));
@@ -156,7 +171,7 @@ namespace utils {
     
     template<typename T>
     Variable<T> Variable<T>::log() const {
-        Matrix<T> result(data_.rows(), data_.cols());
+        Tensor<T> result(data_.rows(), data_.cols());
         for (size_t i = 0; i < data_.rows(); ++i) {
             for (size_t j = 0; j < data_.cols(); ++j) {
                 result(i, j) = std::log(data_(i, j));

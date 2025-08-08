@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <vector>
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
 
 /**
  * @file functions.hpp

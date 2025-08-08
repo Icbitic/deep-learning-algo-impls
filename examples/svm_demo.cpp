@@ -14,7 +14,7 @@
 #include <chrono>
 #include <iomanip>
 #include "ml/svm.hpp"
-#include "utils/matrix.hpp"
+#include "utils/tensor.hpp"
 #include "utils/autograd.hpp"
 
 using namespace utils;
@@ -32,8 +32,8 @@ void demonstrate_autograd_basics() {
     std::cout << "\n1. Creating Variables with autograd tracking:" << std::endl;
     
     // Create matrices
-    Matrix<double> data1({{1.0, 2.0}, {3.0, 4.0}});
-    Matrix<double> data2({{0.5, 1.5}, {2.5, 3.5}});
+    Tensor<double> data1({{1.0, 2.0}, {3.0, 4.0}});
+    Tensor<double> data2({{0.5, 1.5}, {2.5, 3.5}});
     
     // Create Variables (PyTorch-like tensors with autograd)
     Variable<double> var1(data1, true);  // requires_grad = true
@@ -74,7 +74,7 @@ void compare_svm_implementations() {
     print_separator("SVM IMPLEMENTATION COMPARISON");
     
     // Create a linearly separable dataset
-    Matrix<double> X({
+    Tensor<double> X({
         {2.0, 3.0}, {3.0, 3.0}, {1.0, 2.0}, {2.0, 1.0},  // Class +1
         {-2.0, -1.0}, {-1.0, -2.0}, {-3.0, -2.0}, {-2.0, -3.0}  // Class -1
     });
@@ -147,7 +147,7 @@ void demonstrate_kernel_autograd() {
     print_separator("KERNEL METHODS WITH AUTOGRAD");
     
     // Create a non-linearly separable dataset (XOR-like)
-    Matrix<double> X_nonlinear({
+    Tensor<double> X_nonlinear({
         {1.0, 1.0}, {-1.0, -1.0},    // Class +1
         {1.0, -1.0}, {-1.0, 1.0}     // Class -1
     });

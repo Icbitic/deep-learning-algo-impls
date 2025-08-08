@@ -1,10 +1,10 @@
+#include <chrono>
 #include <cmath>
 #include <gtest/gtest.h>
 #include <vector>
-#include <chrono>
 #include "ml/svm.hpp"
-#include "utils/matrix.hpp"
 #include "utils/autograd.hpp"
+#include "utils/tensor.hpp"
 
 using namespace utils;
 using namespace ml;
@@ -15,7 +15,7 @@ protected:
         // Create a simple linearly separable 2D dataset
         // Class 1: points around (1, 1)
         // Class -1: points around (-1, -1)
-        X_linear_ = Matrix<double>({
+        X_linear_ = Tensor<double>({
                 {1.0, 1.0},
                 {1.2, 0.8},
                 {0.8, 1.2},
@@ -28,7 +28,7 @@ protected:
         y_linear_ = {1, 1, 1, 1, -1, -1, -1, -1};
 
         // Create a non-linearly separable dataset (XOR-like)
-        X_nonlinear_ = Matrix<double>({
+        X_nonlinear_ = Tensor<double>({
                 {1.0, 1.0},
                 {-1.0, -1.0}, // Class 1
                 {1.0, -1.0},
@@ -37,18 +37,18 @@ protected:
         y_nonlinear_ = {1, 1, -1, -1};
 
         // Create a simple 1D dataset
-        X_1d_ = Matrix<double>({{2.0}, {3.0}, {4.0}, {-2.0}, {-3.0}, {-4.0}});
+        X_1d_ = Tensor<double>({{2.0}, {3.0}, {4.0}, {-2.0}, {-3.0}, {-4.0}});
         y_1d_ = {1, 1, 1, -1, -1, -1};
     }
 
-    Matrix<double> X_linear_, X_nonlinear_, X_1d_;
+    Tensor<double> X_linear_, X_nonlinear_, X_1d_;
     std::vector<int> y_linear_, y_nonlinear_, y_1d_;
 };
 
 TEST_F(SVMAutogradTest, AutogradBasicTest) {
     // Test basic autograd functionality
-    Matrix<double> data1({{1.0, 2.0}, {3.0, 4.0}});
-    Matrix<double> data2({{0.5, 1.5}, {2.5, 3.5}});
+    Tensor<double> data1({{1.0, 2.0}, {3.0, 4.0}});
+    Tensor<double> data2({{0.5, 1.5}, {2.5, 3.5}});
     
     Variable<double> var1(data1, true);
     Variable<double> var2(data2, true);
@@ -127,7 +127,7 @@ TEST_F(SVMAutogradTest, PredictProbaTest) {
     SVM<double> svm(KernelType::LINEAR, 1.0, 1.0, 3, 0.0, 1e-3, 100, 0.01);
     svm.fit(X_linear_, y_linear_);
 
-    Matrix<double> probabilities = svm.predict_proba(X_linear_);
+    Tensor<double> probabilities = svm.predict_proba(X_linear_);
     EXPECT_EQ(probabilities.rows(), X_linear_.rows());
     EXPECT_EQ(probabilities.cols(), 2);
 
@@ -205,7 +205,7 @@ TEST_F(SVMAutogradTest, ComparisonWithOriginalSVMTest) {
 
 TEST_F(SVMAutogradTest, GradientComputationTest) {
     // Test that gradients are computed correctly
-    Matrix<double> simple_data({{1.0}, {-1.0}});
+    Tensor<double> simple_data({{1.0}, {-1.0}});
     std::vector<int> simple_labels = {1, -1};
     
     SVM<double> svm(KernelType::LINEAR, 1.0, 1.0, 3, 0.0, 1e-6, 50, 0.1);
@@ -239,7 +239,7 @@ TEST_F(SVMAutogradTest, ErrorHandlingTest) {
     EXPECT_THROW(svm.decision_function(X_linear_), std::runtime_error);
     
     // Test mismatched dimensions
-    Matrix<double> X_wrong(3, 2);
+    Tensor<double> X_wrong(3, 2);
     std::vector<int> y_wrong = {1, -1}; // Wrong size
     EXPECT_THROW(svm.fit(X_wrong, y_wrong), std::invalid_argument);
     

@@ -67,7 +67,7 @@ namespace dl::loss {
         
         Variable<T> log_probs = log_softmax(predictions);
         Variable<T> nll = targets * log_probs;
-        Variable<T> loss = nll * Variable<T>(Matrix<T>(1, 1, -1.0), false); // Negate
+        Variable<T> loss = nll * Variable<T>(Tensor<T>(1, 1, -1.0), false); // Negate
         
         if (reduction_ == "mean") {
             return loss.mean();
@@ -93,8 +93,8 @@ namespace dl::loss {
         
         // Add small epsilon for numerical stability
         T eps = 1e-7;
-        Variable<T> eps_var(Matrix<T>(1, 1, eps), false);
-        Variable<T> one_var(Matrix<T>(1, 1, 1.0), false);
+        Variable<T> eps_var(Tensor<T>(1, 1, eps), false);
+        Variable<T> one_var(Tensor<T>(1, 1, 1.0), false);
         
         // Clamp predictions to avoid log(0)
         // TODO: Implement proper clamping
@@ -102,7 +102,7 @@ namespace dl::loss {
         Variable<T> log_one_minus_pred = (one_var - predictions).log();
         
         Variable<T> loss = targets * log_pred + (one_var - targets) * log_one_minus_pred;
-        loss = loss * Variable<T>(Matrix<T>(1, 1, -1.0), false); // Negate
+        loss = loss * Variable<T>(Tensor<T>(1, 1, -1.0), false); // Negate
         
         if (reduction_ == "mean") {
             return loss.mean();
@@ -142,7 +142,7 @@ namespace dl::loss {
         // 2. Apply max(0, margin) - this requires implementing max operation
         // 3. Apply reduction
         
-        Variable<T> one_var(Matrix<T>(1, 1, 1.0), false);
+        Variable<T> one_var(Tensor<T>(1, 1, 1.0), false);
         Variable<T> margin = one_var - targets * predictions;
         
         // TODO: Implement max(0, margin) operation
@@ -180,7 +180,7 @@ namespace dl::loss {
         
         // Placeholder: Use MSE for now
         Variable<T> squared_diff = diff * diff;
-        Variable<T> half_var(Matrix<T>(1, 1, 0.5), false);
+        Variable<T> half_var(Tensor<T>(1, 1, 0.5), false);
         Variable<T> loss = half_var * squared_diff;
         
         if (reduction_ == "mean") {
