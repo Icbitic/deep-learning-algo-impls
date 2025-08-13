@@ -5,11 +5,11 @@
 #include <xtensor-blas/xlinalg.hpp>
 
 namespace ml {
-
     template<typename T>
     void PCA<T>::fit(const Tensor<T> &data, bool center, bool scale) {
         if (data.rows() < 2 || data.cols() < 2) {
-            throw std::invalid_argument("Data matrix must have at least 2 rows and 2 columns");
+            throw std::invalid_argument(
+                "Data matrix must have at least 2 rows and 2 columns");
         }
 
         // Get data dimensions
@@ -70,7 +70,8 @@ namespace ml {
         auto X = centered_data.data(); // Get xtensor array from Matrix
 
         // Compute covariance matrix (X^T * X) / (n_samples - 1)
-        auto cov = xt::linalg::dot(xt::transpose(X), X) / static_cast<T>(n_samples - 1);
+        auto cov = xt::linalg::dot(xt::transpose(X), X) / static_cast<T>(
+                       n_samples - 1);
 
         // Compute eigendecomposition
         auto eigen_result = xt::linalg::eigh(cov);
@@ -81,7 +82,9 @@ namespace ml {
         std::vector<size_t> indices(eigenvalues.size());
         std::iota(indices.begin(), indices.end(), 0);
         std::sort(indices.begin(), indices.end(),
-                  [&eigenvalues](size_t i1, size_t i2) { return eigenvalues(i1) > eigenvalues(i2); });
+                  [&eigenvalues](size_t i1, size_t i2) {
+                      return eigenvalues(i1) > eigenvalues(i2);
+                  });
 
         // Reorder eigenvalues and eigenvectors
         singular_values_.resize(n_features);
@@ -95,7 +98,7 @@ namespace ml {
         }
 
         // Create components matrix
-        components_ = Tensor<T>(n_features, n_features);
+        components_ = Tensor<T>::zeros({n_features, n_features});
 
         for (size_t i = 0; i < n_features; ++i) {
             // Compute singular values (sqrt of eigenvalues)
@@ -143,18 +146,19 @@ namespace ml {
 
         // Project data onto principal components
         // X_transformed = X * V[:, :n_components]
-        Tensor<T> components_subset(n_features, n_components);
+        Tensor<T> components_subset = Tensor<T>::zeros({n_features, n_components});
         for (size_t i = 0; i < n_features; ++i) {
             for (size_t j = 0; j < n_components; ++j) {
                 components_subset(i, j) = components_(i, j);
             }
         }
 
-        return processed_data * components_subset;
+        return processed_data.matmul(components_subset);
     }
 
     template<typename T>
-    Tensor<T> PCA<T>::fit_transform(const Tensor<T> &data, size_t n_components, bool center, bool scale) {
+    Tensor<T> PCA<T>::fit_transform(const Tensor<T> &data, size_t n_components,
+                                    bool center, bool scale) {
         fit(data, center, scale);
         return transform(data, n_components);
     }
@@ -186,5 +190,4 @@ namespace ml {
     // Explicit template instantiations
     template class PCA<float>;
     template class PCA<double>;
-
 } // namespace ml

@@ -13,12 +13,12 @@
  */
 
 namespace dl::loss {
-    using utils::Variable;
-    using utils::VariableD;
-    using utils::VariableF;
     using utils::Tensor;
     using utils::TensorD;
     using utils::TensorF;
+    using utils::Variable;
+    using utils::VariableD;
+    using utils::VariableF;
 
     /**
      * @brief Base class for autograd-compatible loss functions
@@ -27,28 +27,30 @@ namespace dl::loss {
     class AutogradLoss {
     public:
         virtual ~AutogradLoss() = default;
-        
+
         /**
          * @brief Compute loss between predictions and targets
          * @param predictions Model predictions
          * @param targets Ground truth targets
          * @return Loss value as a Variable (scalar)
          */
-        virtual Variable<T> forward(const Variable<T>& predictions, const Variable<T>& targets) = 0;
-        
+        virtual std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
+                                    const std::shared_ptr<Variable<T>> &targets) = 0;
+
         /**
          * @brief Convenience operator for computing loss
          */
-        Variable<T> operator()(const Variable<T>& predictions, const Variable<T>& targets) {
+        std::shared_ptr<Variable<T>> operator()(const std::shared_ptr<Variable<T>> &predictions,
+                               const std::shared_ptr<Variable<T>> &targets) {
             return forward(predictions, targets);
         }
     };
 
     /**
      * @brief Mean Squared Error Loss with autograd support
-     * 
+     *
      * MSE(y_pred, y_true) = (1/n) * sum((y_pred - y_true)²)
-     * 
+     *
      * Commonly used for regression tasks.
      */
     template<typename T>
@@ -58,25 +60,28 @@ namespace dl::loss {
          * @brief Constructor
          * @param reduction Type of reduction ('mean', 'sum', 'none')
          */
-        explicit MSELoss(const std::string& reduction = "mean") : reduction_(reduction) {}
-        
+        explicit MSELoss(const std::string &reduction = "mean") : reduction_(
+            reduction) {
+        }
+
         /**
          * @brief Forward pass: compute MSE loss
          * @param predictions Predicted values
          * @param targets Target values
          * @return MSE loss
          */
-        Variable<T> forward(const Variable<T>& predictions, const Variable<T>& targets) override;
-        
+        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
+                            const std::shared_ptr<Variable<T>> &targets) override;
+
     private:
         std::string reduction_;
     };
 
     /**
      * @brief Cross Entropy Loss with autograd support
-     * 
+     *
      * CrossEntropy(y_pred, y_true) = -sum(y_true * log(softmax(y_pred)))
-     * 
+     *
      * Commonly used for multi-class classification.
      */
     template<typename T>
@@ -86,35 +91,38 @@ namespace dl::loss {
          * @brief Constructor
          * @param reduction Type of reduction ('mean', 'sum', 'none')
          */
-        explicit CrossEntropyLoss(const std::string& reduction = "mean") : reduction_(reduction) {}
-        
+        explicit CrossEntropyLoss(const std::string &reduction = "mean") : reduction_(
+            reduction) {
+        }
+
         /**
          * @brief Forward pass: compute cross entropy loss
          * @param predictions Raw logits (before softmax)
          * @param targets Target class indices or one-hot vectors
          * @return Cross entropy loss
          */
-        Variable<T> forward(const Variable<T>& predictions, const Variable<T>& targets) override;
-        
+        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
+                            const std::shared_ptr<Variable<T>> &targets) override;
+
     private:
         std::string reduction_;
-        
+
         /**
          * @brief Apply softmax to logits
          */
-        Variable<T> softmax(const Variable<T>& logits);
-        
+        std::shared_ptr<Variable<T>> softmax(const std::shared_ptr<Variable<T>> &logits);
+
         /**
          * @brief Apply log softmax (numerically stable)
          */
-        Variable<T> log_softmax(const Variable<T>& logits);
+        std::shared_ptr<Variable<T>> log_softmax(const std::shared_ptr<Variable<T>> &logits);
     };
 
     /**
      * @brief Binary Cross Entropy Loss with autograd support
-     * 
+     *
      * BCE(y_pred, y_true) = -[y_true * log(y_pred) + (1 - y_true) * log(1 - y_pred)]
-     * 
+     *
      * Commonly used for binary classification.
      */
     template<typename T>
@@ -124,23 +132,26 @@ namespace dl::loss {
          * @brief Constructor
          * @param reduction Type of reduction ('mean', 'sum', 'none')
          */
-        explicit BCELoss(const std::string& reduction = "mean") : reduction_(reduction) {}
-        
+        explicit BCELoss(const std::string &reduction = "mean") : reduction_(
+            reduction) {
+        }
+
         /**
          * @brief Forward pass: compute binary cross entropy loss
          * @param predictions Predicted probabilities (after sigmoid)
          * @param targets Binary target values (0 or 1)
          * @return BCE loss
          */
-        Variable<T> forward(const Variable<T>& predictions, const Variable<T>& targets) override;
-        
+        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
+                            const std::shared_ptr<Variable<T>> &targets) override;
+
     private:
         std::string reduction_;
     };
 
     /**
      * @brief Binary Cross Entropy with Logits Loss
-     * 
+     *
      * Combines sigmoid and BCE for numerical stability.
      * More stable than applying sigmoid then BCE separately.
      */
@@ -151,25 +162,29 @@ namespace dl::loss {
          * @brief Constructor
          * @param reduction Type of reduction ('mean', 'sum', 'none')
          */
-        explicit BCEWithLogitsLoss(const std::string& reduction = "mean") : reduction_(reduction) {}
-        
+        explicit
+        BCEWithLogitsLoss(const std::string &reduction = "mean") : reduction_(
+            reduction) {
+        }
+
         /**
          * @brief Forward pass: compute BCE loss from logits
          * @param predictions Raw logits (before sigmoid)
          * @param targets Binary target values (0 or 1)
          * @return BCE loss
          */
-        Variable<T> forward(const Variable<T>& predictions, const Variable<T>& targets) override;
-        
+        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
+                            const std::shared_ptr<Variable<T>> &targets) override;
+
     private:
         std::string reduction_;
     };
 
     /**
      * @brief Hinge Loss with autograd support
-     * 
+     *
      * Hinge(y_pred, y_true) = max(0, 1 - y_true * y_pred)
-     * 
+     *
      * Commonly used for SVM and margin-based classification.
      */
     template<typename T>
@@ -179,25 +194,28 @@ namespace dl::loss {
          * @brief Constructor
          * @param reduction Type of reduction ('mean', 'sum', 'none')
          */
-        explicit HingeLoss(const std::string& reduction = "mean") : reduction_(reduction) {}
-        
+        explicit HingeLoss(const std::string &reduction = "mean") : reduction_(
+            reduction) {
+        }
+
         /**
          * @brief Forward pass: compute hinge loss
          * @param predictions Predicted values
          * @param targets Target values (-1 or +1)
          * @return Hinge loss
          */
-        Variable<T> forward(const Variable<T>& predictions, const Variable<T>& targets) override;
-        
+        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
+                            const std::shared_ptr<Variable<T>> &targets) override;
+
     private:
         std::string reduction_;
     };
 
     /**
      * @brief Huber Loss with autograd support
-     * 
+     *
      * Combines MSE and MAE for robustness to outliers.
-     * 
+     *
      * Huber(y_pred, y_true) = {
      *   0.5 * (y_pred - y_true)²     if |y_pred - y_true| <= delta
      *   delta * |y_pred - y_true| - 0.5 * delta²   otherwise
@@ -211,17 +229,21 @@ namespace dl::loss {
          * @param delta Threshold for switching between MSE and MAE
          * @param reduction Type of reduction ('mean', 'sum', 'none')
          */
-        explicit HuberLoss(T delta = 1.0, const std::string& reduction = "mean") 
-            : delta_(delta), reduction_(reduction) {}
-        
+        explicit
+        HuberLoss(T delta = 1.0,
+                  const std::string &reduction = "mean") : delta_(delta),
+                                                           reduction_(reduction) {
+        }
+
         /**
          * @brief Forward pass: compute Huber loss
          * @param predictions Predicted values
          * @param targets Target values
          * @return Huber loss
          */
-        Variable<T> forward(const Variable<T>& predictions, const Variable<T>& targets) override;
-        
+        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
+                            const std::shared_ptr<Variable<T>> &targets) override;
+
     private:
         T delta_;
         std::string reduction_;
@@ -240,5 +262,4 @@ namespace dl::loss {
     using HingeLossF = HingeLoss<float>;
     using HuberLossD = HuberLoss<double>;
     using HuberLossF = HuberLoss<float>;
-
 } // namespace dl::loss

@@ -15,22 +15,22 @@ protected:
         // Cluster 2: around (5, 5)
         // Cluster 3: around (0, 5)
         data_ = Tensor<double>({
-                {0.0, 0.0},
-                {0.5, 0.2},
-                {-0.3, 0.1},
-                {0.1, -0.4}, // Cluster 1
-                {5.0, 5.0},
-                {5.2, 4.8},
-                {4.9, 5.3},
-                {5.1, 4.7}, // Cluster 2
-                {0.0, 5.0},
-                {0.3, 4.8},
-                {-0.2, 5.2},
-                {0.1, 4.9} // Cluster 3
-        });
+            0.0, 0.0,
+            0.5, 0.2,
+            -0.3, 0.1,
+            0.1, -0.4, // Cluster 1
+            5.0, 5.0,
+            5.2, 4.8,
+            4.9, 5.3,
+            5.1, 4.7, // Cluster 2
+            0.0, 5.0,
+            0.3, 4.8,
+            -0.2, 5.2,
+            0.1, 4.9 // Cluster 3
+        }, {12, 2});
 
         // Create a 1D dataset for edge case testing
-        simple_data_ = Tensor<double>({{1.0}, {1.1}, {1.2}, {5.0}, {5.1}, {5.2}});
+        simple_data_ = Tensor<double>({1.0, 1.1, 1.2, 5.0, 5.1, 5.2}, {6, 1});
     }
 
     Tensor<double> data_;
@@ -54,7 +54,7 @@ TEST_F(KMeansTest, FitTest) {
 
     // Test that cluster centers are computed
     Tensor<double> centers = kmeans.cluster_centers();
-    EXPECT_EQ(centers.rows(), 3);
+    EXPECT_EQ(centers.rows(), 3u);
     EXPECT_EQ(centers.cols(), 2);
 
     // Test that inertia is computed
@@ -62,7 +62,7 @@ TEST_F(KMeansTest, FitTest) {
     EXPECT_GE(inertia, 0.0);
 
     // Test error case: too few samples
-    Tensor<double> small_data({{1.0, 2.0}, {3.0, 4.0}});
+    Tensor<double> small_data({1.0, 2.0, 3.0, 4.0}, {2, 2});
     KMeans<double> kmeans_small(3);
     EXPECT_THROW(kmeans_small.fit(small_data), std::invalid_argument);
 }
@@ -148,14 +148,14 @@ TEST_F(KMeansTest, ConvergenceTest) {
     kmeans.fit(data_);
 
     // Test that algorithm converged (didn't hit max iterations)
-    EXPECT_LT(kmeans.n_iter(), 100);
+    EXPECT_LT(kmeans.n_iter(), 100u);
 
     // Test with very tight tolerance (should take more iterations)
     KMeans<double> kmeans_tight(3, 100, 1e-10, 42);
     kmeans_tight.fit(data_);
 
     // Should still converge, but might take more iterations
-    EXPECT_LE(kmeans_tight.n_iter(), 100);
+    EXPECT_LE(kmeans_tight.n_iter(), 100u);
 }
 
 TEST_F(KMeansTest, ReproducibilityTest) {

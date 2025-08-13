@@ -14,12 +14,12 @@
  */
 
 namespace dl::optimization {
-    using utils::Variable;
-    using utils::VariableD;
-    using utils::VariableF;
     using utils::Tensor;
     using utils::TensorD;
     using utils::TensorF;
+    using utils::Variable;
+    using utils::VariableD;
+    using utils::VariableF;
 
     /**
      * @brief Base class for autograd-compatible optimizers
@@ -31,44 +31,46 @@ namespace dl::optimization {
          * @brief Constructor
          * @param parameters Vector of parameter variables to optimize
          */
-        explicit AutogradOptimizer(std::vector<Variable<T>*> parameters)
-            : parameters_(parameters) {}
-        
+        explicit
+        AutogradOptimizer(std::vector<std::shared_ptr<Variable<T>>> parameters) : parameters_(
+            parameters) {
+        }
+
         virtual ~AutogradOptimizer() = default;
-        
+
         /**
          * @brief Perform one optimization step
          */
         virtual void step() = 0;
-        
+
         /**
          * @brief Zero gradients of all parameters
          */
         virtual void zero_grad() {
-            for (auto* param : parameters_) {
+            for (auto param: parameters_) {
                 param->zero_grad();
             }
         }
-        
+
         /**
          * @brief Get learning rate
          */
         virtual T get_lr() const = 0;
-        
+
         /**
          * @brief Set learning rate
          */
         virtual void set_lr(T lr) = 0;
-        
+
     protected:
-        std::vector<Variable<T>*> parameters_;
+        std::vector<std::shared_ptr<Variable<T>>> parameters_;
     };
 
     /**
      * @brief Stochastic Gradient Descent optimizer with autograd support
-     * 
+     *
      * Updates parameters using: param = param - lr * grad
-     * 
+     *
      * Supports:
      * - Basic SGD
      * - Momentum
@@ -86,45 +88,42 @@ namespace dl::optimization {
          * @param weight_decay Weight decay (L2 penalty) (default: 0)
          * @param nesterov Enable Nesterov momentum (default: false)
          */
-        SGD(std::vector<Variable<T>*> parameters, 
-            T lr, 
-            T momentum = 0.0, 
-            T weight_decay = 0.0, 
-            bool nesterov = false);
-        
+        SGD(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T momentum = 0.0,
+            T weight_decay = 0.0, bool nesterov = false);
+
         /**
          * @brief Perform one SGD step
          */
         void step() override;
-        
+
         /**
          * @brief Get learning rate
          */
         T get_lr() const override { return lr_; }
-        
+
         /**
          * @brief Set learning rate
          */
         void set_lr(T lr) override { lr_ = lr; }
-        
+
     private:
         T lr_;
         T momentum_;
         T weight_decay_;
         bool nesterov_;
-        
+
         // Momentum buffers for each parameter
-        std::vector<Tensor<T>> momentum_buffers_;
-        
+        std::vector<Tensor<T> > momentum_buffers_;
+
         void initialize_momentum_buffers();
     };
 
     /**
      * @brief Adam optimizer with autograd support
-     * 
+     *
      * Adaptive learning rate optimizer that computes individual learning rates
      * for different parameters from estimates of first and second moments.
-     * 
+     *
      * Paper: "Adam: A Method for Stochastic Optimization" (Kingma & Ba, 2014)
      */
     template<typename T>
@@ -139,49 +138,46 @@ namespace dl::optimization {
          * @param eps Term for numerical stability (default: 1e-8)
          * @param weight_decay Weight decay (L2 penalty) (default: 0)
          */
-        Adam(std::vector<Variable<T>*> parameters,
-             T lr = 1e-3,
-             T beta1 = 0.9,
-             T beta2 = 0.999,
-             T eps = 1e-8,
+        Adam(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr = 1e-3, T beta1 = 0.9,
+             T beta2 = 0.999, T eps = 1e-8,
              T weight_decay = 0.0);
-        
+
         /**
          * @brief Perform one Adam step
          */
         void step() override;
-        
+
         /**
          * @brief Get learning rate
          */
         T get_lr() const override { return lr_; }
-        
+
         /**
          * @brief Set learning rate
          */
         void set_lr(T lr) override { lr_ = lr; }
-        
+
     private:
         T lr_;
         T beta1_;
         T beta2_;
         T eps_;
         T weight_decay_;
-        
+
         // State for each parameter
-        std::vector<Tensor<T>> exp_avg_;        // First moment estimate
-        std::vector<Tensor<T>> exp_avg_sq_;     // Second moment estimate
+        std::vector<Tensor<T> > exp_avg_; // First moment estimate
+        std::vector<Tensor<T> > exp_avg_sq_; // Second moment estimate
         size_t step_count_;
-        
+
         void initialize_state();
     };
 
     /**
      * @brief AdamW optimizer with autograd support
-     * 
+     *
      * Adam with decoupled weight decay regularization.
      * Often performs better than Adam with L2 regularization.
-     * 
+     *
      * Paper: "Decoupled Weight Decay Regularization" (Loshchilov & Hutter, 2017)
      */
     template<typename T>
@@ -196,48 +192,45 @@ namespace dl::optimization {
          * @param eps Term for numerical stability (default: 1e-8)
          * @param weight_decay Weight decay coefficient (default: 1e-2)
          */
-        AdamW(std::vector<Variable<T>*> parameters,
-              T lr = 1e-3,
-              T beta1 = 0.9,
-              T beta2 = 0.999,
-              T eps = 1e-8,
+        AdamW(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr = 1e-3, T beta1 = 0.9,
+              T beta2 = 0.999, T eps = 1e-8,
               T weight_decay = 1e-2);
-        
+
         /**
          * @brief Perform one AdamW step
          */
         void step() override;
-        
+
         /**
          * @brief Get learning rate
          */
         T get_lr() const override { return lr_; }
-        
+
         /**
          * @brief Set learning rate
          */
         void set_lr(T lr) override { lr_ = lr; }
-        
+
     private:
         T lr_;
         T beta1_;
         T beta2_;
         T eps_;
         T weight_decay_;
-        
+
         // State for each parameter
-        std::vector<Tensor<T>> exp_avg_;        // First moment estimate
-        std::vector<Tensor<T>> exp_avg_sq_;     // Second moment estimate
+        std::vector<Tensor<T> > exp_avg_; // First moment estimate
+        std::vector<Tensor<T> > exp_avg_sq_; // Second moment estimate
         size_t step_count_;
-        
+
         void initialize_state();
     };
 
     /**
      * @brief RMSprop optimizer with autograd support
-     * 
+     *
      * Maintains a moving average of squared gradients to normalize the gradient.
-     * 
+     *
      * Paper: "Lecture 6.5-rmsprop" (Hinton, 2012)
      */
     template<typename T>
@@ -252,39 +245,36 @@ namespace dl::optimization {
          * @param weight_decay Weight decay (L2 penalty) (default: 0)
          * @param momentum Momentum factor (default: 0)
          */
-        RMSprop(std::vector<Variable<T>*> parameters,
-                T lr = 1e-2,
-                T alpha = 0.99,
-                T eps = 1e-8,
-                T weight_decay = 0.0,
+        RMSprop(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr = 1e-2, T alpha = 0.99,
+                T eps = 1e-8, T weight_decay = 0.0,
                 T momentum = 0.0);
-        
+
         /**
          * @brief Perform one RMSprop step
          */
         void step() override;
-        
+
         /**
          * @brief Get learning rate
          */
         T get_lr() const override { return lr_; }
-        
+
         /**
          * @brief Set learning rate
          */
         void set_lr(T lr) override { lr_ = lr; }
-        
+
     private:
         T lr_;
         T alpha_;
         T eps_;
         T weight_decay_;
         T momentum_;
-        
+
         // State for each parameter
-        std::vector<Tensor<T>> square_avg_;     // Moving average of squared gradients
-        std::vector<Tensor<T>> momentum_buffer_; // Momentum buffer (if momentum > 0)
-        
+        std::vector<Tensor<T> > square_avg_; // Moving average of squared gradients
+        std::vector<Tensor<T> > momentum_buffer_; // Momentum buffer (if momentum > 0)
+
         void initialize_state();
     };
 
@@ -294,21 +284,24 @@ namespace dl::optimization {
     template<typename T>
     class LRScheduler {
     public:
-        explicit LRScheduler(AutogradOptimizer<T>* optimizer) : optimizer_(optimizer) {}
+        explicit
+        LRScheduler(AutogradOptimizer<T> *optimizer) : optimizer_(optimizer) {
+        }
+
         virtual ~LRScheduler() = default;
-        
+
         /**
          * @brief Update learning rate
          */
         virtual void step() = 0;
-        
+
         /**
          * @brief Get current learning rate
          */
         T get_lr() const { return optimizer_->get_lr(); }
-        
+
     protected:
-        AutogradOptimizer<T>* optimizer_;
+        AutogradOptimizer<T> *optimizer_;
     };
 
     /**
@@ -318,12 +311,14 @@ namespace dl::optimization {
     template<typename T>
     class StepLR : public LRScheduler<T> {
     public:
-        StepLR(AutogradOptimizer<T>* optimizer, size_t step_size, T gamma = 0.1)
-            : LRScheduler<T>(optimizer), step_size_(step_size), gamma_(gamma), 
-              last_epoch_(0), base_lr_(optimizer->get_lr()) {}
-        
+        StepLR(AutogradOptimizer<T> *optimizer, size_t step_size,
+               T gamma = 0.1) : LRScheduler<T>(optimizer), step_size_(step_size),
+                                gamma_(gamma), last_epoch_(0),
+                                base_lr_(optimizer->get_lr()) {
+        }
+
         void step() override;
-        
+
     private:
         size_t step_size_;
         T gamma_;
@@ -342,5 +337,4 @@ namespace dl::optimization {
     using RMSpropF = RMSprop<float>;
     using StepLRD = StepLR<double>;
     using StepLRF = StepLR<float>;
-
 } // namespace dl::optimization

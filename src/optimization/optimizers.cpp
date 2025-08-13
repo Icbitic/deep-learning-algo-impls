@@ -1,18 +1,15 @@
 #include "optimization/optimizers.hpp"
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 namespace dl::optimization {
-
     // SGD Implementation
     template<typename T>
-    SGD<T>::SGD(std::vector<Variable<T>*> parameters, 
-                T lr, 
-                T momentum, 
-                T weight_decay, 
-                bool nesterov)
-        : AutogradOptimizer<T>(parameters), lr_(lr), momentum_(momentum), 
-          weight_decay_(weight_decay), nesterov_(nesterov) {
+    SGD<T>::SGD(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T momentum,
+                T weight_decay, bool nesterov) : AutogradOptimizer<T>(parameters),
+                                                 lr_(lr), momentum_(momentum),
+                                                 weight_decay_(weight_decay),
+                                                 nesterov_(nesterov) {
         initialize_momentum_buffers();
     }
 
@@ -20,8 +17,8 @@ namespace dl::optimization {
     void SGD<T>::initialize_momentum_buffers() {
         momentum_buffers_.clear();
         momentum_buffers_.reserve(this->parameters_.size());
-        
-        for (const auto* param : this->parameters_) {
+
+        for (const auto &param: this->parameters_) {
             // TODO: Initialize momentum buffer with same shape as parameter
             // momentum_buffers_.emplace_back(param->data().rows(), param->data().cols());
         }
@@ -30,8 +27,8 @@ namespace dl::optimization {
     template<typename T>
     void SGD<T>::step() {
         for (size_t i = 0; i < this->parameters_.size(); ++i) {
-            auto* param = this->parameters_[i];
-            
+            auto param = this->parameters_[i];
+
             // TODO: Implement SGD update logic
             // 1. Apply weight decay if specified
             // 2. Update momentum buffer if momentum > 0
@@ -42,14 +39,11 @@ namespace dl::optimization {
 
     // Adam Implementation
     template<typename T>
-    Adam<T>::Adam(std::vector<Variable<T>*> parameters,
-                  T lr,
-                  T beta1,
-                  T beta2,
-                  T eps,
-                  T weight_decay)
-        : AutogradOptimizer<T>(parameters), lr_(lr), beta1_(beta1), beta2_(beta2),
-          eps_(eps), weight_decay_(weight_decay), step_count_(0) {
+    Adam<T>::Adam(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T beta1, T beta2,
+                  T eps, T weight_decay) : AutogradOptimizer<T>(parameters),
+                                           lr_(lr), beta1_(beta1), beta2_(beta2),
+                                           eps_(eps), weight_decay_(weight_decay),
+                                           step_count_(0) {
         initialize_state();
     }
 
@@ -59,8 +53,8 @@ namespace dl::optimization {
         exp_avg_sq_.clear();
         exp_avg_.reserve(this->parameters_.size());
         exp_avg_sq_.reserve(this->parameters_.size());
-        
-        for (const auto* param : this->parameters_) {
+
+        for (const auto &param: this->parameters_) {
             // TODO: Initialize first and second moment estimates
             // exp_avg_.emplace_back(param->data().rows(), param->data().cols());
             // exp_avg_sq_.emplace_back(param->data().rows(), param->data().cols());
@@ -70,10 +64,10 @@ namespace dl::optimization {
     template<typename T>
     void Adam<T>::step() {
         step_count_++;
-        
+
         for (size_t i = 0; i < this->parameters_.size(); ++i) {
-            auto* param = this->parameters_[i];
-            
+            auto param = this->parameters_[i];
+
             // TODO: Implement Adam update logic
             // 1. Apply weight decay if specified
             // 2. Update biased first moment estimate: m_t = beta1 * m_{t-1} + (1 - beta1) * grad
@@ -86,14 +80,11 @@ namespace dl::optimization {
 
     // AdamW Implementation
     template<typename T>
-    AdamW<T>::AdamW(std::vector<Variable<T>*> parameters,
-                    T lr,
-                    T beta1,
-                    T beta2,
-                    T eps,
-                    T weight_decay)
-        : AutogradOptimizer<T>(parameters), lr_(lr), beta1_(beta1), beta2_(beta2),
-          eps_(eps), weight_decay_(weight_decay), step_count_(0) {
+    AdamW<T>::AdamW(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T beta1, T beta2,
+                    T eps, T weight_decay) : AutogradOptimizer<T>(parameters),
+                                             lr_(lr), beta1_(beta1), beta2_(beta2),
+                                             eps_(eps), weight_decay_(weight_decay),
+                                             step_count_(0) {
         initialize_state();
     }
 
@@ -103,8 +94,8 @@ namespace dl::optimization {
         exp_avg_sq_.clear();
         exp_avg_.reserve(this->parameters_.size());
         exp_avg_sq_.reserve(this->parameters_.size());
-        
-        for (const auto* param : this->parameters_) {
+
+        for (const auto param: this->parameters_) {
             // TODO: Initialize first and second moment estimates
             // exp_avg_.emplace_back(param->data().rows(), param->data().cols());
             // exp_avg_sq_.emplace_back(param->data().rows(), param->data().cols());
@@ -114,10 +105,10 @@ namespace dl::optimization {
     template<typename T>
     void AdamW<T>::step() {
         step_count_++;
-        
+
         for (size_t i = 0; i < this->parameters_.size(); ++i) {
-            auto* param = this->parameters_[i];
-            
+            auto param = this->parameters_[i];
+
             // TODO: Implement AdamW update logic
             // 1. Update biased first moment estimate: m_t = beta1 * m_{t-1} + (1 - beta1) * grad
             // 2. Update biased second moment estimate: v_t = beta2 * v_{t-1} + (1 - beta2) * grad^2
@@ -130,14 +121,12 @@ namespace dl::optimization {
 
     // RMSprop Implementation
     template<typename T>
-    RMSprop<T>::RMSprop(std::vector<Variable<T>*> parameters,
-                        T lr,
-                        T alpha,
-                        T eps,
+    RMSprop<T>::RMSprop(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T alpha, T eps,
                         T weight_decay,
-                        T momentum)
-        : AutogradOptimizer<T>(parameters), lr_(lr), alpha_(alpha), eps_(eps),
-          weight_decay_(weight_decay), momentum_(momentum) {
+                        T momentum) : AutogradOptimizer<T>(parameters), lr_(lr),
+                                      alpha_(alpha), eps_(eps),
+                                      weight_decay_(weight_decay),
+                                      momentum_(momentum) {
         initialize_state();
     }
 
@@ -147,8 +136,8 @@ namespace dl::optimization {
         momentum_buffer_.clear();
         square_avg_.reserve(this->parameters_.size());
         momentum_buffer_.reserve(this->parameters_.size());
-        
-        for (const auto* param : this->parameters_) {
+
+        for (const auto param: this->parameters_) {
             // TODO: Initialize moving average of squared gradients
             // square_avg_.emplace_back(param->data().rows(), param->data().cols());
             // if (momentum_ > 0) {
@@ -160,8 +149,8 @@ namespace dl::optimization {
     template<typename T>
     void RMSprop<T>::step() {
         for (size_t i = 0; i < this->parameters_.size(); ++i) {
-            auto* param = this->parameters_[i];
-            
+            auto param = this->parameters_[i];
+
             // TODO: Implement RMSprop update logic
             // 1. Apply weight decay if specified
             // 2. Update moving average of squared gradients: v_t = alpha * v_{t-1} + (1 - alpha) * grad^2
@@ -192,5 +181,4 @@ namespace dl::optimization {
     template class RMSprop<double>;
     template class StepLR<float>;
     template class StepLR<double>;
-
 } // namespace dl::optimization

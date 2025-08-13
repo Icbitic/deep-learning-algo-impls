@@ -24,6 +24,8 @@ endif()
 # Include directories
 include_directories(include)
 include_directories(/opt/homebrew/Cellar/xtensor/0.27.0/include)
+include_directories(/opt/homebrew/Cellar/xtl/0.8.0/include)
+include_directories(/opt/homebrew/Cellar/googletest/1.17.0/include)
 include_directories(/usr/local/include)
 
 # Collect source files
@@ -42,21 +44,15 @@ endif()
 add_executable(deep_learning_algo_impls main.cpp)
 target_link_libraries(deep_learning_algo_impls dl_algorithms)
 
+# Variable helpers demo executable
+add_executable(variable_helpers_demo examples/variable_helpers_demo.cpp)
+target_link_libraries(variable_helpers_demo dl_algorithms)
+
 # Test executable
 file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
 add_executable(run_tests ${TEST_SOURCES})
 target_link_libraries(run_tests PRIVATE dl_algorithms GTest::gtest GTest::gtest_main Threads::Threads)
 target_include_directories(run_tests PRIVATE include)
-
-# Demo executable for SVM
-add_executable(svm_demo examples/svm_demo.cpp)
-target_link_libraries(svm_demo dl_algorithms)
-target_include_directories(svm_demo PRIVATE include)
-
-# Demo executable for Autograd Neural Network
-add_executable(neural_network_demo demos/neural_network_demo.cpp)
-target_link_libraries(neural_network_demo dl_algorithms)
-target_include_directories(neural_network_demo PRIVATE include)
 
 # Register tests with CTest
 add_test(NAME unit_tests COMMAND run_tests)
@@ -65,5 +61,3 @@ add_test(NAME unit_tests COMMAND run_tests)
 target_compile_options(dl_algorithms PRIVATE -Wall -Wextra -O2)
 target_compile_options(deep_learning_algo_impls PRIVATE -Wall -Wextra -O2)
 target_compile_options(run_tests PRIVATE -Wall -Wextra -O2)
-target_compile_options(svm_demo PRIVATE -Wall -Wextra -O2)
-target_compile_options(neural_network_demo PRIVATE -Wall -Wextra -O2)

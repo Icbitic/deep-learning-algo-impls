@@ -49,14 +49,14 @@ namespace dl::activation {
         // TODO: Implement Softmax forward pass
         // Formula: f(x_i) = exp(x_i) / sum(exp(x_j)) for all j
         // Placeholder return
-        return MatrixD(x.rows(), x.cols());
+        return MatrixD::zeros({x.rows(), x.cols()});
     }
 
     MatrixD Softmax::backward(const MatrixD &x) {
         // TODO: Implement Softmax backward pass
         // Formula: Jacobian matrix computation
         // Placeholder return
-        return MatrixD(x.rows(), x.cols());
+        return MatrixD::zeros({x.rows(), x.cols()});
     }
 
     // LeakyReLU Implementation

@@ -72,7 +72,8 @@ namespace ml {
          * @param scale Whether to scale the data to unit variance before computing PCA
          * @return Transformed data matrix
          */
-        Tensor<T> fit_transform(const Tensor<T> &data, size_t n_components = 0, bool center = true, bool scale = false);
+        Tensor<T> fit_transform(const Tensor<T> &data, size_t n_components = 0,
+                                bool center = true, bool scale = false);
 
         /**
          * @brief Get the explained variance ratio for each component
@@ -99,7 +100,8 @@ namespace ml {
         Tensor<T> components_; ///< Principal components (eigenvectors)
         std::vector<T> singular_values_; ///< Singular values
         std::vector<T> explained_variance_; ///< Explained variance for each component
-        std::vector<T> explained_variance_ratio_; ///< Explained variance ratio for each component
+        std::vector<T> explained_variance_ratio_;
+        ///< Explained variance ratio for each component
         std::vector<T> mean_; ///< Mean of each feature
         std::vector<T> scale_; ///< Scale (std dev) of each feature
         bool is_fitted_ = false; ///< Whether the model has been fitted
@@ -108,5 +110,4 @@ namespace ml {
     // Type aliases for common use cases
     using PCAF = PCA<float>;
     using PCAD = PCA<double>;
-
 } // namespace ml

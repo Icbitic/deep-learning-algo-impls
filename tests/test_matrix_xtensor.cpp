@@ -10,19 +10,19 @@ TEST(TensorXTensorTest, Construction) {
     EXPECT_EQ(m1.cols(), 0);
 
     // Test size constructor
-    Tensor<double> m2(3, 4);
+    auto m2 = Tensor<double>::zeros({3, 4});
     EXPECT_EQ(m2.rows(), 3);
     EXPECT_EQ(m2.cols(), 4);
 
     // Test value constructor
-    Tensor<double> m3(2, 2, 5.0);
+    auto m3 = Tensor<double>::full({2, 2}, 5.0);
     EXPECT_EQ(m3(0, 0), 5.0);
     EXPECT_EQ(m3(0, 1), 5.0);
     EXPECT_EQ(m3(1, 0), 5.0);
     EXPECT_EQ(m3(1, 1), 5.0);
 
     // Test initializer list constructor
-    Tensor<double> m4 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
+    Tensor<double> m4({1.0, 2.0, 3.0, 4.0, 5.0, 6.0}, {2, 3});
     EXPECT_EQ(m4.rows(), 2);
     EXPECT_EQ(m4.cols(), 3);
     EXPECT_EQ(m4(0, 0), 1.0);
@@ -34,7 +34,7 @@ TEST(TensorXTensorTest, Construction) {
 }
 
 TEST(TensorXTensorTest, ElementAccess) {
-    Tensor<double> m(2, 3);
+    auto m = Tensor<double>::zeros({2, 3});
 
     // Test element assignment
     m(0, 0) = 1.0;
@@ -58,9 +58,9 @@ TEST(TensorXTensorTest, ElementAccess) {
 }
 
 TEST(TensorXTensorTest, ArithmeticOperations) {
-    Tensor<double> m1 = {{1.0, 2.0}, {3.0, 4.0}};
+    Tensor<double> m1({1.0, 2.0, 3.0, 4.0}, {2, 2});
 
-    Tensor<double> m2 = {{5.0, 6.0}, {7.0, 8.0}};
+    Tensor<double> m2({5.0, 6.0, 7.0, 8.0}, {2, 2});
 
     // Test addition
     Tensor<double> m3 = m1 + m2;
@@ -76,21 +76,28 @@ TEST(TensorXTensorTest, ArithmeticOperations) {
     EXPECT_EQ(m4(1, 0), 4.0);
     EXPECT_EQ(m4(1, 1), 4.0);
 
-    // Test multiplication
-    Tensor<double> m5 = {{1.0, 2.0}, {3.0, 4.0}};
+    // Test element-wise multiplication
+    Tensor<double> m5({1.0, 2.0, 3.0, 4.0}, {2, 2});
 
-    Tensor<double> m6 = {{5.0, 6.0}, {7.0, 8.0}};
+    Tensor<double> m6({5.0, 6.0, 7.0, 8.0}, {2, 2});
 
     Tensor<double> m7 = m5 * m6;
-    EXPECT_EQ(m7(0, 0), 19.0);
-    EXPECT_EQ(m7(0, 1), 22.0);
-    EXPECT_EQ(m7(1, 0), 43.0);
-    EXPECT_EQ(m7(1, 1), 50.0);
+    EXPECT_EQ(m7(0, 0), 5.0); // 1.0 * 5.0
+    EXPECT_EQ(m7(0, 1), 12.0); // 2.0 * 6.0
+    EXPECT_EQ(m7(1, 0), 21.0); // 3.0 * 7.0
+    EXPECT_EQ(m7(1, 1), 32.0); // 4.0 * 8.0
+
+    // Test matrix multiplication using matmul
+    Tensor<double> m8 = m5.matmul(m6);
+    EXPECT_EQ(m8(0, 0), 19.0); // 1*5 + 2*7 = 19
+    EXPECT_EQ(m8(0, 1), 22.0); // 1*6 + 2*8 = 22
+    EXPECT_EQ(m8(1, 0), 43.0); // 3*5 + 4*7 = 43
+    EXPECT_EQ(m8(1, 1), 50.0); // 3*6 + 4*8 = 50
 }
 
 TEST(TensorXTensorTest, TensorOperations) {
     // Test transpose
-    Tensor<double> m1 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
+    Tensor<double> m1({1.0, 2.0, 3.0, 4.0, 5.0, 6.0}, {2, 3});
 
     Tensor<double> m2 = m1.transpose();
     EXPECT_EQ(m2.rows(), 3);
@@ -103,7 +110,7 @@ TEST(TensorXTensorTest, TensorOperations) {
     EXPECT_EQ(m2(2, 1), 6.0);
 
     // Test reshape
-    Tensor<double> m3 = m1.reshape(3, 2);
+    Tensor<double> m3 = m1.reshape({3, 2});
     EXPECT_EQ(m3.rows(), 3);
     EXPECT_EQ(m3.cols(), 2);
     EXPECT_EQ(m3(0, 0), 1.0);
@@ -114,7 +121,7 @@ TEST(TensorXTensorTest, TensorOperations) {
     EXPECT_EQ(m3(2, 1), 6.0);
 
     // Test determinant
-    Tensor<double> m4 = {{1.0, 2.0}, {3.0, 4.0}};
+    Tensor<double> m4({1.0, 2.0, 3.0, 4.0}, {2, 2});
     EXPECT_DOUBLE_EQ(m4.determinant(), -2.0);
 
     // Test inverse
@@ -127,7 +134,7 @@ TEST(TensorXTensorTest, TensorOperations) {
 
 TEST(TensorXTensorTest, FactoryMethods) {
     // Test zeros
-    Tensor<double> m1 = Tensor<double>::zeros(2, 3);
+    Tensor<double> m1 = Tensor<double>::zeros({2, 3});
     EXPECT_EQ(m1.rows(), 2);
     EXPECT_EQ(m1.cols(), 3);
     EXPECT_EQ(m1(0, 0), 0.0);
@@ -138,7 +145,7 @@ TEST(TensorXTensorTest, FactoryMethods) {
     EXPECT_EQ(m1(1, 2), 0.0);
 
     // Test ones
-    Tensor<double> m2 = Tensor<double>::ones(2, 3);
+    Tensor<double> m2 = Tensor<double>::ones({2, 3});
     EXPECT_EQ(m2.rows(), 2);
     EXPECT_EQ(m2.cols(), 3);
     EXPECT_EQ(m2(0, 0), 1.0);
@@ -163,7 +170,7 @@ TEST(TensorXTensorTest, FactoryMethods) {
     EXPECT_EQ(m3(2, 2), 1.0);
 
     // Test random
-    Tensor<double> m4 = Tensor<double>::random(2, 3, 0.0, 1.0);
+    Tensor<double> m4 = Tensor<double>::random({2, 3}, 0.0, 1.0);
     EXPECT_EQ(m4.rows(), 2);
     EXPECT_EQ(m4.cols(), 3);
 
@@ -177,7 +184,7 @@ TEST(TensorXTensorTest, FactoryMethods) {
 }
 
 TEST(TensorXTensorTest, NonMemberFunctions) {
-    Tensor<double> m1 = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
+    Tensor<double> m1({1.0, 2.0, 3.0, 4.0, 5.0, 6.0}, {2, 3});
 
     // Test sum
     EXPECT_DOUBLE_EQ(sum(m1), 21.0);
@@ -186,7 +193,7 @@ TEST(TensorXTensorTest, NonMemberFunctions) {
     EXPECT_DOUBLE_EQ(mean(m1), 3.5);
 
     // Test dot product
-    Tensor<double> m2 = {{1.0, 2.0}, {3.0, 4.0}, {5.0, 6.0}};
+    Tensor<double> m2({1.0, 2.0, 3.0, 4.0, 5.0, 6.0}, {3, 2});
 
     Tensor<double> m3 = dot(m1, m2);
     EXPECT_EQ(m3.rows(), 2);

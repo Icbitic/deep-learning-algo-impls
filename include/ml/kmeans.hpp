@@ -134,11 +134,11 @@ namespace ml {
          * @param point2 Second point
          * @return Squared distance
          */
-        T squared_distance(const std::vector<T> &point1, const std::vector<T> &point2) const;
+        T squared_distance(const std::vector<T> &point1,
+                           const std::vector<T> &point2) const;
     };
 
     /// Type aliases for common use cases
     using KMeansF = KMeans<float>;
     using KMeansD = KMeans<double>;
-
 } // namespace ml

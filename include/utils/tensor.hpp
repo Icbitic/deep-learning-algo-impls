@@ -2,24 +2,24 @@
 
 #include <initializer_list>
 #include <iostream>
+#include <stdexcept>
 #include <tuple>
+#include <type_traits>
 #include <vector>
 #include <xtensor/containers/xarray.hpp>
-#include <xtensor/core/xmath.hpp>
-#include <xtensor/generators/xrandom.hpp>
-#include <xtensor/io/xio.hpp>
-#include <xtensor/reducers/xreducer.hpp>
-#include <xtensor/views/xview.hpp>
-#include <xtensor/core/xshape.hpp>
 
 /**
- * @file matrix.hpp
+ * @file tensor.hpp
  * @brief Tensor utility class for deep learning operations (n-dimensional arrays)
  * @author Kalenitid
  * @version 2.0.0
  */
 
 namespace utils {
+    // Forward declaration
+    template<typename T>
+    class Variable;
+
     /**
      * @brief A templated tensor class for mathematical operations in deep learning
      *
@@ -55,58 +55,66 @@ namespace utils {
         /**
          * @brief Default constructor creating an empty tensor
          */
-        Tensor() : data_(xt::xarray<T>::from_shape({0})), rows_(0), cols_(0) {}
+        Tensor() : shape_() {
+            data_.resize({0});
+        }
 
         /**
-         * @brief Constructor creating a tensor with specified shape
+         * @brief Constructor for tensor from data with shape (PyTorch-style)
+         * @param data Vector of data elements
+         * @param shape Vector specifying the dimensions of the tensor
+         * @example
+         *       Tensor<float> t({1.0f, 2.0f, 3.0f, 4.0f}, {2, 2}); // Creates a 2x2 tensor
+         */
+        Tensor(const std::vector<T> &data, const std::vector<size_t> &shape);
+
+        /**
+         * @brief Constructor from initializer list with shape specification
+         * @param data Initializer list containing the tensor data
          * @param shape Shape of the tensor
+         * @note This constructor allows creating tensors with specified data and shape:
+         *       Tensor<double> t({1.0, 1.1, 1.2, 5.0, 5.1, 5.2}, {6});
+         *       Tensor<double> t({1.0, 2.0, 3.0, 4.0}, {2, 2});
+         *       Tensor<float> t({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f}, {2, 2, 2});
          */
-        explicit Tensor(const std::vector<size_t>& shape);
-
-        /**
-         * @brief Constructor creating a 2D tensor (matrix) with specified dimensions
-         * @param rows Number of rows
-         * @param cols Number of columns
-         */
-        Tensor(size_t rows, size_t cols);
-
-        /**
-         * @brief Constructor creating a tensor filled with a specific value
-         * @param shape Shape of the tensor
-         * @param value Value to fill the tensor with
-         */
-        Tensor(const std::vector<size_t>& shape, T value);
-
-        /**
-         * @brief Constructor creating a 2D tensor (matrix) filled with a specific value
-         * @param rows Number of rows
-         * @param cols Number of columns
-         * @param value Value to fill the tensor with
-         */
-        Tensor(size_t rows, size_t cols, T value);
-
-        /**
-         * @brief Constructor from initializer list (2D matrix)
-         * @param list Nested initializer list representing matrix data
-         */
-        Tensor(std::initializer_list<std::initializer_list<T>> list);
+        Tensor(std::initializer_list<T> data, const std::vector<size_t> &shape);
 
         /**
          * @brief Constructor from xtensor array
          * @param data xtensor array data
          */
-        explicit Tensor(const xt::xarray<T>& data);
+        explicit Tensor(const xt::xarray<T> &data);
+
+        /**
+         * @brief Constructor for scalar tensor (0-dimensional)
+         * @param value Scalar value to create a 0-dimensional tensor
+         * @example
+         *       Tensor<double> scalar(42.0); // Creates a 0-dimensional tensor with value 42.0
+         */
+        explicit Tensor(T value);
 
         /** @} */
 
         template<typename U>
         friend std::ostream &operator<<(std::ostream &os, const Tensor<U> &tensor);
+
         template<typename U>
         friend Tensor<U> dot(const Tensor<U> &a, const Tensor<U> &b);
+
         template<typename U>
         friend U sum(const Tensor<U> &tensor);
+
         template<typename U>
         friend U mean(const Tensor<U> &tensor);
+
+        template<typename U, typename V>
+        friend Tensor<U> cast_tensor(const Tensor<V> &tensor);
+
+        template<typename U>
+        friend Tensor<bool> compare_greater(const Tensor<U> &lhs, const Tensor<U> &rhs);
+
+        template<typename U>
+        friend class Variable;
 
         /**
          * @name Element Access
@@ -132,22 +140,12 @@ namespace utils {
         const T &operator()(Args... indices) const;
 
         /**
-         * @brief Access 2D tensor element at specified position (mutable) - backward compatibility
-         * @param row Row index (0-based)
-         * @param col Column index (0-based)
-         * @return Reference to the element
-         * @throw std::out_of_range if indices are invalid
+         * @brief Access scalar value from 0-dimensional tensor
+         * @return Const reference to the scalar value
+         * @throw std::invalid_argument if tensor is not 0-dimensional
          */
-        T &at(size_t row, size_t col);
+        const T &scalar() const;
 
-        /**
-         * @brief Access 2D tensor element at specified position (const) - backward compatibility
-         * @param row Row index (0-based)
-         * @param col Column index (0-based)
-         * @return Const reference to the element
-         * @throw std::out_of_range if indices are invalid
-         */
-        const T &at(size_t row, size_t col) const;
 
         /** @} */
 
@@ -181,6 +179,20 @@ namespace utils {
         Tensor operator*(const Tensor &other) const;
 
         /**
+         * @brief Element-wise division
+         * @param other Tensor to divide by
+         * @return New tensor with element-wise division result
+         * @note This operation creates a new tensor and does not modify the original
+         */
+        Tensor operator/(const Tensor &other) const;
+
+        /**
+         * @brief Unary minus operator
+         * @return New tensor with negated values
+         */
+        Tensor operator-() const;
+
+        /**
          * @brief Matrix multiplication operator (for 2D tensors)
          * @param other Tensor to multiply with
          * @return Result of matrix multiplication
@@ -194,6 +206,96 @@ namespace utils {
          * @return Result of scalar multiplication
          */
         Tensor operator*(T scalar) const;
+
+        /**
+         * @brief Element-wise comparison (greater than)
+         * @param other Tensor to compare with
+         * @return New tensor with boolean results
+         */
+        Tensor<bool> operator>(const Tensor &other) const;
+
+        /**
+         * @brief Element-wise maximum with another tensor
+         * @param other Tensor to compare with
+         * @return New tensor with element-wise maximum values
+         */
+        Tensor max(const Tensor &other) const;
+
+        /**
+         * @brief Element-wise exponential function
+         * @return New tensor with element-wise exponential values
+         */
+        Tensor exp() const;
+
+        /**
+         * @brief Element-wise logarithm function
+         * @return New tensor with element-wise logarithm values
+         */
+        Tensor log() const;
+
+        /**
+         * @brief Element-wise sigmoid function
+         * @return New tensor with element-wise sigmoid values
+         */
+        Tensor sigmoid() const;
+
+        /**
+         * @brief Element-wise tanh function
+         * @return New tensor with element-wise tanh values
+         */
+        Tensor tanh() const;
+
+        /**
+         * @brief Element-wise ReLU function
+         * @return New tensor with element-wise ReLU values
+         */
+        Tensor relu() const;
+
+        /**
+         * @brief Sum all elements in the tensor
+         * @return New tensor with sum of all elements
+         */
+        Tensor sum() const;
+
+        /**
+         * @brief Sum along specified axes
+         * @param axes Axes to sum along
+         * @param keepdims Whether to keep dimensions
+         * @return New tensor with sum along specified axes
+         */
+        Tensor sum(const std::vector<int> &axes, bool keepdims = false) const;
+
+        /**
+         * @brief Mean of all elements in the tensor
+         * @return New tensor with mean of all elements
+         */
+        Tensor mean() const;
+
+        /**
+         * @brief Mean along specified axes
+         * @param axes Axes to compute mean along
+         * @param keepdims Whether to keep dimensions
+         * @return New tensor with mean along specified axes
+         */
+        Tensor mean(const std::vector<int> &axes, bool keepdims = false) const;
+
+        /**
+         * @brief Check if tensor is empty
+         * @return True if tensor has no elements
+         */
+        bool empty() const;
+
+        /**
+         * @brief Clear the tensor, making it empty
+         */
+        void clear();
+
+        /**
+         * @brief Cast tensor to different type
+         * @return New tensor with casted values
+         */
+        template<typename U>
+        Tensor<U> cast() const;
 
         /** @} */
 
@@ -214,7 +316,7 @@ namespace utils {
          * @param axes Axes to transpose
          * @return Transposed tensor
          */
-        Tensor transpose(const std::vector<size_t>& axes) const;
+        Tensor transpose(const std::vector<size_t> &axes) const;
 
         /**
          * @brief Reshape the tensor to new dimensions
@@ -222,16 +324,8 @@ namespace utils {
          * @return Reshaped tensor
          * @throw std::invalid_argument if total size doesn't match
          */
-        Tensor reshape(const std::vector<size_t>& new_shape) const;
+        Tensor reshape(const std::vector<size_t> &new_shape) const;
 
-        /**
-         * @brief Reshape the tensor to new 2D dimensions (backward compatibility)
-         * @param new_rows New number of rows
-         * @param new_cols New number of columns
-         * @return Reshaped tensor
-         * @throw std::invalid_argument if total size doesn't match
-         */
-        Tensor reshape(size_t new_rows, size_t new_cols) const;
 
         /**
          * @brief Create a view of the tensor with new shape
@@ -239,7 +333,7 @@ namespace utils {
          * @return Tensor view with new shape
          * @throw std::invalid_argument if total size doesn't match
          */
-        Tensor view(const std::vector<size_t>& new_shape) const;
+        Tensor view(const std::vector<size_t> &new_shape) const;
 
         /**
          * @brief Squeeze dimensions of size 1
@@ -284,28 +378,46 @@ namespace utils {
          */
 
         /**
-         * @brief Get the number of rows
+         * @brief Get the number of rows (for 2D tensors)
          * @return Number of rows
          */
-        [[nodiscard]] size_t rows() const { return rows_; }
+        [[nodiscard]] size_t rows() const {
+            return shape_.size() > 0 ? shape_[0] : 0;
+        }
 
         /**
-         * @brief Get the number of columns
+         * @brief Get the number of columns (for 2D tensors)
          * @return Number of columns
          */
-        [[nodiscard]] size_t cols() const { return cols_; }
+        [[nodiscard]] size_t cols() const {
+            return shape_.size() > 1 ? shape_[1] : (shape_.size() == 1 ? 1 : 0);
+        }
 
         /**
          * @brief Get the total number of elements
-         * @return Total size (rows * cols)
+         * @return Total size of the tensor
          */
-        [[nodiscard]] size_t size() const { return rows_ * cols_; }
+        [[nodiscard]] size_t size() const { return data_.size(); }
 
         /**
-         * @brief Get the shape of the matric in one step
+         * @brief Get the number of dimensions
+         * @return Number of dimensions
+         */
+        [[nodiscard]] size_t ndim() const { return shape_.size(); }
+
+        /**
+         * @brief Get the shape of the tensor
+         * @return Shape vector
+         */
+        [[nodiscard]] const std::vector<size_t> &shape() const { return shape_; }
+
+        /**
+         * @brief Get the shape of the tensor as tuple (for 2D compatibility)
          * @return Shape (rows, cols) in tuple
          */
-        [[nodiscard]] std::tuple<size_t, size_t> shape() const { return {rows_, cols_}; }
+        [[nodiscard]] std::tuple<size_t, size_t> shape2d() const {
+            return {rows(), cols()};
+        }
 
         /** @} */
 
@@ -319,30 +431,16 @@ namespace utils {
          * @param shape Shape of the tensor
          * @return Zero tensor
          */
-        static Tensor zeros(const std::vector<size_t>& shape);
+        static Tensor zeros(const std::vector<size_t> &shape);
 
-        /**
-         * @brief Create a zero matrix (backward compatibility)
-         * @param rows Number of rows
-         * @param cols Number of columns
-         * @return Zero tensor with 2D shape
-         */
-        static Tensor zeros(size_t rows, size_t cols);
 
         /**
          * @brief Create a tensor filled with ones
          * @param shape Shape of the tensor
          * @return Tensor filled with ones
          */
-        static Tensor ones(const std::vector<size_t>& shape);
+        static Tensor ones(const std::vector<size_t> &shape);
 
-        /**
-         * @brief Create a matrix filled with ones (backward compatibility)
-         * @param rows Number of rows
-         * @param cols Number of columns
-         * @return Tensor filled with ones with 2D shape
-         */
-        static Tensor ones(size_t rows, size_t cols);
 
         /**
          * @brief Create a tensor filled with a specific value
@@ -350,7 +448,7 @@ namespace utils {
          * @param value Value to fill the tensor with
          * @return Tensor filled with the specified value
          */
-        static Tensor full(const std::vector<size_t>& shape, T value);
+        static Tensor full(const std::vector<size_t> &shape, T value);
 
         /**
          * @brief Create an identity matrix (2D tensor)
@@ -364,7 +462,7 @@ namespace utils {
          * @param shape Shape of the tensor
          * @return Random tensor
          */
-        static Tensor random(const std::vector<size_t>& shape);
+        static Tensor random(const std::vector<size_t> &shape);
 
         /**
          * @brief Create a random tensor with values between min and max
@@ -373,32 +471,31 @@ namespace utils {
          * @param max Maximum random value
          * @return Random tensor
          */
-        static Tensor random(const std::vector<size_t>& shape, T min, T max);
+        static Tensor random(const std::vector<size_t> &shape, T min, T max);
 
-        /**
-         * @brief Create a matrix with random values between 0 and 1 (backward compatibility)
-         * @param rows Number of rows
-         * @param cols Number of columns
-         * @return Random tensor with 2D shape
-         */
-        static Tensor random(size_t rows, size_t cols);
-
-        /**
-         * @brief Create a matrix with random values (backward compatibility)
-         * @param rows Number of rows
-         * @param cols Number of columns
-         * @param min Minimum random value
-         * @param max Maximum random value
-         * @return Random tensor with 2D shape
-         */
-        static Tensor random(size_t rows, size_t cols, T min, T max);
 
         /**
          * @brief Create a tensor from an existing xt::xarray
          * @param array The xt::xarray to wrap
          * @return Tensor wrapping the array
          */
-        static Tensor from_array(const xt::xarray<T>& array);
+        static Tensor from_array(const xt::xarray<T> &array) {
+            return Tensor(array);
+        }
+
+        /**
+         * @brief Create a tensor of ones with the same shape as input
+         * @param tensor Input tensor to match shape
+         * @return New tensor filled with ones
+         */
+        static Tensor ones_like(const Tensor &tensor);
+
+        /**
+         * @brief Create a tensor of zeros with the same shape as input
+         * @param tensor Input tensor to match shape
+         * @return New tensor filled with zeros
+         */
+        static Tensor zeros_like(const Tensor &tensor);
 
         /** @} */
 
@@ -421,23 +518,57 @@ namespace utils {
         xt::xarray<T> data_;
 
         /**
-         * @brief Number of rows and columns
+         * @brief Shape of the tensor
          */
-        size_t rows_, cols_;
+        std::vector<size_t> shape_;
     };
 
     // Template method implementations
     template<typename T>
     template<typename... Args>
-    T& Tensor<T>::operator()(Args... indices) {
+    T &Tensor<T>::operator()(Args... indices) {
+        static_assert(sizeof...(indices) > 0, "At least one index required");
+        std::vector<size_t> idx_vec = {static_cast<size_t>(indices)...};
+        if (idx_vec.size() != shape_.size()) {
+            std::cerr << "DEBUG: Tensor access error - indices: " << idx_vec.size() 
+                      << ", shape dimensions: " << shape_.size() << std::endl;
+            throw std::out_of_range(
+                "Number of indices does not match tensor dimensions");
+        }
+        for (size_t i = 0; i < idx_vec.size(); ++i) {
+            if (idx_vec[i] >= shape_[i]) {
+                throw std::out_of_range("Index out of bounds");
+            }
+        }
         return data_(indices...);
     }
 
     template<typename T>
     template<typename... Args>
-    const T& Tensor<T>::operator()(Args... indices) const {
+    const T &Tensor<T>::operator()(Args... indices) const {
+        static_assert(sizeof...(indices) > 0, "At least one index required");
+        std::vector<size_t> idx_vec = {static_cast<size_t>(indices)...};
+        if (idx_vec.size() != shape_.size()) {
+            std::cerr << "DEBUG: Tensor const access error - indices: " << idx_vec.size() 
+                      << ", shape dimensions: " << shape_.size() << std::endl;
+            std::cerr << "DEBUG: Tensor shape: [";
+            for (size_t i = 0; i < shape_.size(); ++i) {
+                std::cerr << shape_[i];
+                if (i < shape_.size() - 1) std::cerr << ", ";
+            }
+            std::cerr << "]" << std::endl;
+            std::cerr << "DEBUG: Tensor size: " << data_.size() << std::endl;
+            throw std::out_of_range(
+                "Number of indices does not match tensor dimensions");
+        }
+        for (size_t i = 0; i < idx_vec.size(); ++i) {
+            if (idx_vec[i] >= shape_[i]) {
+                throw std::out_of_range("Index out of bounds");
+            }
+        }
         return data_(indices...);
     }
+
 
     /**
      * @name Non-member Functions

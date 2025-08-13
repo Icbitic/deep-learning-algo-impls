@@ -11,25 +11,25 @@ protected:
         // Create a simple dataset for testing
         // 2D data with clear principal components
         data_ = Tensor<double>({
-                {1.0, 1.0},
-                {-1.0, -1.0},
-                {2.0, 2.0},
-                {-2.0, -2.0},
-                {3.0, 3.0},
-                {-3.0, -3.0},
+            {1.0, 1.0},
+            {-1.0, -1.0},
+            {2.0, 2.0},
+            {-2.0, -2.0},
+            {3.0, 3.0},
+            {-3.0, -3.0},
         });
 
         // Create a more complex dataset
         // 3D data with different variances along different axes
         complex_data_ = Tensor<double>({
-                {1.0, 2.0, 0.5},
-                {-1.0, -2.0, -0.5},
-                {2.0, 4.0, 1.0},
-                {-2.0, -4.0, -1.0},
-                {3.0, 6.0, 1.5},
-                {-3.0, -6.0, -1.5},
-                {0.5, 1.0, 0.25},
-                {-0.5, -1.0, -0.25},
+            {1.0, 2.0, 0.5},
+            {-1.0, -2.0, -0.5},
+            {2.0, 4.0, 1.0},
+            {-2.0, -4.0, -1.0},
+            {3.0, 6.0, 1.5},
+            {-3.0, -6.0, -1.5},
+            {0.5, 1.0, 0.25},
+            {-0.5, -1.0, -0.25},
         });
     }
 
@@ -87,7 +87,8 @@ TEST_F(PCATest, ComponentsTest) {
     EXPECT_NEAR(comp_abs, 1.0 / std::sqrt(2.0), 1e-5);
 
     // Components should be orthogonal
-    double dot_product = components(0, 0) * components(0, 1) + components(1, 0) * components(1, 1);
+    double dot_product = components(0, 0) * components(0, 1) + components(1, 0) *
+                         components(1, 1);
     EXPECT_NEAR(dot_product, 0.0, 1e-5);
 }
 
@@ -129,6 +130,6 @@ TEST_F(PCATest, ErrorHandlingTest) {
 
     // Test with incompatible dimensions
     pca.fit(data_);
-    Tensor<double> wrong_dims(3, 3);
+    auto wrong_dims = Tensor<double>::zeros({3, 3});
     EXPECT_THROW(pca.transform(wrong_dims), std::invalid_argument);
 }
