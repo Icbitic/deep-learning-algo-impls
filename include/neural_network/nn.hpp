@@ -7,19 +7,19 @@
 #include "utils/tensor.hpp"
 
 /**
- * @file layers.hpp
+ * @file nn.hpp
  * @brief PyTorch-like neural network layers with automatic differentiation
  * @author Kalenitid
  * @version 1.0.0
  */
 
-namespace dl::layers {
-    using utils::Tensor;
-    using utils::TensorD;
-    using utils::TensorF;
-    using utils::Variable;
-    using utils::VariableD;
-    using utils::VariableF;
+namespace dl::nn {
+    using dl::Tensor;
+    using dl::TensorD;
+    using dl::TensorF;
+    using dl::Variable;
+    using dl::VariableD;
+    using dl::VariableF;
 
     /**
      * @brief Base class for all neural network modules (PyTorch-like nn.Module)
@@ -34,13 +34,13 @@ namespace dl::layers {
          * @param input Input variable
          * @return Output variable
          */
-        virtual std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &input) = 0;
+        virtual std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &input) = 0;
 
         /**
          * @brief Get all parameters of this module
          * @return Vector of parameter variables
          */
-        virtual std::vector<std::shared_ptr<Variable<T>>> parameters() = 0;
+        virtual std::vector<std::shared_ptr<Variable<T> > > parameters() = 0;
 
         /**
          * @brief Zero gradients of all parameters
@@ -90,22 +90,22 @@ namespace dl::layers {
          * @param input Input variable of shape (batch_size, in_features)
          * @return Output variable of shape (batch_size, out_features)
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &input) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &input) override;
 
         /**
          * @brief Get parameters (weight and bias)
          */
-        std::vector<std::shared_ptr<Variable<T>>> parameters() override;
+        std::vector<std::shared_ptr<Variable<T> > > parameters() override;
 
         // Getters for parameters
-        std::shared_ptr<Variable<T>> &weight() { return weight_; }
-        std::shared_ptr<Variable<T>> &bias() { return bias_; }
-        const std::shared_ptr<Variable<T>> &weight() const { return weight_; }
-        const std::shared_ptr<Variable<T>> &bias() const { return bias_; }
+        std::shared_ptr<Variable<T> > &weight() { return weight_; }
+        std::shared_ptr<Variable<T> > &bias() { return bias_; }
+        const std::shared_ptr<Variable<T> > &weight() const { return weight_; }
+        const std::shared_ptr<Variable<T> > &bias() const { return bias_; }
 
     private:
-        std::shared_ptr<Variable<T>> weight_; // Shape: (out_features, in_features)
-        std::shared_ptr<Variable<T>> bias_; // Shape: (out_features,)
+        std::shared_ptr<Variable<T> > weight_; // Shape: (out_features, in_features)
+        std::shared_ptr<Variable<T> > bias_; // Shape: (out_features,)
         bool has_bias_;
         size_t in_features_;
         size_t out_features_;
@@ -119,9 +119,9 @@ namespace dl::layers {
     template<typename T>
     class ReLU : public Module<T> {
     public:
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &input) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &input) override;
 
-        std::vector<std::shared_ptr<Variable<T>>> parameters() override { return {}; }
+        std::vector<std::shared_ptr<Variable<T> > > parameters() override { return {}; }
     };
 
     /**
@@ -130,9 +130,9 @@ namespace dl::layers {
     template<typename T>
     class Sigmoid : public Module<T> {
     public:
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &input) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &input) override;
 
-        std::vector<std::shared_ptr<Variable<T>>> parameters() override { return {}; }
+        std::vector<std::shared_ptr<Variable<T> > > parameters() override { return {}; }
     };
 
     /**
@@ -141,9 +141,9 @@ namespace dl::layers {
     template<typename T>
     class Tanh : public Module<T> {
     public:
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &input) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &input) override;
 
-        std::vector<std::shared_ptr<Variable<T>>> parameters() override { return {}; }
+        std::vector<std::shared_ptr<Variable<T> > > parameters() override { return {}; }
     };
 
     /**
@@ -159,9 +159,9 @@ namespace dl::layers {
         explicit Dropout(T p = 0.5) : p_(p) {
         }
 
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &input) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &input) override;
 
-        std::vector<std::shared_ptr<Variable<T>>> parameters() override { return {}; }
+        std::vector<std::shared_ptr<Variable<T> > > parameters() override { return {}; }
 
     private:
         T p_; // Dropout probability
@@ -181,12 +181,12 @@ namespace dl::layers {
         /**
          * @brief Forward pass through all modules in sequence
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &input) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &input) override;
 
         /**
          * @brief Get all parameters from all modules
          */
-        std::vector<std::shared_ptr<Variable<T>>> parameters() override;
+        std::vector<std::shared_ptr<Variable<T> > > parameters() override;
 
         /**
          * @brief Zero gradients for all modules

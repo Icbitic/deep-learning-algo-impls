@@ -4,7 +4,7 @@
 #include <queue>
 #include <unordered_set>
 
-namespace utils {
+namespace dl {
     template<typename T>
     std::vector<typename Variable<T>::VariablePtr> Variable<T>::topological_sort(VariablePtr root) {
         std::vector<VariablePtr> topo_order;
@@ -1489,4 +1489,4 @@ namespace utils {
 
     template std::shared_ptr<Variable<double> >
     make_variable_ones(const std::vector<size_t> &shape, bool requires_grad);
-} // namespace utils
+} // namespace dl

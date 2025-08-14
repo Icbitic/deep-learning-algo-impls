@@ -2,7 +2,7 @@
 #include "ml/pca.hpp"
 #include "utils/tensor.hpp"
 
-using namespace utils;
+using namespace dl;
 using namespace ml;
 
 class PCATest : public ::testing::Test {

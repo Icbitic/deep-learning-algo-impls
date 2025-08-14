@@ -19,7 +19,7 @@
  * - Gradient accumulation and checkpointing
  */
 
-namespace utils {
+namespace dl {
     template<typename T>
     class Variable;
 
@@ -823,4 +823,4 @@ namespace utils {
     using VariableFPtr = std::shared_ptr<VariableF>;
     using VariableDPtr = std::shared_ptr<VariableD>;
 
-} // namespace utils
+} // namespace dl

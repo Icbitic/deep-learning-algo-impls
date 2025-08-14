@@ -6,7 +6,7 @@
 #include <xtensor/generators/xrandom.hpp>
 #include <xtensor/views/xview.hpp>
 
-namespace utils {
+namespace dl {
     // Default constructor is defined inline in header
 
     // Constructor from data vector with shape (PyTorch-style)
@@ -588,4 +588,4 @@ namespace utils {
     template Tensor<bool> compare_greater<double>(const Tensor<double> &, const Tensor<double> &);
 
     template Tensor<bool> compare_greater<int>(const Tensor<int> &, const Tensor<int> &);
-} // namespace utils
+} // namespace dl

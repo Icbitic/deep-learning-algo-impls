@@ -3,17 +3,17 @@
 #include <vector>
 
 // Include the necessary headers
-#include "utils/autograd.hpp"
-#include "utils/tensor.hpp"
+#include "include/utils/autograd.hpp"
+#include "include/utils/tensor.hpp"
 
-using TensorD = utils::Tensor<double>;
-using VariableD = utils::Variable<double>;
+using TensorD = dl::Tensor<double>;
+using VariableD = dl::Variable<double>;
 
 
 int main() {
     try {
-        auto x = utils::make_variable_scalar(1.0, true);
-        auto y = utils::make_variable_scalar(1.0, true);
+        auto x = dl::make_variable_scalar(1.0, true);
+        auto y = dl::make_variable_scalar(1.0, true);
         auto z = *x + *y;
         z->backward();
 

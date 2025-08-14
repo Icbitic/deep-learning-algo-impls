@@ -13,7 +13,7 @@
  */
 
 namespace ml {
-    using namespace utils;
+    using namespace dl;
 
     /**
      * @brief A class implementing K-Means clustering algorithm

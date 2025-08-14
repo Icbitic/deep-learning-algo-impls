@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <iostream>
-#include "neural_network/layers.hpp"
+#include "neural_network/nn.hpp"
 
 namespace {
     // TODO: Add tests for:

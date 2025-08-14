@@ -5,7 +5,7 @@
 #include "ml/svm.hpp"
 #include "utils/tensor.hpp"
 
-using namespace utils;
+using namespace dl;
 using namespace ml;
 
 class SVMTest : public ::testing::Test {

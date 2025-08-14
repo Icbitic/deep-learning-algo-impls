@@ -11,11 +11,11 @@
 #include "../include/utils/autograd.hpp"
 #include "../include/utils/tensor.hpp"
 
-using namespace utils;
+using namespace dl;
 
 int main() {
     auto a = make_variable_ones<double>({1, 2}, true);
-    auto b = make_variable(TensorD::from_array(xt::xarray<double>{{1, 2}, {2, 3}}), true);
+    auto b = make_variable(dl::TensorD::from_array({{1, 2}, {2, 3}}), true);
 
     a->zero_grad();
     b->zero_grad();
@@ -23,8 +23,8 @@ int main() {
     // Perform some computation
     auto c = a->matmul(b);
     auto d = c->sum();
-    auto e = make_variable_scalar(1.0, true);
-    auto two = make_variable_scalar(2.0, true);
+    auto e = dl::make_variable_scalar(1.0, true);
+    auto two = dl::make_variable_scalar(2.0, true);
     auto f = d - e * two;
     auto mean = c->mean();
 

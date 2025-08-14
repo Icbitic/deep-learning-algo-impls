@@ -14,12 +14,12 @@
  */
 
 namespace dl::optimization {
-    using utils::Tensor;
-    using utils::TensorD;
-    using utils::TensorF;
-    using utils::Variable;
-    using utils::VariableD;
-    using utils::VariableF;
+    using dl::Tensor;
+    using dl::TensorD;
+    using dl::TensorF;
+    using dl::Variable;
+    using dl::VariableD;
+    using dl::VariableF;
 
     /**
      * @brief Base class for autograd-compatible optimizers
@@ -32,7 +32,7 @@ namespace dl::optimization {
          * @param parameters Vector of parameter variables to optimize
          */
         explicit
-        AutogradOptimizer(std::vector<std::shared_ptr<Variable<T>>> parameters) : parameters_(
+        AutogradOptimizer(std::vector<std::shared_ptr<Variable<T> > > parameters) : parameters_(
             parameters) {
         }
 
@@ -63,7 +63,7 @@ namespace dl::optimization {
         virtual void set_lr(T lr) = 0;
 
     protected:
-        std::vector<std::shared_ptr<Variable<T>>> parameters_;
+        std::vector<std::shared_ptr<Variable<T> > > parameters_;
     };
 
     /**
@@ -88,7 +88,7 @@ namespace dl::optimization {
          * @param weight_decay Weight decay (L2 penalty) (default: 0)
          * @param nesterov Enable Nesterov momentum (default: false)
          */
-        SGD(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T momentum = 0.0,
+        SGD(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr, T momentum = 0.0,
             T weight_decay = 0.0, bool nesterov = false);
 
         /**
@@ -138,7 +138,7 @@ namespace dl::optimization {
          * @param eps Term for numerical stability (default: 1e-8)
          * @param weight_decay Weight decay (L2 penalty) (default: 0)
          */
-        Adam(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr = 1e-3, T beta1 = 0.9,
+        Adam(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr = 1e-3, T beta1 = 0.9,
              T beta2 = 0.999, T eps = 1e-8,
              T weight_decay = 0.0);
 
@@ -192,7 +192,7 @@ namespace dl::optimization {
          * @param eps Term for numerical stability (default: 1e-8)
          * @param weight_decay Weight decay coefficient (default: 1e-2)
          */
-        AdamW(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr = 1e-3, T beta1 = 0.9,
+        AdamW(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr = 1e-3, T beta1 = 0.9,
               T beta2 = 0.999, T eps = 1e-8,
               T weight_decay = 1e-2);
 
@@ -245,7 +245,7 @@ namespace dl::optimization {
          * @param weight_decay Weight decay (L2 penalty) (default: 0)
          * @param momentum Momentum factor (default: 0)
          */
-        RMSprop(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr = 1e-2, T alpha = 0.99,
+        RMSprop(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr = 1e-2, T alpha = 0.99,
                 T eps = 1e-8, T weight_decay = 0.0,
                 T momentum = 0.0);
 

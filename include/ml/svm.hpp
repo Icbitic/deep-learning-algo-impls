@@ -2,8 +2,8 @@
 
 #include <functional>
 #include <vector>
-#include "utils/autograd.hpp"
-#include "utils/tensor.hpp"
+#include "../utils/autograd.hpp"
+#include "../utils/tensor.hpp"
 
 /**
  * @file svm.hpp
@@ -13,7 +13,7 @@
  */
 
 namespace ml {
-    using namespace utils;
+    using namespace dl;
 
     /**
      * @brief Kernel function types for SVM

@@ -15,7 +15,7 @@
  * @version 2.0.0
  */
 
-namespace utils {
+namespace dl {
     // Forward declaration
     template<typename T>
     class Variable;
@@ -530,8 +530,8 @@ namespace utils {
         static_assert(sizeof...(indices) > 0, "At least one index required");
         std::vector<size_t> idx_vec = {static_cast<size_t>(indices)...};
         if (idx_vec.size() != shape_.size()) {
-            std::cerr << "DEBUG: Tensor access error - indices: " << idx_vec.size() 
-                      << ", shape dimensions: " << shape_.size() << std::endl;
+            std::cerr << "DEBUG: Tensor access error - indices: " << idx_vec.size()
+                    << ", shape dimensions: " << shape_.size() << std::endl;
             throw std::out_of_range(
                 "Number of indices does not match tensor dimensions");
         }
@@ -549,8 +549,8 @@ namespace utils {
         static_assert(sizeof...(indices) > 0, "At least one index required");
         std::vector<size_t> idx_vec = {static_cast<size_t>(indices)...};
         if (idx_vec.size() != shape_.size()) {
-            std::cerr << "DEBUG: Tensor const access error - indices: " << idx_vec.size() 
-                      << ", shape dimensions: " << shape_.size() << std::endl;
+            std::cerr << "DEBUG: Tensor const access error - indices: " << idx_vec.size()
+                    << ", shape dimensions: " << shape_.size() << std::endl;
             std::cerr << "DEBUG: Tensor shape: [";
             for (size_t i = 0; i < shape_.size(); ++i) {
                 std::cerr << shape_[i];
@@ -637,4 +637,4 @@ namespace utils {
     using MatrixD = Tensor<double>;
 
     /** @} */
-} // namespace utils
+} // namespace dl

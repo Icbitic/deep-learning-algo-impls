@@ -6,7 +6,7 @@
 #include "utils/autograd.hpp"
 #include "utils/tensor.hpp"
 
-using namespace utils;
+using namespace dl;
 using namespace ml;
 
 class SVMAutogradTest : public ::testing::Test {

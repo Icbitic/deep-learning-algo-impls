@@ -4,7 +4,7 @@
 #include "ml/kmeans.hpp"
 #include "utils/tensor.hpp"
 
-using namespace utils;
+using namespace dl;
 using namespace ml;
 
 class KMeansTest : public ::testing::Test {

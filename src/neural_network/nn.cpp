@@ -1,9 +1,9 @@
-#include "neural_network/layers.hpp"
+#include "neural_network/nn.hpp"
 #include <algorithm>
 #include <random>
 #include <stdexcept>
 
-namespace dl::layers {
+namespace dl::nn {
     // ============================================================================
     // Linear Layer Implementation
     // ============================================================================

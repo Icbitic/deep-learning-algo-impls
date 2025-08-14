@@ -13,12 +13,12 @@
  */
 
 namespace dl::loss {
-    using utils::Tensor;
-    using utils::TensorD;
-    using utils::TensorF;
-    using utils::Variable;
-    using utils::VariableD;
-    using utils::VariableF;
+    using dl::Tensor;
+using dl::TensorD;
+using dl::TensorF;
+using dl::Variable;
+using dl::VariableD;
+using dl::VariableF;
 
     /**
      * @brief Base class for autograd-compatible loss functions

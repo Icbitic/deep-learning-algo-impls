@@ -5,7 +5,7 @@
 #include <vector>
 #include <cmath>
 
-using namespace utils;
+using namespace dl;
 
 class AutogradTest : public ::testing::Test {
 protected:
@@ -83,7 +83,7 @@ TEST_F(AutogradTest, GradientZeroing) {
     EXPECT_EQ(static_cast<int>(var1->grad().size()), 0);
     
     // After backward pass, gradient should exist
-    auto result = utils::operator*(var1, var1);
+    auto result = dl::operator*(var1, var1);
     auto sum_result = result->sum();
     sum_result->backward();
     
@@ -110,7 +110,7 @@ TEST_F(AutogradTest, ArithmeticOperations) {
     EXPECT_NE(sub_result->get_grad_fn(), nullptr);
     
     // Test multiplication
-    auto mul_result = utils::operator*(v1, v2);
+    auto mul_result = dl::operator*(v1, v2);
     EXPECT_TRUE(mul_result->requires_grad());
     EXPECT_NE(mul_result->get_grad_fn(), nullptr);
     
@@ -130,7 +130,7 @@ TEST_F(AutogradTest, ScalarOperations) {
     EXPECT_TRUE(add_result->requires_grad());
     
     // Test scalar multiplication
-    auto mul_result = utils::operator*(v, scalar);
+    auto mul_result = dl::operator*(v, scalar);
     EXPECT_TRUE(mul_result->requires_grad());
     
     // Test scalar subtraction
@@ -215,7 +215,7 @@ TEST_F(AutogradTest, ReductionOperations) {
 TEST_F(AutogradTest, SimpleBackwardPass) {
     // Simple computation: z = (v1 + v2) * v1
     auto temp = var1 + var2;
-    auto result = utils::operator*(temp, var1);
+    auto result = dl::operator*(temp, var1);
     auto loss = result->sum();
     
     // Backward pass
@@ -259,7 +259,7 @@ TEST_F(AutogradTest, ActivationBackwardPass) {
 // Test gradient accumulation
 TEST_F(AutogradTest, GradientAccumulation) {
     // First backward pass
-    auto result1 = utils::operator*(var1, var1);
+    auto result1 = dl::operator*(var1, var1);
     auto sum1 = result1->sum();
     sum1->backward();
     
@@ -337,8 +337,8 @@ TEST_F(AutogradTest, ComplexComputationalGraph) {
     auto w2 = make_variable(tensor3, true);
     
     // Complex computational graph: h1 = sigmoid(x * w1), h2 = tanh(h1 * w2), loss = sum(h2)
-    auto h1 = utils::operator*(x, w1)->sigmoid();
-    auto h2 = utils::operator*(h1, w2)->tanh();
+    auto h1 = dl::operator*(x, w1)->sigmoid();
+    auto h2 = dl::operator*(h1, w2)->tanh();
     auto loss = h2->sum();
     
     // Backward pass
@@ -366,7 +366,7 @@ TEST_F(AutogradTest, NumericalGradientCheck) {
     auto x = make_variable(x_tensor, true);
     
     // Analytical gradient
-    auto x_squared = utils::operator*(x, x);
+    auto x_squared = dl::operator*(x, x);
     auto y_temp = x_squared->sum();
     y_temp->backward();
     Tensor<float> analytical_grad = x->grad();
@@ -379,7 +379,7 @@ TEST_F(AutogradTest, NumericalGradientCheck) {
         x_plus[i] += eps;
         Tensor<float> x_plus_tensor({x_plus[0], x_plus[1]}, {2, 1});
         auto x_plus_var = make_variable(x_plus_tensor, false);
-        auto x_plus_squared = utils::operator*(x_plus_var, x_plus_var);
+        auto x_plus_squared = dl::operator*(x_plus_var, x_plus_var);
         auto y_plus = x_plus_squared->sum();
         
         // f(x - eps)
@@ -387,7 +387,7 @@ TEST_F(AutogradTest, NumericalGradientCheck) {
         x_minus[i] -= eps;
         Tensor<float> x_minus_tensor({x_minus[0], x_minus[1]}, {2, 1});
         auto x_minus_var = make_variable(x_minus_tensor, false);
-        auto x_minus_squared = utils::operator*(x_minus_var, x_minus_var);
+        auto x_minus_squared = dl::operator*(x_minus_var, x_minus_var);
         auto y_minus = x_minus_squared->sum();
         
         // Numerical gradient: (f(x+eps) - f(x-eps)) / (2*eps)

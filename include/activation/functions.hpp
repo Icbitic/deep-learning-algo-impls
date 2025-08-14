@@ -12,7 +12,7 @@
  */
 
 namespace dl::activation {
-    using utils::MatrixD;
+    using dl::MatrixD;
 
     /**
      * @brief Abstract base class for activation functions

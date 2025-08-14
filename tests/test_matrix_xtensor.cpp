@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "utils/tensor.hpp"
 
-using namespace utils;
+using namespace dl;
 
 TEST(TensorXTensorTest, Construction) {
     // Test default constructor
