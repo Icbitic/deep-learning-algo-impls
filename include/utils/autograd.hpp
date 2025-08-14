@@ -382,6 +382,114 @@ namespace utils {
     };
 
     /**
+     * @brief Scalar addition operation (variable + scalar)
+     */
+    template<typename T>
+    class ScalarAddFunction : public Function<T> {
+    public:
+        explicit ScalarAddFunction(T scalar);
+
+        Tensor<T> forward(const std::vector<Variable<T> > &inputs) override;
+
+        Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
+
+        size_t num_inputs() const override;
+
+    private:
+        T scalar_;
+    };
+
+    /**
+     * @brief Scalar multiplication operation (variable * scalar)
+     */
+    template<typename T>
+    class ScalarMulFunction : public Function<T> {
+    public:
+        explicit ScalarMulFunction(T scalar);
+
+        Tensor<T> forward(const std::vector<Variable<T> > &inputs) override;
+
+        Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
+
+        size_t num_inputs() const override;
+
+    private:
+        T scalar_;
+    };
+
+    /**
+     * @brief Scalar subtraction operation (variable - scalar)
+     */
+    template<typename T>
+    class ScalarSubFunction : public Function<T> {
+    public:
+        explicit ScalarSubFunction(T scalar);
+
+        Tensor<T> forward(const std::vector<Variable<T> > &inputs) override;
+
+        Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
+
+        size_t num_inputs() const override;
+
+    private:
+        T scalar_;
+    };
+
+    /**
+     * @brief Scalar division operation (variable / scalar)
+     */
+    template<typename T>
+    class ScalarDivFunction : public Function<T> {
+    public:
+        explicit ScalarDivFunction(T scalar);
+
+        Tensor<T> forward(const std::vector<Variable<T> > &inputs) override;
+
+        Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
+
+        size_t num_inputs() const override;
+
+    private:
+        T scalar_;
+    };
+
+    /**
+     * @brief Reverse scalar subtraction operation (scalar - variable)
+     */
+    template<typename T>
+    class ReverseScalarSubFunction : public Function<T> {
+    public:
+        explicit ReverseScalarSubFunction(T scalar);
+
+        Tensor<T> forward(const std::vector<Variable<T> > &inputs) override;
+
+        Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
+
+        size_t num_inputs() const override;
+
+    private:
+        T scalar_;
+    };
+
+    /**
+     * @brief Reverse scalar division operation (scalar / variable)
+     */
+    template<typename T>
+    class ReverseScalarDivFunction : public Function<T> {
+    public:
+        explicit ReverseScalarDivFunction(T scalar);
+
+        Tensor<T> forward(const std::vector<Variable<T> > &inputs) override;
+
+        Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
+
+        size_t num_inputs() const override;
+
+    private:
+        T scalar_;
+    };
+
+    /**
      * @brief Matrix multiplication operation
      */
     template<typename T>

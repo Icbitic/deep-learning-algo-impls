@@ -121,8 +121,8 @@ namespace utils {
                 const auto &input_vars = var->get_grad_fn()->get_inputs();
 
                 // Handle gradient accumulation properly for repeated variables
-                std::unordered_map<VariablePtr, Tensor<T>> local_grads;
-                
+                std::unordered_map<VariablePtr, Tensor<T> > local_grads;
+
                 for (size_t i = 0; i < input_grads.size() && i < input_vars.size(); ++i) {
                     if (input_vars[i] && input_vars[i]->requires_grad()) {
                         if (local_grads.count(input_vars[i])) {
@@ -133,9 +133,9 @@ namespace utils {
                         }
                     }
                 }
-                
+
                 // Now add the accumulated local gradients to the global gradients map
-                for (const auto& [input_var, local_grad] : local_grads) {
+                for (const auto &[input_var, local_grad]: local_grads) {
                     if (gradients.count(input_var)) {
                         gradients[input_var] = gradients[input_var] + local_grad;
                     } else {
@@ -154,7 +154,7 @@ namespace utils {
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator+(const Variable<T> &other) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator+(const Variable<T> &other) const {
         auto add_fn = std::make_shared<AddFunction<T> >();
         Tensor<T> result = add_fn->forward({*this, other});
 
@@ -167,11 +167,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, add_fn, {self_ptr, other_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator-(const Variable<T> &other) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator-(const Variable<T> &other) const {
         auto sub_fn = std::make_shared<SubFunction<T> >();
         Tensor<T> result = sub_fn->forward({*this, other});
 
@@ -181,39 +181,41 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, sub_fn, {self_ptr, other_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator*(const Variable<T> &other) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator*(const Variable<T> &other) const {
         auto mul_fn = std::make_shared<MulFunction<T> >();
         Tensor<T> result = mul_fn->forward({*this, other});
 
         if (requires_grad_ || other.requires_grad_) {
             auto self_ptr = shared_from_this();
-            auto other_ptr = std::shared_ptr<Variable<T>>(const_cast<Variable<T>*>(&other), [](Variable<T> *) {});
+            auto other_ptr = std::shared_ptr<Variable<T> >(const_cast<Variable<T> *>(&other), [](Variable<T> *) {
+            });
             auto result_var = Variable<T>::create_with_grad_fn(result, mul_fn, {self_ptr, other_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator/(const Variable<T> &other) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator/(const Variable<T> &other) const {
         auto div_fn = std::make_shared<DivFunction<T> >();
         Tensor<T> result = div_fn->forward({*this, other});
 
         if (requires_grad_ || other.requires_grad_) {
             auto self_ptr = shared_from_this();
-            auto other_ptr = std::shared_ptr<Variable<T>>(const_cast<Variable<T>*>(&other), [](Variable<T> *) {});
+            auto other_ptr = std::shared_ptr<Variable<T> >(const_cast<Variable<T> *>(&other), [](Variable<T> *) {
+            });
             auto result_var = Variable<T>::create_with_grad_fn(result, div_fn, {self_ptr, other_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator+(T scalar) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator+(T scalar) const {
         auto scalar_fn = std::make_shared<AddFunction<T> >();
         Tensor<T> scalar_tensor = Tensor<T>::full(data_.shape(), scalar);
         Variable<T> scalar_var(scalar_tensor, false);
@@ -225,11 +227,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, scalar_fn, {self_ptr, scalar_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator-(T scalar) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator-(T scalar) const {
         auto scalar_fn = std::make_shared<SubFunction<T> >();
         Tensor<T> scalar_tensor = Tensor<T>::full(data_.shape(), scalar);
         Variable<T> scalar_var(scalar_tensor, false);
@@ -241,11 +243,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, scalar_fn, {self_ptr, scalar_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator*(T scalar) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator*(T scalar) const {
         auto scalar_fn = std::make_shared<MulFunction<T> >();
         Tensor<T> scalar_tensor = Tensor<T>::full(data_.shape(), scalar);
         Variable<T> scalar_var(scalar_tensor, false);
@@ -257,11 +259,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, scalar_fn, {self_ptr, scalar_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::operator/(T scalar) const {
+    std::shared_ptr<Variable<T> > Variable<T>::operator/(T scalar) const {
         auto scalar_fn = std::make_shared<DivFunction<T> >();
         Tensor<T> scalar_tensor = Tensor<T>::full(data_.shape(), scalar);
         Variable<T> scalar_var(scalar_tensor, false);
@@ -273,7 +275,7 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, scalar_fn, {self_ptr, scalar_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     // Smart pointer operations
@@ -327,47 +329,67 @@ namespace utils {
 
     template<typename T>
     Variable<T>::VariablePtr Variable<T>::mul(VariablePtr a, T scalar) {
-        Tensor<T> scalar_tensor = Tensor<T>::full(a->data().shape(), scalar);
-        auto scalar_var = std::make_shared<Variable<T> >(scalar_tensor, false);
-        return mul(a, scalar_var);
+        auto scalar_mul_fn = std::make_shared<ScalarMulFunction<T> >(scalar);
+        Tensor<T> result = scalar_mul_fn->forward({*a});
+
+        if (a->requires_grad()) {
+            auto result_var = Variable<T>::create_with_grad_fn(result, scalar_mul_fn, {a});
+            return result_var;
+        }
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
     Variable<T>::VariablePtr Variable<T>::add(VariablePtr a, T scalar) {
-        Tensor<T> scalar_tensor = Tensor<T>::full(a->data().shape(), scalar);
-        auto scalar_var = std::make_shared<Variable<T> >(scalar_tensor, false);
-        return add(a, scalar_var);
+        auto scalar_add_fn = std::make_shared<ScalarAddFunction<T> >(scalar);
+        Tensor<T> result = scalar_add_fn->forward({*a});
+
+        if (a->requires_grad()) {
+            auto result_var = Variable<T>::create_with_grad_fn(result, scalar_add_fn, {a});
+            return result_var;
+        }
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
     Variable<T>::VariablePtr Variable<T>::sub(VariablePtr a, T scalar) {
-        Tensor<T> scalar_tensor = Tensor<T>::full(a->data().shape(), scalar);
-        auto scalar_var = std::make_shared<Variable<T> >(scalar_tensor, false);
-        return sub(a, scalar_var);
+        auto scalar_sub_fn = std::make_shared<ScalarSubFunction<T> >(scalar);
+        Tensor<T> result = scalar_sub_fn->forward({*a});
+
+        if (a->requires_grad()) {
+            auto result_var = Variable<T>::create_with_grad_fn(result, scalar_sub_fn, {a});
+            return result_var;
+        }
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
     Variable<T>::VariablePtr Variable<T>::div(VariablePtr a, T scalar) {
-        Tensor<T> scalar_tensor = Tensor<T>::full(a->data().shape(), scalar);
-        auto scalar_var = std::make_shared<Variable<T> >(scalar_tensor, false);
-        return div(a, scalar_var);
+        auto scalar_div_fn = std::make_shared<ScalarDivFunction<T> >(scalar);
+        Tensor<T> result = scalar_div_fn->forward({*a});
+
+        if (a->requires_grad()) {
+            auto result_var = Variable<T>::create_with_grad_fn(result, scalar_div_fn, {a});
+            return result_var;
+        }
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::matmul(const std::shared_ptr<Variable<T>> &other) const {
+    std::shared_ptr<Variable<T> > Variable<T>::matmul(const std::shared_ptr<Variable<T> > &other) const {
         auto matmul_fn = std::make_shared<MatMulFunction<T> >();
         Tensor<T> result = matmul_fn->forward({*this, *other});
 
         if (requires_grad_ || other->requires_grad_) {
             auto self_ptr = shared_from_this();
             auto result_var = Variable<T>::create_with_grad_fn(result, matmul_fn, {self_ptr, other});
-        return result_var;
+            return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::dot(const std::shared_ptr<Variable<T>> &other) const {
+    std::shared_ptr<Variable<T> > Variable<T>::dot(const std::shared_ptr<Variable<T> > &other) const {
         auto dot_fn = std::make_shared<DotFunction<T> >();
         Tensor<T> result = dot_fn->forward({*this, *other});
 
@@ -375,11 +397,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, dot_fn, {self_ptr, other});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::transpose() const {
+    std::shared_ptr<Variable<T> > Variable<T>::transpose() const {
         auto transpose_fn = std::make_shared<TransposeFunction<T> >();
         Tensor<T> result = transpose_fn->forward({*this});
 
@@ -387,11 +409,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, transpose_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::transpose(const std::vector<size_t> &axes) const {
+    std::shared_ptr<Variable<T> > Variable<T>::transpose(const std::vector<size_t> &axes) const {
         auto transpose_axes_fn = std::make_shared<TransposeAxesFunction<T> >(axes);
         Tensor<T> result = transpose_axes_fn->forward({*this});
 
@@ -399,11 +421,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, transpose_axes_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::view(const std::vector<size_t> &new_shape) const {
+    std::shared_ptr<Variable<T> > Variable<T>::view(const std::vector<size_t> &new_shape) const {
         auto view_fn = std::make_shared<ViewFunction<T> >(data_.shape());
         Tensor<T> result = view_fn->forward({*this});
 
@@ -411,11 +433,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, view_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::squeeze(int axis) const {
+    std::shared_ptr<Variable<T> > Variable<T>::squeeze(int axis) const {
         auto squeeze_fn = std::make_shared<SqueezeFunction<T> >(axis, data_.shape());
         Tensor<T> result = squeeze_fn->forward({*this});
 
@@ -423,11 +445,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, squeeze_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::unsqueeze(size_t axis) const {
+    std::shared_ptr<Variable<T> > Variable<T>::unsqueeze(size_t axis) const {
         auto unsqueeze_fn = std::make_shared<UnsqueezeFunction<T> >(axis);
         Tensor<T> result = unsqueeze_fn->forward({*this});
 
@@ -435,11 +457,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, unsqueeze_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::sum(const std::vector<int> &axes, bool keepdims) const {
+    std::shared_ptr<Variable<T> > Variable<T>::sum(const std::vector<int> &axes, bool keepdims) const {
         auto sum_axes_fn = std::make_shared<SumAxesFunction<T> >(axes, keepdims);
         Tensor<T> result = sum_axes_fn->forward({*this});
 
@@ -447,11 +469,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, sum_axes_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::mean(const std::vector<int> &axes, bool keepdims) const {
+    std::shared_ptr<Variable<T> > Variable<T>::mean(const std::vector<int> &axes, bool keepdims) const {
         auto mean_axes_fn = std::make_shared<MeanAxesFunction<T> >(axes, keepdims);
         Tensor<T> result = mean_axes_fn->forward({*this});
 
@@ -459,24 +481,24 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, mean_axes_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::sum() const {
+    std::shared_ptr<Variable<T> > Variable<T>::sum() const {
         auto sum_fn = std::make_shared<SumFunction<T> >();
         Tensor<T> result = sum_fn->forward({*this});
 
         if (requires_grad_) {
             auto self_ptr = shared_from_this();
             auto result_var = Variable<T>::create_with_grad_fn(result, sum_fn, {self_ptr});
-        return result_var;
+            return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::mean() const {
+    std::shared_ptr<Variable<T> > Variable<T>::mean() const {
         auto mean_fn = std::make_shared<MeanFunction<T> >();
         Tensor<T> result = mean_fn->forward({*this});
 
@@ -485,11 +507,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, mean_fn, {self_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::sigmoid() const {
+    std::shared_ptr<Variable<T> > Variable<T>::sigmoid() const {
         auto sigmoid_fn = std::make_shared<SigmoidFunction<T> >();
         Tensor<T> result = sigmoid_fn->forward({*this});
 
@@ -498,11 +520,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, sigmoid_fn, {self_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::tanh() const {
+    std::shared_ptr<Variable<T> > Variable<T>::tanh() const {
         auto tanh_fn = std::make_shared<TanhFunction<T> >();
         Tensor<T> result = tanh_fn->forward({*this});
 
@@ -511,11 +533,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, tanh_fn, {self_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::relu() const {
+    std::shared_ptr<Variable<T> > Variable<T>::relu() const {
         auto relu_fn = std::make_shared<ReLUFunction<T> >();
         Tensor<T> result = relu_fn->forward({*this});
 
@@ -524,11 +546,11 @@ namespace utils {
             auto result_var = Variable<T>::create_with_grad_fn(result, relu_fn, {self_ptr});
             return result_var;
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::exp() const {
+    std::shared_ptr<Variable<T> > Variable<T>::exp() const {
         auto exp_fn = std::make_shared<ExpFunction<T> >();
         Tensor<T> result = exp_fn->forward({*this});
 
@@ -536,11 +558,11 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, exp_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::log() const {
+    std::shared_ptr<Variable<T> > Variable<T>::log() const {
         auto log_fn = std::make_shared<LogFunction<T> >();
         Tensor<T> result = log_fn->forward({*this});
 
@@ -548,7 +570,7 @@ namespace utils {
             auto self_ptr = shared_from_this();
             return Variable<T>::create_with_grad_fn(result, log_fn, {self_ptr});
         }
-        return std::make_shared<Variable<T>>(result, false);
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     // Function class method implementations
@@ -595,10 +617,10 @@ namespace utils {
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::create_with_grad_fn(const Tensor<T> &data,
-                                                 FunctionPtr grad_fn,
-                                                 const std::vector<VariablePtr> &inputs) {
-        auto var = std::make_shared<Variable<T>>(data, grad_fn);
+    std::shared_ptr<Variable<T> > Variable<T>::create_with_grad_fn(const Tensor<T> &data,
+                                                                   FunctionPtr grad_fn,
+                                                                   const std::vector<VariablePtr> &inputs) {
+        auto var = std::make_shared<Variable<T> >(data, grad_fn);
         if (grad_fn) {
             grad_fn->set_inputs(inputs);
         }
@@ -616,13 +638,13 @@ namespace utils {
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::detach() const {
-        return std::make_shared<Variable<T>>(data_, false);
+    std::shared_ptr<Variable<T> > Variable<T>::detach() const {
+        return std::make_shared<Variable<T> >(data_, false);
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Variable<T>::clone(bool requires_grad) const {
-        auto cloned = std::make_shared<Variable<T>>(data_, requires_grad);
+    std::shared_ptr<Variable<T> > Variable<T>::clone(bool requires_grad) const {
+        auto cloned = std::make_shared<Variable<T> >(data_, requires_grad);
         if (!grad_.empty()) {
             cloned->grad_ = grad_;
         }
@@ -1126,6 +1148,122 @@ namespace utils {
         return 1;
     }
 
+    // ============================================================================
+    // SCALAR OPERATION IMPLEMENTATIONS
+    // ============================================================================
+
+    template<typename T>
+    ScalarAddFunction<T>::ScalarAddFunction(T scalar) : scalar_(scalar) {}
+
+    template<typename T>
+    Tensor<T> ScalarAddFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
+        return inputs[0].data() + Tensor<T>::full(inputs[0].data().shape(), scalar_);
+    }
+
+    template<typename T>
+    Function<T>::TensorVec ScalarAddFunction<T>::backward(const Tensor<T> &grad_output) {
+        return {grad_output};
+    }
+
+    template<typename T>
+    size_t ScalarAddFunction<T>::num_inputs() const {
+        return 1;
+    }
+
+    template<typename T>
+    ScalarMulFunction<T>::ScalarMulFunction(T scalar) : scalar_(scalar) {}
+
+    template<typename T>
+    Tensor<T> ScalarMulFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
+        return inputs[0].data() * scalar_;
+    }
+
+    template<typename T>
+    Function<T>::TensorVec ScalarMulFunction<T>::backward(const Tensor<T> &grad_output) {
+        return {grad_output * scalar_};
+    }
+
+    template<typename T>
+    size_t ScalarMulFunction<T>::num_inputs() const {
+        return 1;
+    }
+
+    template<typename T>
+    ScalarSubFunction<T>::ScalarSubFunction(T scalar) : scalar_(scalar) {}
+
+    template<typename T>
+    Tensor<T> ScalarSubFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
+        return inputs[0].data() + Tensor<T>::full(inputs[0].data().shape(), -scalar_);
+    }
+
+    template<typename T>
+    Function<T>::TensorVec ScalarSubFunction<T>::backward(const Tensor<T> &grad_output) {
+        return {grad_output};
+    }
+
+    template<typename T>
+    size_t ScalarSubFunction<T>::num_inputs() const {
+        return 1;
+    }
+
+    template<typename T>
+    ScalarDivFunction<T>::ScalarDivFunction(T scalar) : scalar_(scalar) {}
+
+    template<typename T>
+    Tensor<T> ScalarDivFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
+        return inputs[0].data() * (T(1) / scalar_);
+    }
+
+    template<typename T>
+    Function<T>::TensorVec ScalarDivFunction<T>::backward(const Tensor<T> &grad_output) {
+        return {grad_output * (T(1) / scalar_)};
+    }
+
+    template<typename T>
+    size_t ScalarDivFunction<T>::num_inputs() const {
+        return 1;
+    }
+
+    template<typename T>
+    ReverseScalarSubFunction<T>::ReverseScalarSubFunction(T scalar) : scalar_(scalar) {}
+
+    template<typename T>
+    Tensor<T> ReverseScalarSubFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
+        return Tensor<T>::full(inputs[0].data().shape(), scalar_) - inputs[0].data();
+    }
+
+    template<typename T>
+    Function<T>::TensorVec ReverseScalarSubFunction<T>::backward(const Tensor<T> &grad_output) {
+        return {-grad_output};
+    }
+
+    template<typename T>
+    size_t ReverseScalarSubFunction<T>::num_inputs() const {
+        return 1;
+    }
+
+    template<typename T>
+    ReverseScalarDivFunction<T>::ReverseScalarDivFunction(T scalar) : scalar_(scalar) {}
+
+    template<typename T>
+    Tensor<T> ReverseScalarDivFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
+        return Tensor<T>::full(inputs[0].data().shape(), scalar_) / inputs[0].data();
+    }
+
+    template<typename T>
+    Function<T>::TensorVec ReverseScalarDivFunction<T>::backward(const Tensor<T> &grad_output) {
+        const auto &inputs = this->get_inputs();
+        const Tensor<T> &input_data = inputs[0]->data();
+        auto input_squared = input_data * input_data;
+        auto ones_tensor = Tensor<T>::ones(input_squared.shape());
+        return {grad_output * (-scalar_) * (ones_tensor / input_squared)};
+    }
+
+    template<typename T>
+    size_t ReverseScalarDivFunction<T>::num_inputs() const {
+        return 1;
+    }
+
     // Global operator overloads for smart pointers
     template<typename T>
     std::shared_ptr<Variable<T> > operator+(const std::shared_ptr<Variable<T> > &lhs,
@@ -1178,10 +1316,14 @@ namespace utils {
 
     template<typename T>
     std::shared_ptr<Variable<T> > operator-(T scalar, const std::shared_ptr<Variable<T> > &rhs) {
-        // For scalar - variable, create scalar variable and subtract
-        Tensor<T> scalar_tensor = Tensor<T>::full(rhs->data().shape(), scalar);
-        auto scalar_var = std::make_shared<Variable<T> >(scalar_tensor, false);
-        return Variable<T>::sub(scalar_var, rhs);
+        auto reverse_scalar_sub_fn = std::make_shared<ReverseScalarSubFunction<T> >(scalar);
+        Tensor<T> result = reverse_scalar_sub_fn->forward({*rhs});
+
+        if (rhs->requires_grad()) {
+            auto result_var = Variable<T>::create_with_grad_fn(result, reverse_scalar_sub_fn, {rhs});
+            return result_var;
+        }
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     template<typename T>
@@ -1191,10 +1333,14 @@ namespace utils {
 
     template<typename T>
     std::shared_ptr<Variable<T> > operator/(T scalar, const std::shared_ptr<Variable<T> > &rhs) {
-        // For scalar / variable, create scalar variable and divide
-        Tensor<T> scalar_tensor = Tensor<T>::full(rhs->data().shape(), scalar);
-        auto scalar_var = std::make_shared<Variable<T> >(scalar_tensor, false);
-        return Variable<T>::div(scalar_var, rhs);
+        auto reverse_scalar_div_fn = std::make_shared<ReverseScalarDivFunction<T> >(scalar);
+        Tensor<T> result = reverse_scalar_div_fn->forward({*rhs});
+
+        if (rhs->requires_grad()) {
+            auto result_var = Variable<T>::create_with_grad_fn(result, reverse_scalar_div_fn, {rhs});
+            return result_var;
+        }
+        return std::make_shared<Variable<T> >(result, false);
     }
 
     // Explicit template instantiations
@@ -1302,19 +1448,45 @@ namespace utils {
     template class SumAxesFunction<double>;
     template class MeanAxesFunction<float>;
     template class MeanAxesFunction<double>;
+    template class ScalarAddFunction<float>;
+    template class ScalarAddFunction<double>;
+    template class ScalarMulFunction<float>;
+    template class ScalarMulFunction<double>;
+    template class ScalarSubFunction<float>;
+    template class ScalarSubFunction<double>;
+    template class ScalarDivFunction<float>;
+    template class ScalarDivFunction<double>;
+    template class ReverseScalarSubFunction<float>;
+    template class ReverseScalarSubFunction<double>;
+    template class ReverseScalarDivFunction<float>;
+    template class ReverseScalarDivFunction<double>;
 
     // Explicit function template instantiations
     // topological_sort is automatically instantiated when used in backward()
-    
+
     // Helper function template instantiations
-    template std::shared_ptr<Variable<float>> make_variable(const Tensor<float>& data, bool requires_grad);
-    template std::shared_ptr<Variable<double>> make_variable(const Tensor<double>& data, bool requires_grad);
-    template std::shared_ptr<Variable<float>> make_variable(const Tensor<float>& data, std::shared_ptr<Function<float>> grad_fn);
-    template std::shared_ptr<Variable<double>> make_variable(const Tensor<double>& data, std::shared_ptr<Function<double>> grad_fn);
-    template std::shared_ptr<Variable<float>> make_variable_scalar(float value, bool requires_grad);
-    template std::shared_ptr<Variable<double>> make_variable_scalar(double value, bool requires_grad);
-    template std::shared_ptr<Variable<float>> make_variable_zeros(const std::vector<size_t>& shape, bool requires_grad);
-    template std::shared_ptr<Variable<double>> make_variable_zeros(const std::vector<size_t>& shape, bool requires_grad);
-    template std::shared_ptr<Variable<float>> make_variable_ones(const std::vector<size_t>& shape, bool requires_grad);
-    template std::shared_ptr<Variable<double>> make_variable_ones(const std::vector<size_t>& shape, bool requires_grad);
+    template std::shared_ptr<Variable<float> > make_variable(const Tensor<float> &data, bool requires_grad);
+
+    template std::shared_ptr<Variable<double> > make_variable(const Tensor<double> &data, bool requires_grad);
+
+    template std::shared_ptr<Variable<float> > make_variable(const Tensor<float> &data,
+                                                             std::shared_ptr<Function<float> > grad_fn);
+
+    template std::shared_ptr<Variable<double> > make_variable(const Tensor<double> &data,
+                                                              std::shared_ptr<Function<double> > grad_fn);
+
+    template std::shared_ptr<Variable<float> > make_variable_scalar(float value, bool requires_grad);
+
+    template std::shared_ptr<Variable<double> > make_variable_scalar(double value, bool requires_grad);
+
+    template std::shared_ptr<Variable<float> >
+    make_variable_zeros(const std::vector<size_t> &shape, bool requires_grad);
+
+    template std::shared_ptr<Variable<double> > make_variable_zeros(const std::vector<size_t> &shape,
+                                                                    bool requires_grad);
+
+    template std::shared_ptr<Variable<float> > make_variable_ones(const std::vector<size_t> &shape, bool requires_grad);
+
+    template std::shared_ptr<Variable<double> >
+    make_variable_ones(const std::vector<size_t> &shape, bool requires_grad);
 } // namespace utils
