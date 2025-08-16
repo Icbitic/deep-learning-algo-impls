@@ -2,8 +2,8 @@
 
 A C++ library for implementing deep learning and machine learning algorithms from scratch.
 
-[![CI](https://github.com/Icbitic/deep-learning-algo-impls/workflows/CI/badge.svg)](https://github.com/your-username/deep-learning-algo-impls/actions)
-[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](https://your-username.github.io/deep-learning-algo-impls/)
+[![CI](https://github.com/Icbitic/deep-learning-algo-impls/workflows/CI/badge.svg)](https://github.com/Icbitic/deep-learning-algo-impls/actions)
+[![Documentation](https://img.shields.io/badge/docs-doxygen-blue.svg)](https://icbitic.github.io/deep-learning-algo-impls/)
 
 ## Features
 
