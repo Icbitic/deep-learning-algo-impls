@@ -5,7 +5,7 @@
 namespace dl::optimization {
     // SGD Implementation
     template<typename T>
-    SGD<T>::SGD(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T momentum,
+    SGD<T>::SGD(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr, T momentum,
                 T weight_decay, bool nesterov) : AutogradOptimizer<T>(parameters),
                                                  lr_(lr), momentum_(momentum),
                                                  weight_decay_(weight_decay),
@@ -39,7 +39,7 @@ namespace dl::optimization {
 
     // Adam Implementation
     template<typename T>
-    Adam<T>::Adam(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T beta1, T beta2,
+    Adam<T>::Adam(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr, T beta1, T beta2,
                   T eps, T weight_decay) : AutogradOptimizer<T>(parameters),
                                            lr_(lr), beta1_(beta1), beta2_(beta2),
                                            eps_(eps), weight_decay_(weight_decay),
@@ -80,7 +80,7 @@ namespace dl::optimization {
 
     // AdamW Implementation
     template<typename T>
-    AdamW<T>::AdamW(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T beta1, T beta2,
+    AdamW<T>::AdamW(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr, T beta1, T beta2,
                     T eps, T weight_decay) : AutogradOptimizer<T>(parameters),
                                              lr_(lr), beta1_(beta1), beta2_(beta2),
                                              eps_(eps), weight_decay_(weight_decay),
@@ -121,7 +121,7 @@ namespace dl::optimization {
 
     // RMSprop Implementation
     template<typename T>
-    RMSprop<T>::RMSprop(std::vector<std::shared_ptr<Variable<T>>> parameters, T lr, T alpha, T eps,
+    RMSprop<T>::RMSprop(std::vector<std::shared_ptr<Variable<T> > > parameters, T lr, T alpha, T eps,
                         T weight_decay,
                         T momentum) : AutogradOptimizer<T>(parameters), lr_(lr),
                                       alpha_(alpha), eps_(eps),

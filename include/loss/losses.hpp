@@ -14,11 +14,11 @@
 
 namespace dl::loss {
     using dl::Tensor;
-using dl::TensorD;
-using dl::TensorF;
-using dl::Variable;
-using dl::VariableD;
-using dl::VariableF;
+    using dl::TensorD;
+    using dl::TensorF;
+    using dl::Variable;
+    using dl::VariableD;
+    using dl::VariableF;
 
     /**
      * @brief Base class for autograd-compatible loss functions
@@ -34,14 +34,14 @@ using dl::VariableF;
          * @param targets Ground truth targets
          * @return Loss value as a Variable (scalar)
          */
-        virtual std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
-                                    const std::shared_ptr<Variable<T>> &targets) = 0;
+        virtual std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &predictions,
+                                                      const std::shared_ptr<Variable<T> > &targets) = 0;
 
         /**
          * @brief Convenience operator for computing loss
          */
-        std::shared_ptr<Variable<T>> operator()(const std::shared_ptr<Variable<T>> &predictions,
-                               const std::shared_ptr<Variable<T>> &targets) {
+        std::shared_ptr<Variable<T> > operator()(const std::shared_ptr<Variable<T> > &predictions,
+                                                 const std::shared_ptr<Variable<T> > &targets) {
             return forward(predictions, targets);
         }
     };
@@ -70,8 +70,8 @@ using dl::VariableF;
          * @param targets Target values
          * @return MSE loss
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
-                            const std::shared_ptr<Variable<T>> &targets) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &predictions,
+                                              const std::shared_ptr<Variable<T> > &targets) override;
 
     private:
         std::string reduction_;
@@ -101,8 +101,8 @@ using dl::VariableF;
          * @param targets Target class indices or one-hot vectors
          * @return Cross entropy loss
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
-                            const std::shared_ptr<Variable<T>> &targets) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &predictions,
+                                              const std::shared_ptr<Variable<T> > &targets) override;
 
     private:
         std::string reduction_;
@@ -110,12 +110,12 @@ using dl::VariableF;
         /**
          * @brief Apply softmax to logits
          */
-        std::shared_ptr<Variable<T>> softmax(const std::shared_ptr<Variable<T>> &logits);
+        std::shared_ptr<Variable<T> > softmax(const std::shared_ptr<Variable<T> > &logits);
 
         /**
          * @brief Apply log softmax (numerically stable)
          */
-        std::shared_ptr<Variable<T>> log_softmax(const std::shared_ptr<Variable<T>> &logits);
+        std::shared_ptr<Variable<T> > log_softmax(const std::shared_ptr<Variable<T> > &logits);
     };
 
     /**
@@ -142,8 +142,8 @@ using dl::VariableF;
          * @param targets Binary target values (0 or 1)
          * @return BCE loss
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
-                            const std::shared_ptr<Variable<T>> &targets) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &predictions,
+                                              const std::shared_ptr<Variable<T> > &targets) override;
 
     private:
         std::string reduction_;
@@ -173,8 +173,8 @@ using dl::VariableF;
          * @param targets Binary target values (0 or 1)
          * @return BCE loss
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
-                            const std::shared_ptr<Variable<T>> &targets) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &predictions,
+                                              const std::shared_ptr<Variable<T> > &targets) override;
 
     private:
         std::string reduction_;
@@ -204,8 +204,8 @@ using dl::VariableF;
          * @param targets Target values (-1 or +1)
          * @return Hinge loss
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
-                            const std::shared_ptr<Variable<T>> &targets) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &predictions,
+                                              const std::shared_ptr<Variable<T> > &targets) override;
 
     private:
         std::string reduction_;
@@ -241,8 +241,8 @@ using dl::VariableF;
          * @param targets Target values
          * @return Huber loss
          */
-        std::shared_ptr<Variable<T>> forward(const std::shared_ptr<Variable<T>> &predictions,
-                            const std::shared_ptr<Variable<T>> &targets) override;
+        std::shared_ptr<Variable<T> > forward(const std::shared_ptr<Variable<T> > &predictions,
+                                              const std::shared_ptr<Variable<T> > &targets) override;
 
     private:
         T delta_;

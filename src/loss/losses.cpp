@@ -8,8 +8,8 @@ namespace dl::loss {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> MSELoss<T>::forward(const std::shared_ptr<Variable<T>> &predictions,
-                                    const std::shared_ptr<Variable<T>> &targets) {
+    std::shared_ptr<Variable<T> > MSELoss<T>::forward(const std::shared_ptr<Variable<T> > &predictions,
+                                                      const std::shared_ptr<Variable<T> > &targets) {
         // TODO: Implement MSE loss computation
         // Steps:
         // 1. Compute difference: diff = predictions - targets
@@ -33,7 +33,7 @@ namespace dl::loss {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> CrossEntropyLoss<T>::softmax(const std::shared_ptr<Variable<T>> &logits) {
+    std::shared_ptr<Variable<T> > CrossEntropyLoss<T>::softmax(const std::shared_ptr<Variable<T> > &logits) {
         // TODO: Implement numerically stable softmax
         // Steps:
         // 1. Subtract max for numerical stability: shifted = logits - max(logits)
@@ -48,7 +48,7 @@ namespace dl::loss {
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> CrossEntropyLoss<T>::log_softmax(const std::shared_ptr<Variable<T>> &logits) {
+    std::shared_ptr<Variable<T> > CrossEntropyLoss<T>::log_softmax(const std::shared_ptr<Variable<T> > &logits) {
         // TODO: Implement numerically stable log_softmax
         // log_softmax(x) = x - log(sum(exp(x)))
         // More stable than log(softmax(x))
@@ -58,8 +58,8 @@ namespace dl::loss {
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> CrossEntropyLoss<T>::forward(const std::shared_ptr<Variable<T>> &predictions,
-                                             const std::shared_ptr<Variable<T>> &targets) {
+    std::shared_ptr<Variable<T> > CrossEntropyLoss<T>::forward(const std::shared_ptr<Variable<T> > &predictions,
+                                                               const std::shared_ptr<Variable<T> > &targets) {
         // TODO: Implement cross entropy loss
         // Steps:
         // 1. Apply log_softmax to predictions
@@ -68,7 +68,7 @@ namespace dl::loss {
 
         auto log_probs = log_softmax(predictions);
         auto nll = targets * log_probs;
-        auto neg_one = std::make_shared<Variable<T>>(Tensor<T>({-1.0}, {1, 1}), false);
+        auto neg_one = std::make_shared<Variable<T> >(Tensor<T>({-1.0}, {1, 1}), false);
         auto loss = nll * neg_one;
         // Negate
 
@@ -86,8 +86,8 @@ namespace dl::loss {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> BCELoss<T>::forward(const std::shared_ptr<Variable<T>> &predictions,
-                                    const std::shared_ptr<Variable<T>> &targets) {
+    std::shared_ptr<Variable<T> > BCELoss<T>::forward(const std::shared_ptr<Variable<T> > &predictions,
+                                                      const std::shared_ptr<Variable<T> > &targets) {
         // TODO: Implement BCE loss
         // BCE = -[y * log(p) + (1-y) * log(1-p)]
         // Steps:
@@ -97,8 +97,8 @@ namespace dl::loss {
 
         // Add small epsilon for numerical stability
         T eps = 1e-7;
-        auto eps_var = std::make_shared<Variable<T>>(Tensor<T>({eps}, {1, 1}), false);
-        auto one_var = std::make_shared<Variable<T>>(Tensor<T>({1.0}, {1, 1}), false);
+        auto eps_var = std::make_shared<Variable<T> >(Tensor<T>({eps}, {1, 1}), false);
+        auto one_var = std::make_shared<Variable<T> >(Tensor<T>({1.0}, {1, 1}), false);
 
         // Clamp predictions to avoid log(0)
         // TODO: Implement proper clamping
@@ -107,7 +107,7 @@ namespace dl::loss {
         auto log_one_minus_pred = one_minus_pred->log();
 
         auto loss = targets * log_pred + (one_var - targets) * log_one_minus_pred;
-        auto neg_one = std::make_shared<Variable<T>>(Tensor<T>({-1.0}, {1, 1}), false);
+        auto neg_one = std::make_shared<Variable<T> >(Tensor<T>({-1.0}, {1, 1}), false);
         loss = loss * neg_one; // Negate
 
         if (reduction_ == "mean") {
@@ -124,8 +124,8 @@ namespace dl::loss {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> BCEWithLogitsLoss<T>::forward(const std::shared_ptr<Variable<T>> &predictions,
-                                              const std::shared_ptr<Variable<T>> &targets) {
+    std::shared_ptr<Variable<T> > BCEWithLogitsLoss<T>::forward(const std::shared_ptr<Variable<T> > &predictions,
+                                                                const std::shared_ptr<Variable<T> > &targets) {
         // TODO: Implement BCE with logits (more numerically stable)
         // Use the identity: BCE_with_logits(x, y) = max(x, 0) - x*y + log(1 + exp(-|x|))
         // This avoids computing sigmoid explicitly
@@ -141,8 +141,8 @@ namespace dl::loss {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> HingeLoss<T>::forward(const std::shared_ptr<Variable<T>> &predictions,
-                                      const std::shared_ptr<Variable<T>> &targets) {
+    std::shared_ptr<Variable<T> > HingeLoss<T>::forward(const std::shared_ptr<Variable<T> > &predictions,
+                                                        const std::shared_ptr<Variable<T> > &targets) {
         // TODO: Implement hinge loss
         // Hinge(y_pred, y_true) = max(0, 1 - y_true * y_pred)
         // Steps:
@@ -150,7 +150,7 @@ namespace dl::loss {
         // 2. Apply max(0, margin) - this requires implementing max operation
         // 3. Apply reduction
 
-        auto one_var = std::make_shared<Variable<T>>(Tensor<T>({1.0}, {1, 1}), false);
+        auto one_var = std::make_shared<Variable<T> >(Tensor<T>({1.0}, {1, 1}), false);
         auto margin = one_var - targets * predictions;
 
         // TODO: Implement max(0, margin) operation
@@ -171,8 +171,8 @@ namespace dl::loss {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> HuberLoss<T>::forward(const std::shared_ptr<Variable<T>> &predictions,
-                                      const std::shared_ptr<Variable<T>> &targets) {
+    std::shared_ptr<Variable<T> > HuberLoss<T>::forward(const std::shared_ptr<Variable<T> > &predictions,
+                                                        const std::shared_ptr<Variable<T> > &targets) {
         // TODO: Implement Huber loss
         // Huber(y_pred, y_true) = {
         //   0.5 * (y_pred - y_true)²     if |y_pred - y_true| <= delta
@@ -189,7 +189,7 @@ namespace dl::loss {
 
         // Placeholder: Use MSE for now
         auto squared_diff = diff * diff;
-        auto half_var = std::make_shared<Variable<T>>(Tensor<T>({0.5}, {1, 1}), false);
+        auto half_var = std::make_shared<Variable<T> >(Tensor<T>({0.5}, {1, 1}), false);
         auto loss = half_var * squared_diff;
 
         if (reduction_ == "mean") {

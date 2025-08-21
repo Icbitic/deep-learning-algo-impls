@@ -14,9 +14,10 @@ namespace dl::nn {
                    bool bias) : in_features_(in_features),
                                 out_features_(out_features), has_bias_(bias),
                                 weight_(
-                                    std::make_shared<Variable<T>>(Tensor<T>::zeros({out_features, in_features}), true)),
-                                bias_(std::make_shared<Variable<T>>(Tensor<T>::zeros({out_features, 1}),
-                                      true)) {
+                                    std::make_shared<Variable<T> >(Tensor<T>::zeros({out_features, in_features}),
+                                                                   true)),
+                                bias_(std::make_shared<Variable<T> >(Tensor<T>::zeros({out_features, 1}),
+                                                                     true)) {
         initialize_parameters();
     }
 
@@ -38,7 +39,7 @@ namespace dl::nn {
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Linear<T>::forward(const std::shared_ptr<Variable<T>> &input) {
+    std::shared_ptr<Variable<T> > Linear<T>::forward(const std::shared_ptr<Variable<T> > &input) {
         // TODO: Implement forward pass: y = xW^T + b
         // Steps:
         // 1. Compute input.dot(weight_.transpose())
@@ -54,8 +55,8 @@ namespace dl::nn {
     }
 
     template<typename T>
-    std::vector<std::shared_ptr<Variable<T>>> Linear<T>::parameters() {
-        std::vector<std::shared_ptr<Variable<T>>> params;
+    std::vector<std::shared_ptr<Variable<T> > > Linear<T>::parameters() {
+        std::vector<std::shared_ptr<Variable<T> > > params;
         params.push_back(weight_);
         if (has_bias_) {
             params.push_back(bias_);
@@ -68,21 +69,21 @@ namespace dl::nn {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> ReLU<T>::forward(const std::shared_ptr<Variable<T>> &input) {
+    std::shared_ptr<Variable<T> > ReLU<T>::forward(const std::shared_ptr<Variable<T> > &input) {
         // TODO: Implement ReLU activation
         // Hint: Use input.relu() method from autograd
         return input->relu();
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Sigmoid<T>::forward(const std::shared_ptr<Variable<T>> &input) {
+    std::shared_ptr<Variable<T> > Sigmoid<T>::forward(const std::shared_ptr<Variable<T> > &input) {
         // TODO: Implement Sigmoid activation
         // Hint: Use input.sigmoid() method from autograd
         return input->sigmoid();
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Tanh<T>::forward(const std::shared_ptr<Variable<T>> &input) {
+    std::shared_ptr<Variable<T> > Tanh<T>::forward(const std::shared_ptr<Variable<T> > &input) {
         // TODO: Implement Tanh activation
         // Hint: Use input.tanh() method from autograd
         return input->tanh();
@@ -93,7 +94,7 @@ namespace dl::nn {
     // ============================================================================
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Dropout<T>::forward(const std::shared_ptr<Variable<T>> &input) {
+    std::shared_ptr<Variable<T> > Dropout<T>::forward(const std::shared_ptr<Variable<T> > &input) {
         // TODO: Implement dropout
         // During training:
         //   - Generate random mask with probability p_
@@ -121,7 +122,7 @@ namespace dl::nn {
     }
 
     template<typename T>
-    std::shared_ptr<Variable<T>> Sequential<T>::forward(const std::shared_ptr<Variable<T>> &input) {
+    std::shared_ptr<Variable<T> > Sequential<T>::forward(const std::shared_ptr<Variable<T> > &input) {
         // TODO: Implement sequential forward pass
         // Apply each module in sequence to the input
 
@@ -133,8 +134,8 @@ namespace dl::nn {
     }
 
     template<typename T>
-    std::vector<std::shared_ptr<Variable<T>>> Sequential<T>::parameters() {
-        std::vector<std::shared_ptr<Variable<T>>> all_params;
+    std::vector<std::shared_ptr<Variable<T> > > Sequential<T>::parameters() {
+        std::vector<std::shared_ptr<Variable<T> > > all_params;
         for (auto &module: modules_) {
             auto module_params = module->parameters();
             all_params.insert(all_params.end(), module_params.begin(),

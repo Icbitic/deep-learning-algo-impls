@@ -1153,7 +1153,8 @@ namespace dl {
     // ============================================================================
 
     template<typename T>
-    ScalarAddFunction<T>::ScalarAddFunction(T scalar) : scalar_(scalar) {}
+    ScalarAddFunction<T>::ScalarAddFunction(T scalar) : scalar_(scalar) {
+    }
 
     template<typename T>
     Tensor<T> ScalarAddFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
@@ -1171,7 +1172,8 @@ namespace dl {
     }
 
     template<typename T>
-    ScalarMulFunction<T>::ScalarMulFunction(T scalar) : scalar_(scalar) {}
+    ScalarMulFunction<T>::ScalarMulFunction(T scalar) : scalar_(scalar) {
+    }
 
     template<typename T>
     Tensor<T> ScalarMulFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
@@ -1189,7 +1191,8 @@ namespace dl {
     }
 
     template<typename T>
-    ScalarSubFunction<T>::ScalarSubFunction(T scalar) : scalar_(scalar) {}
+    ScalarSubFunction<T>::ScalarSubFunction(T scalar) : scalar_(scalar) {
+    }
 
     template<typename T>
     Tensor<T> ScalarSubFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
@@ -1207,7 +1210,8 @@ namespace dl {
     }
 
     template<typename T>
-    ScalarDivFunction<T>::ScalarDivFunction(T scalar) : scalar_(scalar) {}
+    ScalarDivFunction<T>::ScalarDivFunction(T scalar) : scalar_(scalar) {
+    }
 
     template<typename T>
     Tensor<T> ScalarDivFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
@@ -1225,7 +1229,8 @@ namespace dl {
     }
 
     template<typename T>
-    ReverseScalarSubFunction<T>::ReverseScalarSubFunction(T scalar) : scalar_(scalar) {}
+    ReverseScalarSubFunction<T>::ReverseScalarSubFunction(T scalar) : scalar_(scalar) {
+    }
 
     template<typename T>
     Tensor<T> ReverseScalarSubFunction<T>::forward(const std::vector<Variable<T> > &inputs) {
@@ -1243,7 +1248,8 @@ namespace dl {
     }
 
     template<typename T>
-    ReverseScalarDivFunction<T>::ReverseScalarDivFunction(T scalar) : scalar_(scalar) {}
+    ReverseScalarDivFunction<T>::ReverseScalarDivFunction(T scalar) : scalar_(scalar) {
+    }
 
     template<typename T>
     Tensor<T> ReverseScalarDivFunction<T>::forward(const std::vector<Variable<T> > &inputs) {

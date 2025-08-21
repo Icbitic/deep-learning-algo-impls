@@ -251,7 +251,7 @@ namespace ml {
                 // Compute decision function: w^T * x_i + b
                 // weights_ is (n_features, 1), x_i is (1, n_features)
                 // x_i.dot(weights_) should give (1, 1) result
-        auto decision = x_i->dot(weights_) + bias_;
+                auto decision = x_i->dot(weights_) + bias_;
 
                 // Compute margin: y_i * decision
                 T y_i = static_cast<T>(y[i]);
@@ -262,7 +262,7 @@ namespace ml {
                 T margin_val = margin->data()(0);
                 if (margin_val < 1.0) {
                     auto hinge = std::make_shared<Variable<T> >(Tensor<T>({1.0}, {1, 1}), false) - margin;
-                hinge_loss_sum = hinge_loss_sum + hinge;
+                    hinge_loss_sum = hinge_loss_sum + hinge;
                 }
             }
 
@@ -304,7 +304,7 @@ namespace ml {
                         auto alpha_k_var = std::make_shared<Variable<T> >(alpha_k, false);
                         decision = decision + alpha_k_var * kernel_val *
                                    std::make_shared<Variable<T> >(Tensor<T>({static_cast<T>(y[k])}, {1, 1}),
-                                                                   false);
+                                                                  false);
                     }
                 }
 

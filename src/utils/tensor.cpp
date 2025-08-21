@@ -15,7 +15,7 @@ namespace dl {
         : shape_(shape) {
         // Calculate total size from shape
         size_t total_size = 1;
-        for (size_t dim : shape) {
+        for (size_t dim: shape) {
             total_size *= dim;
         }
 
@@ -366,7 +366,7 @@ namespace dl {
     template<typename T>
     Tensor<T> Tensor<T>::zeros(const std::vector<size_t> &shape) {
         size_t total_size = 1;
-        for (size_t dim : shape) {
+        for (size_t dim: shape) {
             total_size *= dim;
         }
         std::vector<T> data(total_size, T(0));
@@ -377,7 +377,7 @@ namespace dl {
     template<typename T>
     Tensor<T> Tensor<T>::ones(const std::vector<size_t> &shape) {
         size_t total_size = 1;
-        for (size_t dim : shape) {
+        for (size_t dim: shape) {
             total_size *= dim;
         }
         std::vector<T> data(total_size, T(1));
@@ -388,7 +388,7 @@ namespace dl {
     template<typename T>
     Tensor<T> Tensor<T>::full(const std::vector<size_t> &shape, T value) {
         size_t total_size = 1;
-        for (size_t dim : shape) {
+        for (size_t dim: shape) {
             total_size *= dim;
         }
         std::vector<T> data(total_size, value);
@@ -485,7 +485,7 @@ namespace dl {
     template<typename T>
     Tensor<T> Tensor<T>::sum(const std::vector<int> &axes, bool keepdims) const {
         auto result = data_;
-        for (int axis : axes) {
+        for (int axis: axes) {
             if (axis >= 0 && axis < static_cast<int>(result.shape().size())) {
                 if (keepdims) {
                     result = xt::sum(result, {static_cast<size_t>(axis)}, xt::keep_dims);
@@ -506,7 +506,7 @@ namespace dl {
     template<typename T>
     Tensor<T> Tensor<T>::mean(const std::vector<int> &axes, bool keepdims) const {
         auto result = data_;
-        for (int axis : axes) {
+        for (int axis: axes) {
             if (axis >= 0 && axis < static_cast<int>(result.shape().size())) {
                 if (keepdims) {
                     result = xt::mean(result, {static_cast<size_t>(axis)}, xt::keep_dims);
@@ -543,7 +543,6 @@ namespace dl {
     template class Tensor<float>;
     template class Tensor<double>;
     template class Tensor<int>;
-
 
 
     // Explicit instantiation of friend functions

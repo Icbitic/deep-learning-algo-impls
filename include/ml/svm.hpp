@@ -134,8 +134,8 @@ namespace ml {
         size_t max_iter_; ///< Maximum iterations
         T learning_rate_; ///< Learning rate for gradient descent
 
-        std::shared_ptr<Variable<T>> weights_; ///< Weight parameters (with autograd)
-        std::shared_ptr<Variable<T>> bias_; ///< Bias parameter (with autograd)
+        std::shared_ptr<Variable<T> > weights_; ///< Weight parameters (with autograd)
+        std::shared_ptr<Variable<T> > bias_; ///< Bias parameter (with autograd)
         Tensor<T> support_vectors_; ///< Support vectors
         std::vector<size_t> support_indices_; ///< Support vector indices
         std::vector<T> dual_coef_; ///< Dual coefficients
@@ -149,7 +149,8 @@ namespace ml {
          * @param x2 Second vector as Variable
          * @return Kernel value as Variable
          */
-        std::shared_ptr<Variable<T>> kernel(const std::shared_ptr<Variable<T>> &x1, const std::shared_ptr<Variable<T>> &x2) const;
+        std::shared_ptr<Variable<T> > kernel(const std::shared_ptr<Variable<T> > &x1,
+                                             const std::shared_ptr<Variable<T> > &x2) const;
 
         /**
          * @brief Compute kernel matrix using autograd
@@ -157,7 +158,8 @@ namespace ml {
          * @param X2 Second matrix as Variable
          * @return Kernel matrix as Variable
          */
-        std::shared_ptr<Variable<T>> kernel_matrix(const std::shared_ptr<Variable<T>> &X1, const std::shared_ptr<Variable<T>> &X2) const;
+        std::shared_ptr<Variable<T> > kernel_matrix(const std::shared_ptr<Variable<T> > &X1,
+                                                    const std::shared_ptr<Variable<T> > &X2) const;
 
         /**
          * @brief Compute SVM loss function using autograd
@@ -165,8 +167,8 @@ namespace ml {
          * @param y Training labels
          * @return Loss value as Variable
          */
-        std::shared_ptr<Variable<T>> compute_loss(const std::shared_ptr<Variable<T>> &X,
-                                 const std::vector<int> &y) const;
+        std::shared_ptr<Variable<T> > compute_loss(const std::shared_ptr<Variable<T> > &X,
+                                                   const std::vector<int> &y) const;
 
         /**
          * @brief Perform gradient descent step
@@ -182,8 +184,8 @@ namespace ml {
          * @param requires_grad Whether to track gradients
          * @return Variable wrapping the matrix
          */
-        std::shared_ptr<Variable<T>> to_variable(const Tensor<T> &matrix,
-                                bool requires_grad = false) const;
+        std::shared_ptr<Variable<T> > to_variable(const Tensor<T> &matrix,
+                                                  bool requires_grad = false) const;
     };
 
     // Type aliases

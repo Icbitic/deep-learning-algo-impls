@@ -66,12 +66,12 @@ namespace dl {
         /**
          * @brief Get the number of inputs this function expects
          */
-        virtual size_t num_inputs() const = 0;
+        [[nodiscard]] virtual size_t num_inputs() const = 0;
 
         /**
          * @brief Check if this function needs input values for backward pass
          */
-        virtual bool needs_input_grad(size_t input_idx) const;
+        [[nodiscard]] virtual bool needs_input_grad(size_t input_idx) const;
 
     protected:
         /**
@@ -125,7 +125,7 @@ namespace dl {
         Tensor<T> &data() { return data_; }
         const Tensor<T> &grad() const { return grad_; }
         Tensor<T> &grad() { return grad_; }
-        bool requires_grad() const { return requires_grad_; }
+        [[nodiscard]] bool requires_grad() const { return requires_grad_; }
         FunctionPtr grad_fn() const { return grad_fn_; }
 
         /**
@@ -154,93 +154,103 @@ namespace dl {
          * @brief Detach from computational graph
          * @return A new variable with the same data but no gradient tracking
          */
-        std::shared_ptr<Variable<T>> detach() const;
+        std::shared_ptr<Variable<T> > detach() const;
 
         /**
          * @brief Clone this variable with optional gradient requirement
          */
-        std::shared_ptr<Variable<T>> clone(bool requires_grad = true) const;
+        std::shared_ptr<Variable<T> > clone(bool requires_grad = true) const;
 
         // Arithmetic operations
-        std::shared_ptr<Variable<T>> operator+(const Variable<T> &other) const;
+        std::shared_ptr<Variable<T> > operator+(const Variable<T> &other) const;
 
-        std::shared_ptr<Variable<T>> operator-(const Variable<T> &other) const;
+        std::shared_ptr<Variable<T> > operator-(const Variable<T> &other) const;
 
-        std::shared_ptr<Variable<T>> operator*(const Variable<T> &other) const;
+        std::shared_ptr<Variable<T> > operator*(const Variable<T> &other) const;
 
-        std::shared_ptr<Variable<T>> operator/(const Variable<T> &other) const;
+        std::shared_ptr<Variable<T> > operator/(const Variable<T> &other) const;
 
         // Scalar operations
-        std::shared_ptr<Variable<T>> operator+(T scalar) const;
-        std::shared_ptr<Variable<T>> operator-(T scalar) const;
-        std::shared_ptr<Variable<T>> operator*(T scalar) const;
-        std::shared_ptr<Variable<T>> operator/(T scalar) const;
+        std::shared_ptr<Variable<T> > operator+(T scalar) const;
+
+        std::shared_ptr<Variable<T> > operator-(T scalar) const;
+
+        std::shared_ptr<Variable<T> > operator*(T scalar) const;
+
+        std::shared_ptr<Variable<T> > operator/(T scalar) const;
 
         // Smart pointer operations
         static VariablePtr add(VariablePtr a, VariablePtr b);
+
         static VariablePtr sub(VariablePtr a, VariablePtr b);
+
         static VariablePtr mul(VariablePtr a, VariablePtr b);
+
         static VariablePtr div(VariablePtr a, VariablePtr b);
+
         static VariablePtr mul(VariablePtr a, T scalar);
+
         static VariablePtr add(VariablePtr a, T scalar);
+
         static VariablePtr sub(VariablePtr a, T scalar);
+
         static VariablePtr div(VariablePtr a, T scalar);
 
         // Tensor operations
-        std::shared_ptr<Variable<T>> matmul(const std::shared_ptr<Variable<T>> &other) const;
+        std::shared_ptr<Variable<T> > matmul(const std::shared_ptr<Variable<T> > &other) const;
 
-        std::shared_ptr<Variable<T>> dot(const std::shared_ptr<Variable<T>> &other) const;
+        std::shared_ptr<Variable<T> > dot(const std::shared_ptr<Variable<T> > &other) const;
 
-        std::shared_ptr<Variable<T>> transpose() const;
+        std::shared_ptr<Variable<T> > transpose() const;
 
-        std::shared_ptr<Variable<T>> transpose(const std::vector<size_t> &axes) const;
+        std::shared_ptr<Variable<T> > transpose(const std::vector<size_t> &axes) const;
 
-        std::shared_ptr<Variable<T>> reshape(const std::vector<size_t> &new_shape) const;
+        std::shared_ptr<Variable<T> > reshape(const std::vector<size_t> &new_shape) const;
 
-        std::shared_ptr<Variable<T>> view(const std::vector<size_t> &new_shape) const;
+        std::shared_ptr<Variable<T> > view(const std::vector<size_t> &new_shape) const;
 
-        std::shared_ptr<Variable<T>> squeeze(int axis = -1) const;
+        std::shared_ptr<Variable<T> > squeeze(int axis = -1) const;
 
-        std::shared_ptr<Variable<T>> unsqueeze(size_t axis) const;
+        std::shared_ptr<Variable<T> > unsqueeze(size_t axis) const;
 
         // Reduction operations
-        std::shared_ptr<Variable<T>> sum() const;
+        std::shared_ptr<Variable<T> > sum() const;
 
-        std::shared_ptr<Variable<T>> sum(const std::vector<int> &axes, bool keepdims = false) const;
+        std::shared_ptr<Variable<T> > sum(const std::vector<int> &axes, bool keepdims = false) const;
 
-        std::shared_ptr<Variable<T>> mean() const;
+        std::shared_ptr<Variable<T> > mean() const;
 
-        std::shared_ptr<Variable<T>> mean(const std::vector<int> &axes, bool keepdims = false) const;
+        std::shared_ptr<Variable<T> > mean(const std::vector<int> &axes, bool keepdims = false) const;
 
-        std::shared_ptr<Variable<T>> max() const;
+        std::shared_ptr<Variable<T> > max() const;
 
-        std::shared_ptr<Variable<T>> min() const;
+        std::shared_ptr<Variable<T> > min() const;
 
         // Activation functions
-        std::shared_ptr<Variable<T>> sigmoid() const;
+        std::shared_ptr<Variable<T> > sigmoid() const;
 
-        std::shared_ptr<Variable<T>> tanh() const;
+        std::shared_ptr<Variable<T> > tanh() const;
 
-        std::shared_ptr<Variable<T>> relu() const;
+        std::shared_ptr<Variable<T> > relu() const;
 
-        std::shared_ptr<Variable<T>> leaky_relu(T negative_slope = 0.01) const;
+        std::shared_ptr<Variable<T> > leaky_relu(T negative_slope = 0.01) const;
 
-        std::shared_ptr<Variable<T>> gelu() const;
+        std::shared_ptr<Variable<T> > gelu() const;
 
-        std::shared_ptr<Variable<T>> softmax(int axis = -1) const;
+        std::shared_ptr<Variable<T> > softmax(int axis = -1) const;
 
-        std::shared_ptr<Variable<T>> log_softmax(int axis = -1) const;
+        std::shared_ptr<Variable<T> > log_softmax(int axis = -1) const;
 
         // Mathematical functions
-        std::shared_ptr<Variable<T>> exp() const;
+        std::shared_ptr<Variable<T> > exp() const;
 
-        std::shared_ptr<Variable<T>> log() const;
+        std::shared_ptr<Variable<T> > log() const;
 
-        std::shared_ptr<Variable<T>> sqrt() const;
+        std::shared_ptr<Variable<T> > sqrt() const;
 
-        std::shared_ptr<Variable<T>> pow(T exponent) const;
+        std::shared_ptr<Variable<T> > pow(T exponent) const;
 
-        std::shared_ptr<Variable<T>> abs() const;
+        std::shared_ptr<Variable<T> > abs() const;
 
         // Element access (variadic for n-dimensional tensors)
         template<typename... Args>
@@ -250,21 +260,21 @@ namespace dl {
         const T &operator()(Args... indices) const { return data_(indices...); }
 
         // Shape and size information
-        const std::vector<size_t> &shape() const { return data_.shape(); }
-        size_t size() const { return data_.size(); }
-        size_t ndim() const { return data_.shape().size(); }
+        [[nodiscard]] const std::vector<size_t> &shape() const { return data_.shape(); }
+        [[nodiscard]] size_t size() const { return data_.size(); }
+        [[nodiscard]] size_t ndim() const { return data_.shape().size(); }
 
         // Backward compatibility for 2D tensors
-        size_t rows() const;
+        [[nodiscard]] size_t rows() const;
 
-        size_t cols() const;
+        [[nodiscard]] size_t cols() const;
 
         /**
          * @brief Create a variable with gradient function and input references
          */
-        static std::shared_ptr<Variable<T>> create_with_grad_fn(const Tensor<T> &data,
-                                               FunctionPtr grad_fn,
-                                               const std::vector<VariablePtr> &inputs);
+        static std::shared_ptr<Variable<T> > create_with_grad_fn(const Tensor<T> &data,
+                                                                 FunctionPtr grad_fn,
+                                                                 const std::vector<VariablePtr> &inputs);
 
         /**
          * @brief Check if any input requires gradients
@@ -290,40 +300,44 @@ namespace dl {
 
     // Global operator overloads for smart pointers
     template<typename T>
-    std::shared_ptr<Variable<T>> operator+(const std::shared_ptr<Variable<T>>& lhs, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator+(const std::shared_ptr<Variable<T> > &lhs,
+                                            const std::shared_ptr<Variable<T> > &rhs);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator-(const std::shared_ptr<Variable<T>>& lhs, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator-(const std::shared_ptr<Variable<T> > &lhs,
+                                            const std::shared_ptr<Variable<T> > &rhs);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator*(const std::shared_ptr<Variable<T>>& lhs, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator*(const std::shared_ptr<Variable<T> > &lhs,
+                                            const std::shared_ptr<Variable<T> > &rhs);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator/(const std::shared_ptr<Variable<T>>& lhs, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator/(const std::shared_ptr<Variable<T> > &lhs,
+                                            const std::shared_ptr<Variable<T> > &rhs);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator*(const std::shared_ptr<Variable<T>>& lhs, T scalar);
+    std::shared_ptr<Variable<T> > operator*(const std::shared_ptr<Variable<T> > &lhs, T scalar);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator*(T scalar, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator*(T scalar, const std::shared_ptr<Variable<T> > &rhs);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator+(const std::shared_ptr<Variable<T>>& lhs, T scalar);
+    std::shared_ptr<Variable<T> > operator+(const std::shared_ptr<Variable<T> > &lhs, T scalar);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator+(T scalar, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator+(T scalar, const std::shared_ptr<Variable<T> > &rhs);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator-(const std::shared_ptr<Variable<T>>& lhs, T scalar);
+    std::shared_ptr<Variable<T> > operator-(const std::shared_ptr<Variable<T> > &lhs, T scalar);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator-(T scalar, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator-(T scalar, const std::shared_ptr<Variable<T> > &rhs);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator/(const std::shared_ptr<Variable<T>>& lhs, T scalar);
+    std::shared_ptr<Variable<T> > operator/(const std::shared_ptr<Variable<T> > &lhs, T scalar);
 
     template<typename T>
-    std::shared_ptr<Variable<T>> operator/(T scalar, const std::shared_ptr<Variable<T>>& rhs);
+    std::shared_ptr<Variable<T> > operator/(T scalar, const std::shared_ptr<Variable<T> > &rhs);
 
     // ============================================================================
     // OPERATION IMPLEMENTATIONS
@@ -339,7 +353,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -352,7 +366,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -365,7 +379,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -378,7 +392,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -393,7 +407,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         T scalar_;
@@ -411,7 +425,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         T scalar_;
@@ -429,7 +443,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         T scalar_;
@@ -447,7 +461,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         T scalar_;
@@ -465,7 +479,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         T scalar_;
@@ -483,7 +497,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         T scalar_;
@@ -499,7 +513,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -512,7 +526,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -525,7 +539,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -540,7 +554,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         std::vector<size_t> axes_;
@@ -559,7 +573,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         std::vector<size_t> original_shape_;
@@ -577,7 +591,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         int axis_;
@@ -596,7 +610,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         size_t axis_;
@@ -614,7 +628,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         std::vector<int> axes_;
@@ -634,7 +648,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         std::vector<int> axes_;
@@ -655,7 +669,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
 
     private:
         std::vector<size_t> original_shape_;
@@ -671,7 +685,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -684,7 +698,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -697,7 +711,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -710,7 +724,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -723,7 +737,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -736,7 +750,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
     /**
@@ -749,7 +763,7 @@ namespace dl {
 
         Function<T>::TensorVec backward(const Tensor<T> &grad_output) override;
 
-        size_t num_inputs() const override;
+        [[nodiscard]] size_t num_inputs() const override;
     };
 
 
@@ -758,7 +772,7 @@ namespace dl {
     using VariableD = Variable<double>;
 
     // Helper functions for creating Variables on heap
-    
+
     /**
      * @brief Create a shared pointer to a Variable (similar to std::make_shared)
      * @tparam T The data type (float, double, etc.)
@@ -767,8 +781,8 @@ namespace dl {
      * @return Shared pointer to the created Variable
      */
     template<typename T>
-    std::shared_ptr<Variable<T>> make_variable(const Tensor<T>& data, bool requires_grad = false) {
-        return std::make_shared<Variable<T>>(data, requires_grad);
+    std::shared_ptr<Variable<T> > make_variable(const Tensor<T> &data, bool requires_grad = false) {
+        return std::make_shared<Variable<T> >(data, requires_grad);
     }
 
     /**
@@ -779,8 +793,8 @@ namespace dl {
      * @return Shared pointer to the created Variable
      */
     template<typename T>
-    std::shared_ptr<Variable<T>> make_variable(const Tensor<T>& data, std::shared_ptr<Function<T>> grad_fn) {
-        return std::make_shared<Variable<T>>(data, grad_fn);
+    std::shared_ptr<Variable<T> > make_variable(const Tensor<T> &data, std::shared_ptr<Function<T> > grad_fn) {
+        return std::make_shared<Variable<T> >(data, grad_fn);
     }
 
     /**
@@ -791,8 +805,8 @@ namespace dl {
      * @return Shared pointer to the created Variable
      */
     template<typename T>
-    std::shared_ptr<Variable<T>> make_variable_scalar(T value, bool requires_grad = false) {
-        return std::make_shared<Variable<T>>(Tensor<T>(value), requires_grad);
+    std::shared_ptr<Variable<T> > make_variable_scalar(T value, bool requires_grad = false) {
+        return std::make_shared<Variable<T> >(Tensor<T>(value), requires_grad);
     }
 
     /**
@@ -803,8 +817,8 @@ namespace dl {
      * @return Shared pointer to the created Variable
      */
     template<typename T>
-    std::shared_ptr<Variable<T>> make_variable_zeros(const std::vector<size_t>& shape, bool requires_grad = false) {
-        return std::make_shared<Variable<T>>(Tensor<T>::zeros(shape), requires_grad);
+    std::shared_ptr<Variable<T> > make_variable_zeros(const std::vector<size_t> &shape, bool requires_grad = false) {
+        return std::make_shared<Variable<T> >(Tensor<T>::zeros(shape), requires_grad);
     }
 
     /**
@@ -815,12 +829,11 @@ namespace dl {
      * @return Shared pointer to the created Variable
      */
     template<typename T>
-    std::shared_ptr<Variable<T>> make_variable_ones(const std::vector<size_t>& shape, bool requires_grad = false) {
-        return std::make_shared<Variable<T>>(Tensor<T>::ones(shape), requires_grad);
+    std::shared_ptr<Variable<T> > make_variable_ones(const std::vector<size_t> &shape, bool requires_grad = false) {
+        return std::make_shared<Variable<T> >(Tensor<T>::ones(shape), requires_grad);
     }
 
     // Convenient type aliases for shared pointers
     using VariableFPtr = std::shared_ptr<VariableF>;
     using VariableDPtr = std::shared_ptr<VariableD>;
-
 } // namespace dl

@@ -15,19 +15,19 @@ protected:
         // Cluster 2: around (5, 5)
         // Cluster 3: around (0, 5)
         data_ = Tensor<double>({
-            0.0, 0.0,
-            0.5, 0.2,
-            -0.3, 0.1,
-            0.1, -0.4, // Cluster 1
-            5.0, 5.0,
-            5.2, 4.8,
-            4.9, 5.3,
-            5.1, 4.7, // Cluster 2
-            0.0, 5.0,
-            0.3, 4.8,
-            -0.2, 5.2,
-            0.1, 4.9 // Cluster 3
-        }, {12, 2});
+                                   0.0, 0.0,
+                                   0.5, 0.2,
+                                   -0.3, 0.1,
+                                   0.1, -0.4, // Cluster 1
+                                   5.0, 5.0,
+                                   5.2, 4.8,
+                                   4.9, 5.3,
+                                   5.1, 4.7, // Cluster 2
+                                   0.0, 5.0,
+                                   0.3, 4.8,
+                                   -0.2, 5.2,
+                                   0.1, 4.9 // Cluster 3
+                               }, {12, 2});
 
         // Create a 1D dataset for edge case testing
         simple_data_ = Tensor<double>({1.0, 1.1, 1.2, 5.0, 5.1, 5.2}, {6, 1});
